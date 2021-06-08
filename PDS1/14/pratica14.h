@@ -1,0 +1,10 @@
+unsigned long long cubeSum(int n);
+void printNAsc(int n);
+void printNDes(int n);
+int sumArray(int V[], int n);
+int medianArray(int V[], int n);
+unsigned long long fakePow(int x, int y);
+void invertString(char *str);
+void invertInt(int i);
+void intToBinary(int i);
+int minVec(int i[], int len);
