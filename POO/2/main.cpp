@@ -1,4 +1,5 @@
 #include <iostream>
+#include <time.h>
 #include <algorithm>
 
 #include "ponto2d.h"
@@ -14,6 +15,7 @@ void testSumOf() {
     double x = 4, y = 3;
     Ponto2D p1(2, 2);
     Ponto2D p2(2, 1);
+    std::cout << p1.getId() << std::endl;
     p1.sumOf(p2);
     assert(p1.getX() == x && p1.getY() == y, "ERROR: testSumOf() -> Different sum");
     std::cout << "PASS: testSumOf()" << std::endl;
@@ -47,7 +49,7 @@ void testGetNextId() {
     Ponto2D p1;
     auto it = std::find(Ponto2D::ids.begin(), Ponto2D::ids.end(), p1.getId());
     assert(
-        p1.getId() > 0 && p1.getId() < 1000 && it != Ponto2D::ids.end(), 
+        p1.getId() > 0 && p1.getId() < 1000 && it == Ponto2D::ids.end(), 
         "ERROR: getNextId() -> Invalid id"
     );
     std::cout << "PASS: getNextId()" << std::endl;
@@ -55,18 +57,23 @@ void testGetNextId() {
 
 void testDestructor() {
     Ponto2D *p1 = new Ponto2D();
-    delete p1;
     auto it = std::find(Ponto2D::ids.begin(), Ponto2D::ids.end(), p1->getId());
-    assert(it == Ponto2D::ids.end(), "ERROR: ~Ponto2D() -> ID still exists!");
+    assert(it == Ponto2D::ids.end(), "ERROR: ~Ponto2D() -> ID found in available ids!");
+    delete p1;
+    auto that = std::find(Ponto2D::ids.begin(), Ponto2D::ids.end(), p1->getId());
+    assert(that != Ponto2D::ids.end(), "ERROR: ~Ponto2D() -> ID not found in available ids!");
     std::cout << "PASS: ~Ponto2D()" << std::endl;
 }
 
 int main() {
+    srand(time(NULL));
+
     testSumOf();
     testGetSumOf();
     testDistToOrig();
     testDistTo();
     testGetNextId();
     testDestructor();
+
     return 0;
 }

@@ -4,25 +4,31 @@
 #include <iostream>
 #include <algorithm>
 
-std::vector<unsigned> Ponto2D::ids = std::vector<unsigned>(0);
+std::vector<unsigned> generateAllAvailableIds() {
+    std::vector<unsigned> ids(MAX_IDS_COUNT);
+    for (unsigned i = 1; i <= MAX_IDS_COUNT; i++) {
+        ids[i] = i;
+    }
+    return ids;
+}
+
+std::vector<unsigned> Ponto2D::ids = generateAllAvailableIds();
 
 unsigned Ponto2D::_getNextId() {
-    unsigned id = rand() % MAX_IDS_COUNT;
-    while (std::find(ids.begin(), ids.end(), id) != ids.end()) {
-        id = rand() % MAX_IDS_COUNT;
+    unsigned i = rand() % ids.size();
+    unsigned id = ids[i];
+    auto it = std::find(ids.begin(), ids.end(), id);
+    if (it != ids.end()) {
+        int index = it - ids.begin();
+        ids.erase(ids.begin() + index);
     }
-    ids.push_back(id);
     return id;
 }
 
 Ponto2D::Ponto2D(double x, double y): _x(x), _y(y), _id(_getNextId()) {};
 
 Ponto2D::~Ponto2D() {
-    auto it = std::find(ids.begin(), ids.end(), _id);
-    if (it != ids.end()) {
-        int index = it - ids.begin();
-        ids.erase(ids.begin() + index);
-    }
+    ids.push_back(_id);
 }
 
 inline double Ponto2D::getX() const { return _x; };

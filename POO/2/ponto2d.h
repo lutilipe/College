@@ -4,7 +4,6 @@
 #include <vector>
 
 const unsigned MAX_IDS_COUNT = 999;
-const unsigned DEFAULT_ID = 0;
 
 class Ponto2D {
     private:        
