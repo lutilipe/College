@@ -27,43 +27,45 @@ EXE = $(BIN)/vetop
 all:  mem perf gprof
 
 mem: $(EXE)
-	$(EXE) -d 20 -s -p /tmp/somalog.out -l 
-	rm -rf /tmp/somadin
-	mkdir /tmp/somadin
-	$(ANALISAMEM) -i /tmp/somalog.out -p /tmp/somadin/somadin
-	$(EXE) -d 20 -i -p /tmp/internolog.out -l 
-	rm -rf /tmp/internodin
-	mkdir /tmp/internodin
-	$(ANALISAMEM) -i /tmp/internolog.out -p /tmp/internodin/internodin
-	$(EXE) -d 20 -n -p /tmp/normalog.out -l 
-	rm -rf /tmp/normadin
-	mkdir /tmp/normadin
-	$(ANALISAMEM) -i /tmp/normalog.out -p /tmp/normadin/normadin
+	rm -rf ./out
+	mkdir out
+	$(EXE) -d 20 -s -p ./out/somalog.out -l 
+	rm -rf ./out/somadin
+	mkdir ./out/somadin
+	$(ANALISAMEM) -i ./out/somalog.out -p ./out/somadin/somadin
+	$(EXE) -d 20 -i -p ./out/internolog.out -l 
+	rm -rf ./out/internodin
+	mkdir ./out/internodin
+	$(ANALISAMEM) -i ./out/internolog.out -p ./out/internodin/internodin
+	$(EXE) -d 20 -n -p ./out/normalog.out -l 
+	rm -rf ./out/normadin
+	mkdir ./out/normadin
+	$(ANALISAMEM) -i ./out/normalog.out -p ./out/normadin/normadin
 
 perf: $(EXE)
-	$(EXE) -d 1000000 -s -p /tmp/soma1M.out
-	$(EXE) -d 1000000 -i -p /tmp/interno1M.out
-	$(EXE) -d 1000000 -n -p /tmp/norma1M.out
-	$(EXE) -d 2000000 -s -p /tmp/soma2M.out
-	$(EXE) -d 2000000 -i -p /tmp/interno2M.out
-	$(EXE) -d 2000000 -n -p /tmp/norma2M.out
-	$(EXE) -d 3000000 -s -p /tmp/soma3M.out
-	$(EXE) -d 3000000 -i -p /tmp/interno3M.out
-	$(EXE) -d 3000000 -n -p /tmp/norma3M.out
-	$(EXE) -d 4000000 -s -p /tmp/soma4M.out
-	$(EXE) -d 4000000 -i -p /tmp/interno4M.out
-	$(EXE) -d 4000000 -n -p /tmp/norma4M.out
-	$(EXE) -d 5000000 -s -p /tmp/soma5M.out
-	$(EXE) -d 5000000 -i -p /tmp/interno5M.out
-	$(EXE) -d 5000000 -n -p /tmp/norma5M.out
+	$(EXE) -d 1000000 -s -p ./out/soma1M.out
+	$(EXE) -d 1000000 -i -p ./out/interno1M.out
+	$(EXE) -d 1000000 -n -p ./out/norma1M.out
+	$(EXE) -d 2000000 -s -p ./out/soma2M.out
+	$(EXE) -d 2000000 -i -p ./out/interno2M.out
+	$(EXE) -d 2000000 -n -p ./out/norma2M.out
+	$(EXE) -d 3000000 -s -p ./out/soma3M.out
+	$(EXE) -d 3000000 -i -p ./out/interno3M.out
+	$(EXE) -d 3000000 -n -p ./out/norma3M.out
+	$(EXE) -d 4000000 -s -p ./out/soma4M.out
+	$(EXE) -d 4000000 -i -p ./out/interno4M.out
+	$(EXE) -d 4000000 -n -p ./out/norma4M.out
+	$(EXE) -d 5000000 -s -p ./out/soma5M.out
+	$(EXE) -d 5000000 -i -p ./out/interno5M.out
+	$(EXE) -d 5000000 -n -p ./out/norma5M.out
 
 gprof: $(BIN)/vetop
-	$(EXE) -d 5000000 -s -p /tmp/soma5Mgprof.out 
-	gprof $(EXE) gmon.out > /tmp/soma5Mgprof.txt
-	$(EXE) -d 5000000 -i -p /tmp/interno5Mgprof.out 
-	gprof $(EXE) gmon.out > /tmp/interno5Mgprof.txt
-	$(EXE) -d 5000000 -n -p /tmp/norma5Mgprof.out 
-	gprof $(EXE) gmon.out > /tmp/norma5Mgprof.txt
+	$(EXE) -d 5000000 -s -p ./out/soma5Mgprof.out 
+	gprof $(EXE) gmon.out > ./out/soma5Mgprof.txt
+	$(EXE) -d 5000000 -i -p ./out/interno5Mgprof.out 
+	gprof $(EXE) gmon.out > ./out/interno5Mgprof.txt
+	$(EXE) -d 5000000 -n -p ./out/norma5Mgprof.out 
+	gprof $(EXE) gmon.out > ./out/norma5Mgprof.txt
 	
 
 $(BIN)/vetop: $(OBJS)
