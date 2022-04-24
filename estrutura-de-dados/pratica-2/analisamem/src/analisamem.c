@@ -1,9 +1,10 @@
 //---------------------------------------------------------------------
-// Arquivo      : pilhaindexada.c
-// Conteudo     : implementacao da biblioteca de pilha indexada
+// Arquivo      : analisamem.c
+// Conteudo     : analise de localidade de referencia
 // Autor        : Wagner Meira Jr. (meira@dcc.ufmg.br)
 // Historico    : 2021-10-30 - arquivo criado
 //              : 2021-11-08 - comentarios
+//              : 2022-04-17 - adicionado distp e png
 //---------------------------------------------------------------------
 
 #include <stdio.h>
@@ -23,11 +24,13 @@
 // poderia ser uma estrutura passada como parametro
 char lognome[1000];
 char prefixo[1000];
+char formato[10];
+char terminal[1000];
 
 // estrutura do arquivo gnuplot para grafico de acesso
 char* gpacesso[]={
-  "set term postscript eps color 14",
-  "set output \"%s-acesso-%d.eps\"",
+  "set term %s",
+  "set output \"%s-acesso-%d.%s\"",
   "set title \"Grafico de acesso - ID %d\"",
   "set xlabel \"Acesso\"",
   "set ylabel \"Endereco\"",
@@ -37,13 +40,23 @@ char* gpacesso[]={
 
 // estrutura do arquivo gnuplot para histograma de distancia de pilha 
 char* gphist[]={
-  "set term postscript eps color 14",
-  "set output \"%s-hist-%d-%d.eps\"",
+  "set term %s",
+  "set output \"%s-hist-%d-%d.%s\"",
   "set style fill solid 1.0",
-  "set title \"Distancia de Pilha Total %ld - Fase  %d - ID %d\"",
+  "set title \"Distancia de Pilha (Total %ld # %d Media %.2f) - Fase  %d - ID %d\"",
   "set xlabel \"Distancia\"",
-  "set ylabel \"Endereco\"",
+  "set ylabel \"Frequencia\"",
   "plot [%d:%d] \"%s-hist-%d-%d.gpdat\" u 3:4 w boxes t \"\"", 
+  0
+};
+
+char* gpdistp[]={
+  "set term %s",
+  "set output \"%s-distp-%d.%s\"",
+  "set title \"Evolucao Distancia de Pilha - ID %d\"",
+  "set xlabel \"Acesso\"",
+  "set ylabel \"Distancia de Pilha\"",
+  "plot \"%s-acesso-2-%d.gpdat\" u 2:5 w impulses t \"\"", 
   0
 };
 
@@ -55,6 +68,7 @@ void uso()
   fprintf(stderr,"analyzemem\n");
   fprintf(stderr,"\t-i <arq> \t(arquivo de log) \n");
   fprintf(stderr,"\t-p <arq>\t(prefixo de saida)\n");
+  fprintf(stderr,"\t-f <fmt>\t(formato graficos: eps/png)\n");
 }
 
 void parse_args(int argc,char ** argv)
@@ -67,8 +81,10 @@ void parse_args(int argc,char ** argv)
      int c ;
      lognome[0] = 0;
      prefixo[0] = 0;
+     strcpy(formato,"png");
+     strcpy(terminal,"png");
      // percorre a linha de comando buscando identificadores
-     while ((c = getopt(argc, argv, "i:p:h")) != EOF)
+     while ((c = getopt(argc, argv, "i:p:f:h")) != EOF)
        switch(c) {
          case 'i':
 	          // log de entrada
@@ -77,6 +93,18 @@ void parse_args(int argc,char ** argv)
          case 'p': 
 	          // prefixo dos arquivos de saida
 	          strcpy(prefixo,optarg);
+		  break;
+         case 'f': 
+	          // formato de saida dos graficos
+	          strcpy(formato,optarg);
+		  if (!strcasecmp(formato,"png")){
+		    strcpy(terminal,"png");
+		  } else if (!strcasecmp(formato,"eps")){
+		    strcpy(terminal,"postscript eps color 14");
+		  } else{
+		    // formato desconhecido, gerar erro 
+		    formato[0] = 0;
+		  }
 		  break;
          case 'h':
          default:
@@ -212,17 +240,21 @@ int main(int argc, char ** argv)
   retclose = fclose(log);
   erroAssert(retclose==0,"Erro no fclose");
 
+  // verifica se minfase e minid sao 0
+  erroAssert(minid == 0, "Id minimo nao e zero");
+  erroAssert(minfase == 0, "Fase minima nao e zero");
+
   // calcula as dimensoes a serem utilizadas na analise
   numend = ((maxend-minend)/TAMPALAVRA)+2;
   numfase = (maxfase-minfase)+1;
   numid = (maxid-minid)+1;
 
   // apenas para conferencia
-  fprintf(stderr,"minend %ld maxend %ld range %ld numend %ld\n",
+  fprintf(stderr,"Enderecos:  [%ld-%ld] (%ld) #end %ld\n",
           minend,maxend,maxend-minend, numend);
-  fprintf(stderr,"minfase %d maxfase %d range %d numfase %d \n",
+  fprintf(stderr,"Fases: [%d-%d] (%d) #fase %d\n",
           minfase,maxfase,maxfase-minfase,numfase);
-  fprintf(stderr,"minid %d maxid %d numid %d\n",
+  fprintf(stderr,"Ids: [%d-%d] #id %d\n",
           minid,maxid,numid);
 
   // cria pilha e vetor de contagem de distância de pilha, um por fase.
@@ -256,11 +288,11 @@ int main(int argc, char ** argv)
 
 
   // cria arquivos de saida
-  // 2(escritas e leituras)*numid arquivos
+  // 3(escrita, leitura, historico)*numid arquivos
   // leitura = 0 e escrita = 1 
-  out = malloc(2*sizeof(FILE**));
+  out = malloc(3*sizeof(FILE**));
   erroAssert(out!=NULL,"Malloc falhou");
-  for (i=0; i<2;i++){
+  for (i=0; i<3;i++){
     out[i] = malloc(numid*sizeof(FILE*));
     erroAssert(out[i]!=NULL,"Malloc falhou");
     for (j=0; j<numid; j++){
@@ -306,6 +338,9 @@ int main(int argc, char ** argv)
 		retprint = fprintf(out[auxtipo][auxid],"%d %d %d %ld\n",
 		        auxfase, auxcont, auxid, auxend);
                 erroAssert(retprint>=0,"Erro no fprintf");
+		retprint = fprintf(out[2][auxid],"%d %d %d %ld %d\n",
+		        auxfase, auxcont, auxid, auxend, auxdp);
+                erroAssert(retprint>=0,"Erro no fprintf");
                 break;
       case 'F':
                 break;
@@ -314,7 +349,7 @@ int main(int argc, char ** argv)
   // fecha o arquivo de leitura e todos de escrita
   retclose = fclose(log);
   erroAssert(retclose==0,"Erro no fclose");
-  for (i=0; i<2;i++){
+  for (i=0; i<3;i++){
     for (j=0; j<numid; j++){
       retclose = fclose(out[i][j]);
       erroAssert(retclose==0,"Erro no fclose");
@@ -340,6 +375,9 @@ int main(int argc, char ** argv)
       while(gpacesso[k]){
 	switch (k){
 	  case 0:
+      	    retprint = fprintf(out[i][j],gpacesso[k],terminal);
+            erroAssert(retprint>=0,"Erro no fprintf");
+	    break;
 	  case 3:
 	  case 4: 
 	    // linhas que nao tem parametro
@@ -348,7 +386,7 @@ int main(int argc, char ** argv)
 	    break;
 	  case 1:
 	    // nome do arquivo de saida
-	    retprint = fprintf(out[i][j],gpacesso[k],prefixo,j);
+	    retprint = fprintf(out[i][j],gpacesso[k],prefixo,j,formato);
             erroAssert(retprint>=0,"Erro no fprintf");
 	    break;
 	  case 5:
@@ -359,6 +397,63 @@ int main(int argc, char ** argv)
 	  case 2:
 	    // titulo do grafico
 	    retprint = fprintf(out[i][j],gpacesso[k],j);
+            erroAssert(retprint>=0,"Erro no fprintf");
+	    break;
+	}
+	retprint = fprintf(out[i][j],"\n");
+        erroAssert(retprint>=0,"Erro no fprintf");
+	k++;
+      }
+      retclose = fclose(out[i][j]);
+      erroAssert(retclose==0,"Erro no fclose");
+    }
+  }
+
+  // desalocacao dos arquivos
+  for (i=0; i<1;i++){
+    free(out[i]);
+  }
+  free(out);
+
+  // geracao de arquivos gnuplot para distancias de pilha
+  // na verdade nao e necessario usar a matriz de arquivos de saida
+  // feito assim por comodidade
+  out = malloc(1*sizeof(FILE**));
+  erroAssert(out!=NULL,"Malloc falhou");
+  for (i=0; i<1;i++){
+    out[i] = malloc(numid*sizeof(FILE*));
+    erroAssert(out[i]!=NULL,"Malloc falhou");
+    for (j=0; j<numid; j++){
+      retprint = sprintf((char*) outnome,"%s-distp-%d.gp",prefixo,j);
+      erroAssert(retprint>=0,"Erro no sprintf");
+      out[i][j] = fopen(outnome,"wt");
+      erroAssert(out[i][j]!=NULL,"Erro no fopen");
+      k=0;
+      while(gpacesso[k]){
+	switch (k){
+	  case 0:
+      	    retprint = fprintf(out[i][j],gpdistp[k],terminal);
+            erroAssert(retprint>=0,"Erro no fprintf");
+	    break;
+	  case 3:
+	  case 4: 
+	    // linhas que nao tem parametro
+	    retprint = fprintf(out[i][j], gpdistp[k],"\n");
+            erroAssert(retprint>=0,"Erro no fprintf");
+	    break;
+	  case 1:
+	    // nome do arquivo de saida
+	    retprint = fprintf(out[i][j],gpdistp[k],prefixo,j,formato);
+            erroAssert(retprint>=0,"Erro no fprintf");
+	    break;
+	  case 5:
+	    // geracao do grafico
+	    retprint = fprintf(out[i][j],gpdistp[k],prefixo,j);
+            erroAssert(retprint>=0,"Erro no fprintf");
+	    break;
+	  case 2:
+	    // titulo do grafico
+	    retprint = fprintf(out[i][j],gpdistp[k],j);
             erroAssert(retprint>=0,"Erro no fprintf");
 	    break;
 	}
@@ -457,8 +552,10 @@ int main(int argc, char ** argv)
       // verifica se ha dados para gerar os histogramas
       if (controle[i][j]){
         long somadp=0;
+	int countnonzero=0;
         for (k=0;k<numend;k++){
 	  somadp += dpvet[i][j][k]*k;
+	  if (dpvet[i][j][k]) countnonzero+=dpvet[i][j][k];
 	}
         retprint = sprintf((char*) outnome,"%s-hist-%d-%d.gp",prefixo,i,j);
         erroAssert(retprint>=0,"Erro no sprintf");
@@ -468,6 +565,9 @@ int main(int argc, char ** argv)
         while(gphist[k]){
       	switch (k){
       	  case 0:
+      	    retprint = fprintf(out[i][j],gphist[k],terminal);
+            erroAssert(retprint>=0,"Erro no fprintf");
+	    break;
       	  case 2:
       	  case 4:
       	  case 5: 
@@ -477,7 +577,7 @@ int main(int argc, char ** argv)
       	    break;
       	  case 1:
     	    // arquivo de saida
-      	    retprint = fprintf(out[i][j],gphist[k],prefixo,i,j);
+      	    retprint = fprintf(out[i][j],gphist[k],prefixo,i,j,formato);
             erroAssert(retprint>=0,"Erro no fprintf");
       	    break;
       	  case 6:
@@ -488,7 +588,8 @@ int main(int argc, char ** argv)
       	    break;
       	  case 3:
     	    // titulo
-      	    retprint = fprintf(out[i][j],gphist[k],somadp,i,j);
+      	    retprint = fprintf(out[i][j],gphist[k],somadp,countnonzero,
+	                       (somadp*1.0)/countnonzero,i,j);
             erroAssert(retprint>=0,"Erro no fprintf");
       	    break;
       	}

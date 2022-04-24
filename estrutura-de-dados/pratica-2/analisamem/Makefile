@@ -26,13 +26,12 @@ TEST = $(BIN)/testepilhaindexada
 all: test use
 
 use: $(EXE)
-	if test -d /tmp/out; then rm -rf /tmp/out; fi
-	mkdir /tmp/out
-	$(EXE) -i teste/multlog.out -p /tmp/out/mult
-	$(EXE) -i teste/somalog.out -p /tmp/out/soma
-	$(EXE) -i teste/transplog.out -p /tmp/out/transp
-	gnuplot /tmp/out/*.gp
-	ls /tmp/out/
+
+	$(EXE) -i teste/multlog.out -p ../out/mult
+	$(EXE) -i teste/somalog.out -p ../out/soma
+	$(EXE) -i teste/transplog.out -p ../out/transp
+	gnuplot ../out/*.gp
+	ls ../out/
 
 test: $(TEST)
 	$(BIN)/testepilhaindexada
