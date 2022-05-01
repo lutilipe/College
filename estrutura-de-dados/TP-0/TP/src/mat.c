@@ -204,7 +204,7 @@ void destroyMatrix(Matrix *a) {
     // Saida: a
     
     // apenas um aviso se a matriz for destruida mais de uma vez
-    avisoAssert(((a->M>0 && a->N>0) || (a->N != NULL)),"Matriz já foi destruida");
+    avisoAssert((a->M>0 && a->N>0),"Matriz já foi destruida");
 
     int i = 0;
 
