@@ -54,7 +54,6 @@ void initMatrixFromFile(char* filename, Matrix * mat, int id) {
     erroAssert(file != NULL, "Arquivo nao encontrado");
 
     erroAssert(fscanf(file, "%d %d", &M, &N), "Tamanho da matriz nao definido");
-    erroAssert(N > 0 && M > 0,"Dimensao nula");
     createMatrix(mat, M, N, id);
     for (int i = 0; i < mat->M; i++) {
         for (int j = 0; j < mat->N; j++) {
