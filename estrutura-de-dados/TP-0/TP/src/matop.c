@@ -142,7 +142,7 @@ int main(int argc, char ** argv) {
             defineFaseMemLog(0);
                 initMatrixFromFile(firstInMatrixFilename, &a, 0);
                 initMatrixFromFile(secondInMatrixFilename, &b, 1);
-                createMatrix(&c, a.N, a.M, 2);
+                createMatrix(&c, a.M, a.N, 2);
                 initNullMatrix(&c);
             defineFaseMemLog(1);
                 accessMatrix(&a);
@@ -162,7 +162,7 @@ int main(int argc, char ** argv) {
             defineFaseMemLog(0);
                 initMatrixFromFile(firstInMatrixFilename, &a, 0);
                 initMatrixFromFile(secondInMatrixFilename, &b, 1);
-                createMatrix(&c, a.N, b.M, 2);
+                createMatrix(&c, a.M, b.N, 2);
                 initNullMatrix(&c);
             defineFaseMemLog(1);
                 accessMatrix(&a);
@@ -181,7 +181,7 @@ int main(int argc, char ** argv) {
             // cria matriz a aleatoria, que e transposta, impressa e destruida
             defineFaseMemLog(0);
                 initMatrixFromFile(firstInMatrixFilename, &a, 0);
-                createMatrix(&b, a.M, a.N, 1);
+                createMatrix(&b, a.N, a.M, 1);
             defineFaseMemLog(1);
                 accessMatrix(&a);
                 accessMatrix(&b);

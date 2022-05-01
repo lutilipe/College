@@ -116,4 +116,3 @@ $(OBJ)/memlog.o: $(HDRS) $(SRC)/memlog.c
 	
 clean:
 	rm -f $(EXE) $(OBJS) gmon.out
-	rm -rf $(OUT)
