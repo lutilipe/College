@@ -176,8 +176,11 @@ void writeMatrixToFile(char* filename, Matrix* mat) {
     // Se o arquivo nao existir, o mesmo e' criado
     // Entrada: filename, mat 
     // Saida: mat
+
+
     FILE *file;
     file = fopen(filename, "rb+");
+    // Checa se o arquivo especificado existe. Se nao, cria ele
     if(file == NULL) {
         file = fopen(filename, "wb");
         erroAssert(file != NULL, "Erro na criacao do arquivo");
