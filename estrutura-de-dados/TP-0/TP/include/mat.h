@@ -3,27 +3,21 @@
 
 #include "memlog.h"
 
-#ifndef MAXTAM 
-#define MAXTAM 500
-#endif
-
 typedef struct Matrix{
-	double m[MAXTAM][MAXTAM];
-	int i, j;
+	double **m;
+	int N, M;
 	int id;
 } Matrix;
 
+void initMatrixFromFile(char* filename, Matrix * mat, int id);
 void createMatrix(Matrix * mat, int tx, int ty, int id);
 void initNullMatrix(Matrix * mat);
-void initRandomMatrix(Matrix * mat);
 double accessMatrix(Matrix * mat);
 void printMatrix(Matrix * mat);
-void writeElement(Matrix * mat, int x, int y, double v);
-double readElement (Matrix * mat, int x, int y);
-void copyMatrix(Matrix * src, Matrix * dst, int dst_id);
+void writeMatrixToFile(char* filename, Matrix *mat);
 void sumMatrix(Matrix * a, Matrix * b, Matrix * c);
 void multiplyMatrix(Matrix * a, Matrix * b, Matrix * c);
-void transposeMatrix(Matrix *a);
+void transposeMatrix(Matrix *a, Matrix *b);
 void destroyMatrix(Matrix *a);
 
 #endif
