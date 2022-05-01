@@ -193,6 +193,7 @@ void writeMatrixToFile(char* filename, Matrix* mat) {
     for(i = 0;i < mat->M; i++) {
         for(j = 0; j < mat->N; j++) {
             fprintf(file,"%lf ",mat->m[i][j]);
+            LEMEMLOG((long int)(&(mat->m[i][j])),sizeof(double),mat->id);
         }
         fprintf(file,"\n");
     }
