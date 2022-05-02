@@ -55,9 +55,10 @@ void initMatrixFromFile(char* filename, Matrix * mat, int id) {
 
     erroAssert(fscanf(file, "%d %d", &M, &N), "Tamanho da matriz nao definido");
     createMatrix(mat, M, N, id);
+    initNullMatrix(mat);
     for (int i = 0; i < mat->M; i++) {
         for (int j = 0; j < mat->N; j++) {
-            erroAssert(fscanf(file, "%lf", &(mat->m[i][j])), "Tamanho da matriz nao definido");
+            erroAssert(fscanf(file, "%lf", &(mat->m[i][j])), "Valor invalido");
             ESCREVEMEMLOG((long int)(&(mat->m[i][j])),sizeof(double),mat->id);
         }
     }
