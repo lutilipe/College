@@ -86,18 +86,18 @@ gprof: $(EXE) $(OUT)
 
 	if test -d $(OUT)/gprof/sum; then rm -rf $(OUT)/gprof/sum; fi
 	mkdir $(OUT)/gprof/sum
-	$(EXE) -s -p $(OUT)/gprof/sum/soma500gprof.out -1 $(IN)/sum/500x500.txt -2 $(IN)/sum/500x500.txt -o $(OUT)/gprof/sum/res-500x500.out
-	gprof $(EXE) gmon.out > $(OUT)/gprof/sum/soma500gprof.txt
+	$(EXE) -s -p $(OUT)/gprof/sum/soma1000gprof.out -1 $(IN)/sum/1000x1000.txt -2 $(IN)/sum/1000x1000.txt -o $(OUT)/gprof/sum/res-1000x1000.out
+	gprof $(EXE) gmon.out > $(OUT)/gprof/sum/soma1000gprof.txt
 
 	if test -d $(OUT)/gprof/mult; then rm -rf $(OUT)/gprof/mult; fi
 	mkdir $(OUT)/gprof/mult
-	$(EXE) -m -p $(OUT)/gprof/mult/mult500gprof.out -1 $(IN)/mult/500x500.txt -2 $(IN)/mult/500x500.txt -o $(OUT)/gprof/mult/res-500x500.out
-	gprof $(EXE) gmon.out > $(OUT)/gprof/mult/mult500gprof.txt
+	$(EXE) -m -p $(OUT)/gprof/mult/mult1000gprof.out -1 $(IN)/mult/1000x1000.txt -2 $(IN)/mult/1000x1000.txt -o $(OUT)/gprof/mult/res-1000x1000.out
+	gprof $(EXE) gmon.out > $(OUT)/gprof/mult/mult1000gprof.txt
 
 	if test -d $(OUT)/gprof/transp; then rm -rf $(OUT)/gprof/transp; fi
 	mkdir $(OUT)/gprof/transp
-	$(EXE) -t -p $(OUT)/gprof/transp/transp500gprof.out -1 $(IN)/transp/500x500.txt -o $(OUT)/gprof/transp/res-500x500.out
-	gprof $(EXE) gmon.out > $(OUT)/gprof/transp/transp500gprof.txt
+	$(EXE) -t -p $(OUT)/gprof/transp/transp1000gprof.out -1 $(IN)/transp/1000x1000.txt -o $(OUT)/gprof/transp/res-1000x1000.out
+	gprof $(EXE) gmon.out > $(OUT)/gprof/transp/transp1000gprof.txt
 
 $(OUT):
 	mkdir -p $(OUT)

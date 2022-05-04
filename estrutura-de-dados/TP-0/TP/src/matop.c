@@ -150,7 +150,8 @@ int main(int argc, char ** argv) {
                 accessMatrix(&c);
                 sumMatrix(&a, &b, &c);
                 writeMatrixToFile(outMatrixFilename, &c);
-            defineFaseMemLog(3);
+            defineFaseMemLog(2);
+                accessMatrix(&c);
                 if (regMem) printMatrix(&c);
                 destroyMatrix(&a);
                 destroyMatrix(&b);
@@ -178,7 +179,7 @@ int main(int argc, char ** argv) {
                 destroyMatrix(&c);
         break;
         case TRANSPOSE:
-            // cria matriz a aleatoria, que e transposta, impressa e destruida
+            // cria matriz a aleatoria A, que e transposta e armazenada em B, impressa e destruida
             defineFaseMemLog(0);
                 initMatrixFromFile(firstInMatrixFilename, &a, 0);
                 createMatrix(&b, a.N, a.M, 1);
