@@ -183,6 +183,7 @@ int main(int argc, char ** argv) {
             defineFaseMemLog(0);
                 initMatrixFromFile(firstInMatrixFilename, &a, 0);
                 createMatrix(&b, a.N, a.M, 1);
+                initNullMatrix(&b);
             defineFaseMemLog(1);
                 accessMatrix(&a);
                 accessMatrix(&b);
