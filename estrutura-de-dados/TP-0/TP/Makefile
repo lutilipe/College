@@ -1,18 +1,3 @@
-#---------------------------------------------------------------------
-# Arquivo	: Makefile
-# Conteúdo	: compilar o programa matop
-# Autor		: Wagner Meira Jr. (meira@dcc.ufmg.br)
-# Histórico	: 2021-10-18 - arquivo criado
-#		: 2021-10-21 - estrutura de diretórios
-#               : 2021-11-15 - Versao 1.1 memlog
-#---------------------------------------------------------------------
-# Opções	: make all - compila tudo
-#               : make mem - gera arquivos de registro de acesso
-#               : make prof - faz medidas de tempo de desempenho
-#               : make gprof - ilustra uso do gprof para depuração
-#		: make clean - remove objetos e executável
-#---------------------------------------------------------------------
-
 CC = gcc
 LIBS = -lm
 SRC = src
