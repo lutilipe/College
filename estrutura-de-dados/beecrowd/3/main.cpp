@@ -1,11 +1,21 @@
 #include <iostream>
 
+class TreeNode {
+    public:
+        TreeNode() { val = 0; right = NULL; left = NULL; };
+    private:
+        int val;
+        TreeNode *right;
+        TreeNode *left;
+        friend class Tree;
+};
+
 class QueueNode {
     public:
-        QueueNode() { val = 0; next = NULL; };
+        QueueNode() { val = NULL; next = NULL; };
     private:
         QueueNode *next;
-        int val;
+        TreeNode *val;
         friend class Queue;
 };
 
@@ -18,9 +28,9 @@ class Queue {
         Queue();
         ~Queue();
 
-        void enqueue(char ch);
+        void enqueue(TreeNode *ch);
         bool empty();
-        int dequeue();
+        TreeNode* dequeue();
         int size();
 };
 
@@ -41,7 +51,7 @@ bool Queue::empty() {
     return length == 0;
 }
 
-void Queue::enqueue(char ch) {
+void Queue::enqueue(TreeNode *ch) {
     QueueNode *n = new QueueNode();
     n->val = ch;
     tail->next = n;
@@ -49,11 +59,11 @@ void Queue::enqueue(char ch) {
     length++;
 }
 
-int Queue::dequeue() {
+TreeNode* Queue::dequeue() {
     if (empty()) 
         throw "Queue is empty!";
 
-    int aux = head->next->val;
+    TreeNode *aux = head->next->val;
     QueueNode *p = head;
     head = head->next;
     delete p;
@@ -65,16 +75,6 @@ int Queue::size() {
     return length;
 }
 
-class TreeNode {
-    public:
-        TreeNode() { val = 0; right = NULL; left = NULL; };
-    private:
-        int val;
-        TreeNode *right;
-        TreeNode *left;
-        friend class Tree;
-};
-
 class Tree {
     private:
         TreeNode* root;
@@ -82,6 +82,11 @@ class Tree {
         Tree() { root = NULL; };
         void add(int val);
 };
+
+void addHelper(TreeNode* root) {
+    if (!root) return;
+    
+}
 
 void Tree::add(int val) {
     TreeNode *t = new TreeNode();
@@ -94,8 +99,6 @@ void Tree::add(int val) {
 
 int main() {
     Queue *q = new Queue();
-    q->enqueue(1);
-    q->enqueue(2);
     std::cout << q->size() << std::endl;
     std::cout << q->dequeue() << std::endl;
     std::cout << q->size() << std::endl;
