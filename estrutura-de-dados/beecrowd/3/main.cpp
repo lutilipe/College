@@ -113,7 +113,6 @@ std::string Tree::bfs() {
             q->enqueue(tmp->left);
             q->enqueue(tmp->right);
         }
-        delete tmp;
     }
     delete q;
 
@@ -163,6 +162,8 @@ int main() {
         ans += t->bfs();
         ans += '\n';
         ans += '\n';
+
+        delete t;
     }
     std::cout << ans;
     return 0;
