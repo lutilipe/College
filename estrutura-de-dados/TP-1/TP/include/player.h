@@ -2,20 +2,32 @@
 #define PLAYER_H
 
 #include <iostream>
+#include "card.h"
 
 using namespace std;
+
+#ifndef HAND_SIZE 
+#define HAND_SIZE 5
+#endif
 
 class Player {
     private:
         string name;
-        float amount;
+        int amount;
+        Card hand[HAND_SIZE];
+        bool isPlaying = true;
     public:
+        Player() { name = ""; amount = 0; };
         Player(string n, float a);
-        ~Player();
+        Card* getHand() { return hand; };
         string getName() { return name; };
-        float getAmount() { return amount; };
-        float doAnt();
-        float doBet();
+        bool getIsPlaying() { return isPlaying; };
+        void setIsPlaying(bool playing) { isPlaying = playing; };
+        int getAmount() { return amount; };
+        int doAnte();
+        int doBet();
+        void setHand();
+        void printHand();
 };
 
 #endif
