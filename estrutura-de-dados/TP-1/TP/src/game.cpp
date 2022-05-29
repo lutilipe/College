@@ -21,22 +21,27 @@ Player* createPlayers(int n) {
     return players;
 }
 
-Player createPlayer() {
-    int bet = 0;
+void getPlayerRoundInfo(string* name, int* bet) {
     string tmp;
-    string name = "";
 
     while (cin >> tmp) {
         try {
-            bet = stoi(tmp);
+            (*bet) = stoi(tmp);
             break;
         } catch (...) {
-            if (name.size()) {
+            if (name->size()) {
                 name += ' ';
             }
-            name += tmp;
+            (*name) += tmp;
         }
     }
+}
+
+Player createPlayer() {
+    int bet = 0;
+    string name = "";
+
+    getPlayerRoundInfo(&name, &bet);
 
     Player p(name, bet);
     p.setHand();

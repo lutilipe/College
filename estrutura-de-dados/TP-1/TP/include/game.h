@@ -3,32 +3,6 @@
 
 #include "player.h"
 
-enum Combinations {
-    HighCard,
-    OnePair,
-    TwoPairs,
-    ThreeOfAKind,
-    Straight,
-    Flush,
-    FullHouse,
-    FourOfAKind,
-    StraightFlush,
-    RoyalStraightFlush,
-};
-
-static const string CombinationsStr[] = {
-    "HC",
-    "OP",
-    "TP",
-    "TK",
-    "S",
-    "F",
-    "FH",
-    "FK",
-    "SF",
-    "RSF",
-};
-
 class Game {
     private:
         int numberOfRounds = 0;

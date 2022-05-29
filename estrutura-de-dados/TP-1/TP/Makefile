@@ -5,7 +5,7 @@ OBJ = obj
 INC = include
 BIN = bin
 OBJS = $(OBJ)/poker.o $(OBJ)/player.o $(OBJ)/card.o $(OBJ)/game.o $(OBJ)/memlog.o
-HDRS = $(INC)/player.h $(INC)/card.h $(INC)/game.h $(INC)/memlog.h $(INC)/msgassert.h
+HDRS = $(INC)/player.h $(INC)/card.h $(INC)/game.h $(INC)/memlog.h $(INC)/msgassert.h $(INC)/utils.h
 CFLAGS = -pg -Wall -c -I$(INC)
 ANALISAMEM = ../analisamem/bin/analisamem
 

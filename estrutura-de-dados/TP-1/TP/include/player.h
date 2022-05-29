@@ -10,12 +10,40 @@ using namespace std;
 #define HAND_SIZE 5
 #endif
 
+enum CardRank {
+    HighCard,
+    OnePair,
+    TwoPairs,
+    ThreeOfAKind,
+    Straight,
+    Flush,
+    FullHouse,
+    FourOfAKind,
+    StraightFlush,
+    RoyalStraightFlush,
+};
+
+static const string CardRankStr[] = {
+    "HC",
+    "OP",
+    "TP",
+    "TK",
+    "S",
+    "F",
+    "FH",
+    "FK",
+    "SF",
+    "RSF",
+};
+
 class Player {
     private:
         string name;
         int amount;
         Card hand[HAND_SIZE];
         bool isPlaying = true;
+
+        void organizeHand();
     public:
         Player() { name = ""; amount = 0; };
         Player(string n, float a);
@@ -28,6 +56,8 @@ class Player {
         int doBet();
         void setHand();
         void printHand();
+
+        CardRank getCardRank();
 };
 
 #endif

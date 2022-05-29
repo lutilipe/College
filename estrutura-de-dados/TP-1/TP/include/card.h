@@ -32,6 +32,8 @@ class Card {
         char getSuit() { return suit; };
         void print();
         string getCard();
+
+        bool operator > (Card c);
     private:
         int value;
         char suit;

@@ -1,5 +1,7 @@
 #include "card.h"
 #include "player.h"
+#include "msgassert.h"
+#include "utils.h"
 
 #include <iostream>
 
@@ -10,12 +12,19 @@ Player::Player(std::string n, float a) {
     amount = a;
 }
 
+void Player::organizeHand() {
+    erroAssert(!!hand, "Player hand not setted!");
+    sort(hand, HAND_SIZE);
+}
+
 void Player::setHand() {
     string tmp;
     for (int i = 0; i < HAND_SIZE; i++) {
         cin >> tmp;
         hand[i] = Card(tmp);
     }
+
+    organizeHand();
 }
 
 void Player::printHand() {

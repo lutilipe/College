@@ -27,6 +27,10 @@ string Card::getCard() {
     return card;
 }
 
+bool Card::operator>(Card c) {
+    return this->value > c.getValue();
+}
+
 void Card::print() {
     cout << getCard() << endl;
 }
