@@ -22,6 +22,9 @@ class Game {
         void initPlayers(Player* players, int numberOfPlayers);
         void getPlayerRoundInfo(string* name, int* bet);
         Player createPlayer();
+
+        void handleFirstRound();
+        void handleRound();
     public:
         Game(string inFile);
         ~Game();
@@ -29,8 +32,7 @@ class Game {
         int getNumberOfRounds() { return numberOfRounds; };
         int getInitialAmount() { return initialAmount; };
 
-        void handleFirstRound();
-        void handleRound();
+        void play();
 };
 
 #endif

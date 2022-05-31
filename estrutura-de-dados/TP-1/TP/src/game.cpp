@@ -33,9 +33,7 @@ Player* createPlayers(int n) {
 
 void Game::getPlayerRoundInfo(string* name, int* bet) {
     string tmp;
-    int stringSize = 0;
 
-    cout << "here1" << endl;
     while (this->in >> tmp) {
         try {
             (*bet) = stoi(tmp);
@@ -95,7 +93,7 @@ void Game::setRound(bool isFirstRound) {
 }
 
 void Game::handleRound() {
-    setRound();
+    //setRound();
 }
 
 void Game::handleFirstRound() {
@@ -105,5 +103,12 @@ void Game::handleFirstRound() {
         cout << players[i].getName() << endl;
         players[i].printHand();
         cout << players[i].getAmount() << endl;
+    }
+}
+
+void Game::play() {
+    handleFirstRound();
+    for (int i = 0; i < this->numberOfRounds; i++) {
+        handleRound();
     }
 }

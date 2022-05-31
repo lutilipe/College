@@ -9,7 +9,7 @@ using namespace std;
 int main() {
     Game* game = new Game("entrada.txt");
 
-    game->handleFirstRound();
+    game->play();
 
     delete game;
 
