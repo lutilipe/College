@@ -37,3 +37,15 @@ void Player::printHand() {
     }
     cout << endl;
 }
+
+int Player::doAnte(int ante) {
+    int tmp = amount - ante;
+    erroAssert(tmp >= 0, "Player can not have negative amount!");
+    amount = tmp;
+}
+
+int Player::doBet(int bet) {
+    int tmp = amount - bet;
+    erroAssert(tmp >= 0, "Player can not have negative amount!");
+    amount = tmp;
+}

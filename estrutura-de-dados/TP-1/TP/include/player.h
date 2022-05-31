@@ -52,8 +52,8 @@ class Player {
         bool getIsPlaying() { return isPlaying; };
         void setIsPlaying(bool playing) { isPlaying = playing; };
         int getAmount() { return amount; };
-        int doAnte();
-        int doBet();
+        int doAnte(int ante);
+        int doBet(int bet);
         void setHand();
         void printHand();
 

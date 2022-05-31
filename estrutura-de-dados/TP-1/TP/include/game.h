@@ -14,6 +14,8 @@ class Game {
         Player* players;
 
         void setRound(bool isFirstRound = false);
+        void initPlayers(Player* players, int numberOfPlayers);
+        Player createPlayer();
     public:
         Game(int nRounds, int iAmount);
         ~Game();
