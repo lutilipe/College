@@ -10,6 +10,7 @@ class Game {
         int numberOfPlayersInRound = 0;
         int totalNumberOfPlayers = 0;
         int anteValue = 0;
+        bool isRoundValid = true;
 
         Player* players;
 

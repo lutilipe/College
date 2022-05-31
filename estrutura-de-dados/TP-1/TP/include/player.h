@@ -42,6 +42,7 @@ class Player {
         int amount;
         Card hand[HAND_SIZE];
         bool isPlaying = true;
+        int bet = 0;
 
         void organizeHand();
     public:
@@ -52,8 +53,10 @@ class Player {
         bool getIsPlaying() { return isPlaying; };
         void setIsPlaying(bool playing) { isPlaying = playing; };
         int getAmount() { return amount; };
-        int doAnte(int ante);
-        int doBet(int bet);
+        void doAnte(int ante);
+        void doBet();
+        void setBet(int b) { bet = b; };
+        int getBet() { return bet; };
         void setHand();
         void printHand();
 

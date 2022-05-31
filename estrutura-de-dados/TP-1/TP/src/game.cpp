@@ -43,8 +43,13 @@ Player Game::createPlayer() {
 
     getPlayerRoundInfo(&name, &bet);
 
-    Player p(name, this->initialAmount - bet);
+    if (this->initialAmount - bet < 0) {
+        this->isRoundValid = false;
+    }
+
+    Player p(name, this->initialAmount);
     p.setHand();
+    p.setBet(bet);
     return p;
 }
 
@@ -73,6 +78,8 @@ void Game::setRound(bool isFirstRound) {
     if (isFirstRound) {
         this->players = createPlayers(this->numberOfPlayersInRound);
     }
+
+    this->isRoundValid = true;
 }
 
 void Game::handleRound() {
