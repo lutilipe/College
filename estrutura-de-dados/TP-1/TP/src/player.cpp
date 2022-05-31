@@ -4,6 +4,7 @@
 #include "utils.h"
 
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -17,10 +18,10 @@ void Player::organizeHand() {
     sort(hand, HAND_SIZE);
 }
 
-void Player::setHand() {
+void Player::setHand(ifstream* in) {
     string tmp;
     for (int i = 0; i < HAND_SIZE; i++) {
-        cin >> tmp;
+        (*in) >> tmp;
         hand[i] = Card(tmp);
     }
 

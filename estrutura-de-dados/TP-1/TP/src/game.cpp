@@ -2,9 +2,18 @@
 #include "player.h"
 
 #include <iostream>
+#include <fstream>
 #include "msgassert.h"
 
-Game::Game(int nRounds, int iAmount) {
+using namespace std;
+
+Game::Game(string inFile) {
+    int nRounds = 0, iAmount = 0;
+
+    this->in = ifstream(inFile);
+
+    this->in >> nRounds >> iAmount;
+
     erroAssert(nRounds > 0, "Invalid number of rounds!");
     erroAssert(iAmount > 0, "Invalid initial amount!");
 
@@ -13,6 +22,7 @@ Game::Game(int nRounds, int iAmount) {
 }
 
 Game::~Game() {
+    this->in.close();
     delete[] this->players;
 }
 
@@ -21,16 +31,18 @@ Player* createPlayers(int n) {
     return players;
 }
 
-void getPlayerRoundInfo(string* name, int* bet) {
+void Game::getPlayerRoundInfo(string* name, int* bet) {
     string tmp;
+    int stringSize = 0;
 
-    while (cin >> tmp) {
+    cout << "here1" << endl;
+    while (this->in >> tmp) {
         try {
             (*bet) = stoi(tmp);
             break;
         } catch (...) {
             if (name->size()) {
-                name += ' ';
+                (*name) += ' ';
             }
             (*name) += tmp;
         }
@@ -48,7 +60,7 @@ Player Game::createPlayer() {
     }
 
     Player p(name, this->initialAmount);
-    p.setHand();
+    p.setHand(&in);
     p.setBet(bet);
     return p;
 }
@@ -63,7 +75,7 @@ void Game::setRound(bool isFirstRound) {
     int numberOfPlayers = 0,
         roundAnteValue = 0;
     
-    cin >> numberOfPlayers;
+    this->in >> numberOfPlayers;
     erroAssert(numberOfPlayers > 0,"Number of players is null!");
     this->numberOfPlayersInRound = numberOfPlayers;
 
@@ -71,7 +83,7 @@ void Game::setRound(bool isFirstRound) {
         this->totalNumberOfPlayers = this->numberOfPlayersInRound;
     }
 
-    cin >> roundAnteValue;
+    this->in >> roundAnteValue;
     erroAssert(roundAnteValue > 0,"Ante value is invalid!");
     this->anteValue = roundAnteValue;
 
@@ -90,6 +102,7 @@ void Game::handleFirstRound() {
     setRound(true);
     initPlayers(this->players, this->totalNumberOfPlayers);
     for(int i = 0; i < this->totalNumberOfPlayers; i++) {
+        cout << players[i].getName() << endl;
         players[i].printHand();
         cout << players[i].getAmount() << endl;
     }

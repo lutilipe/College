@@ -57,7 +57,7 @@ class Player {
         void doBet();
         void setBet(int b) { bet = b; };
         int getBet() { return bet; };
-        void setHand();
+        void setHand(ifstream* in);
         void printHand();
 
         CardRank getCardRank();
