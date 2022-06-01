@@ -7,16 +7,21 @@ using namespace std;
 
 Card::Card(std::string card) {
     string subHand;
-    int v = 0;
+    Card::CardNumber v = Card::INVALIDNUMBER;
 
     erroAssert((card != "" && card != " "), "Invalid card!");
 
-    this->suit = card[card.size() - 1];
-    erroAssert((suit == OUROS || suit == PAUS || suit == ESPADAS || suit == COPAS), "Invalid card suit!");
+    this->suit = (Card::Suit) card[card.size() - 1];
+    erroAssert((
+        suit == Card::OUROS ||
+        suit == Card::PAUS ||
+        suit == Card::ESPADAS ||
+        suit == Card::COPAS
+    ), "Invalid card suit!");
 
     card.pop_back();
-    v = stoi(card);
-    erroAssert((v >= MIN_CARD_VALUE && v <= MAX_CARD_VALUE), "Invalid card value!");
+    v = (Card::CardNumber) stoi(card);
+    erroAssert((v >= Card::ACE && v <= Card::KING), "Invalid card value!");
     this->value = v;
 }
 

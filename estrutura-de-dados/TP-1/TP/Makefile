@@ -4,8 +4,8 @@ SRC = src
 OBJ = obj
 INC = include
 BIN = bin
-OBJS = $(OBJ)/poker.o $(OBJ)/player.o $(OBJ)/card.o $(OBJ)/game.o $(OBJ)/memlog.o
-HDRS = $(INC)/player.h $(INC)/card.h $(INC)/game.h $(INC)/memlog.h $(INC)/msgassert.h $(INC)/utils.h
+OBJS = $(OBJ)/poker.o $(OBJ)/player.o $(OBJ)/card.o $(OBJ)/game.o $(OBJ)/memlog.o $(OBJ)/hand.o
+HDRS = $(INC)/player.h $(INC)/hand.h $(INC)/card.h $(INC)/game.h $(INC)/memlog.h $(INC)/msgassert.h $(INC)/utils.h
 CFLAGS = -pg -Wall -c -I$(INC)
 ANALISAMEM = ../analisamem/bin/analisamem
 
@@ -30,6 +30,9 @@ $(OBJ)/poker.o: $(HDRS) $(SRC)/poker.cpp
 
 $(OBJ)/player.o: $(HDRS) $(SRC)/player.cpp
 	$(CC) $(CFLAGS) -o $(OBJ)/player.o $(SRC)/player.cpp 
+
+$(OBJ)/hand.o: $(HDRS) $(SRC)/hand.cpp
+	$(CC) $(CFLAGS) -o $(OBJ)/hand.o $(SRC)/hand.cpp 
 
 $(OBJ)/game.o: $(HDRS) $(SRC)/game.cpp
 	$(CC) $(CFLAGS) -o $(OBJ)/game.o $(SRC)/game.cpp 

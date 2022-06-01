@@ -13,32 +13,6 @@ Player::Player(std::string n, float a) {
     amount = a;
 }
 
-void Player::organizeHand() {
-    erroAssert(!!hand, "Player hand not setted!");
-    sort(hand, HAND_SIZE);
-}
-
-void Player::setHand(ifstream* in) {
-    string tmp;
-    for (int i = 0; i < HAND_SIZE; i++) {
-        (*in) >> tmp;
-        hand[i] = Card(tmp);
-    }
-
-    organizeHand();
-}
-
-void Player::printHand() {
-    for (int i = 0; i < HAND_SIZE; i++) {
-        if (i != HAND_SIZE - 1) {
-            cout << hand[i].getCard() << " ";
-        } else {
-            cout << hand[i].getCard();
-        }
-    }
-    cout << endl;
-}
-
 void Player::doAnte(int ante) {
     int tmp = amount - ante;
     erroAssert(tmp >= 0, "Player can not have negative amount!");

@@ -9,34 +9,44 @@ using namespace std;
 #define SUIT_TYPES_SIZE 4
 #endif
 
-#ifndef MAX_CARD_VALUE
-#define MAX_CARD_VALUE 13
-#endif
-
-#ifndef MIN_CARD_VALUE
-#define MIN_CARD_VALUE 1
-#endif
-
-enum Suit {
-    OUROS = 'O',
-    ESPADAS = 'E',
-    COPAS = 'C',
-    PAUS = 'P',
-};
-
 class Card {
     public:
-        Card() { value = 0; suit = 0; };
+        enum CardNumber {
+            INVALIDNUMBER = 0,
+            ACE = 1,
+            TWO,
+            THREE,
+            FOUR,
+            FIVE,
+            SIX,
+            SEVEN,
+            EIGHT,
+            NINE,
+            TEN,
+            JACK,
+            QUEEN,
+            KING,
+        };
+
+        enum Suit {
+            INVALIDSUIT = 0,
+            OUROS = 'O',
+            ESPADAS = 'E',
+            COPAS = 'C',
+            PAUS = 'P',
+        };
+
+        Card() { value = INVALIDNUMBER; suit = INVALIDSUIT; };
         Card(string card);
-        int getValue() { return value; };
-        char getSuit() { return suit; };
+        Card::CardNumber getValue() { return value; };
+        Card::Suit getSuit() { return suit; };
         void print();
         string getCard();
 
         bool operator > (Card c);
     private:
-        int value;
-        char suit;
+        Card::CardNumber value;
+        Card::Suit suit;
 };
 
 #endif

@@ -58,7 +58,11 @@ Player Game::createPlayer() {
     }
 
     Player p(name, this->initialAmount);
-    p.setHand(&in);
+
+    Hand hand;
+    hand.setCards(&in);
+    p.setHand(hand);
+
     p.setBet(bet);
     return p;
 }
@@ -101,7 +105,7 @@ void Game::handleFirstRound() {
     initPlayers(this->players, this->totalNumberOfPlayers);
     for(int i = 0; i < this->totalNumberOfPlayers; i++) {
         cout << players[i].getName() << endl;
-        players[i].printHand();
+        players[i].getHand().print();
         cout << players[i].getAmount() << endl;
     }
 }
