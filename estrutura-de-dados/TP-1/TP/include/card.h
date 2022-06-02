@@ -12,8 +12,8 @@ using namespace std;
 class Card {
     public:
         enum CardNumber {
-            INVALIDNUMBER = 0,
-            ACE = 1,
+            INVALIDNUMBER,
+            ACE,
             TWO,
             THREE,
             FOUR,

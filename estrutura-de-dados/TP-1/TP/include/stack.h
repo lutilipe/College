@@ -2,6 +2,7 @@
 #define STACK_H
 
 #include <iostream>
+#include "msgassert.h"
 
 using namespace std;
 
@@ -11,7 +12,7 @@ class Stack;
 template <class T>
 class Node {
     public:
-        Node() { val = 0; next = NULL; };
+        Node() { val = (T) 0; next = NULL; };
     private:
         T val;
         Node<T> *next;
@@ -59,8 +60,7 @@ template <class T>void Stack<T>::push(T el) {
 }
 
 template <class T>T Stack<T>::pop() {
-    if (empty())
-        throw "Trying to remove from an empty queue!";
+    erroAssert(!empty(), "Trying to remove from an empty stack!");
 
     Node<T> *tmp = head->next;
     T v = tmp->val;
