@@ -11,16 +11,26 @@ using namespace std;
 Player::Player(std::string n, float a) {
     name = n;
     amount = a;
+    hand = new Hand();
+}
+
+Player::~Player() {
+    delete hand;
+}
+
+void Player::setHand(Hand* h) {
+    delete hand;
+    this->hand = h;
 }
 
 void Player::doAnte(int ante) {
-    int tmp = amount - ante;
+    int tmp = this->amount - ante;
     erroAssert(tmp >= 0, "Player can not have negative amount!");
-    amount = tmp;
+    this->amount = tmp;
 }
 
 void Player::doBet() {
-    int tmp = amount - bet;
+    int tmp = this->amount - bet;
     erroAssert(tmp >= 0, "Player can not have negative amount!");
-    amount = tmp;
+    this->amount = tmp;
 }

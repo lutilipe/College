@@ -19,9 +19,9 @@ class Game {
         Player* players;
 
         void setRound(bool isFirstRound = false);
-        void initPlayers(Player* players, int numberOfPlayers);
+        void initPlayers();
         void getPlayerRoundInfo(string* name, int* bet);
-        Player createPlayer();
+        Player* createPlayer();
 
         void handleFirstRound();
         void handleRound();

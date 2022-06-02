@@ -47,7 +47,7 @@ void Game::getPlayerRoundInfo(string* name, int* bet) {
     }
 }
 
-Player Game::createPlayer() {
+Player* Game::createPlayer() {
     int bet = 0;
     string name = "";
 
@@ -57,19 +57,17 @@ Player Game::createPlayer() {
         this->isRoundValid = false;
     }
 
-    Player p(name, this->initialAmount);
+    Player* p = new Player(name, this->initialAmount);
+    p->getHand()->setCards(&in);
 
-    Hand hand;
-    hand.setCards(&in);
-    p.setHand(hand);
-
-    p.setBet(bet);
+    p->setBet(bet);
     return p;
 }
 
-void Game::initPlayers(Player* players, int numberOfPlayers) {
-    for (int i = 0; i < numberOfPlayers; i++) {
-        players[i] = createPlayer();
+void Game::initPlayers() {
+    erroAssert(this->players != NULL, "Players not set!");
+    for (int i = 0; i < this->totalNumberOfPlayers; i++) {
+        players[i] = *createPlayer();
     }
 }
 
@@ -102,10 +100,10 @@ void Game::handleRound() {
 
 void Game::handleFirstRound() {
     setRound(true);
-    initPlayers(this->players, this->totalNumberOfPlayers);
+    initPlayers();
     for(int i = 0; i < this->totalNumberOfPlayers; i++) {
         cout << players[i].getName() << endl;
-        players[i].getHand().print();
+        players[i].getHand()->print();
         cout << players[i].getAmount() << endl;
     }
 }
