@@ -102,9 +102,9 @@ void Game::handleFirstRound() {
     setRound(true);
     initPlayers();
     for(int i = 0; i < this->totalNumberOfPlayers; i++) {
-        cout << players[i].getName() << endl;
+        players[i].getHand()->rankHand();
         players[i].getHand()->print();
-        cout << players[i].getAmount() << endl;
+        cout << players[i].getHand()->getRankName() << endl;
     }
 }
 

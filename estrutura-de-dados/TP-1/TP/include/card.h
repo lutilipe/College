@@ -12,31 +12,31 @@ using namespace std;
 class Card {
     public:
         enum CardNumber {
-            INVALIDNUMBER,
-            ACE,
-            TWO,
-            THREE,
-            FOUR,
-            FIVE,
-            SIX,
-            SEVEN,
-            EIGHT,
-            NINE,
-            TEN,
-            JACK,
-            QUEEN,
-            KING,
+            InvalidNumber,
+            Ace,
+            Two,
+            Three,
+            Four,
+            Five,
+            Six,
+            Seven,
+            Eight,
+            Nine,
+            Ten,
+            Jack,
+            Queen,
+            King,
         };
 
         enum Suit {
-            INVALIDSUIT = 0,
-            OUROS = 'O',
-            ESPADAS = 'E',
-            COPAS = 'C',
-            PAUS = 'P',
+            InvalidSuit = 0,
+            Ouros = 'O',
+            Espadas = 'E',
+            Copas = 'C',
+            Paus = 'P',
         };
 
-        Card() { value = INVALIDNUMBER; suit = INVALIDSUIT; };
+        Card() { value = Card::CardNumber::InvalidNumber; suit = Card::Suit::InvalidSuit; };
         Card(string card);
         Card::CardNumber getValue() { return value; };
         Card::Suit getSuit() { return suit; };

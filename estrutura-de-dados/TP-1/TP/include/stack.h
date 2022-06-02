@@ -32,6 +32,7 @@ class Stack {
         bool empty();
         T pop();
         int size();
+        T top();
 };
 
 template <class T> Stack<T>::Stack() {
@@ -60,7 +61,7 @@ template <class T>void Stack<T>::push(T el) {
 }
 
 template <class T>T Stack<T>::pop() {
-    erroAssert(!empty(), "Trying to remove from an empty stack!");
+    erroAssert(!empty(), "Stack is empty!");
 
     Node<T> *tmp = head->next;
     T v = tmp->val;
@@ -68,6 +69,12 @@ template <class T>T Stack<T>::pop() {
     delete tmp;
     length--;
     return v;
+}
+
+template <class T>T Stack<T>::top() {
+    erroAssert(!empty(), "Stack is empty!");
+
+    return this->head->next->val;
 }
 
 template <class T> int Stack<T>::size() {

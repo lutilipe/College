@@ -13,7 +13,7 @@ class Player {
         int amount;
         bool isPlaying = true;
         int bet = 0;
-        Hand* hand;
+        Hand* hand = NULL;
 
     public:
         Player() { name = ""; amount = 0; };
