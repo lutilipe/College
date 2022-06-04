@@ -1,7 +1,6 @@
 #include "card.h"
 #include "player.h"
 #include "msgassert.h"
-#include "utils.h"
 
 #include <iostream>
 #include <fstream>
@@ -12,6 +11,12 @@ Player::Player(std::string n, float a) {
     name = n;
     amount = a;
     hand = new Hand();
+}
+
+Player::Player(const Player& p) {
+    name = p.name;
+    amount = p.amount;
+    hand = new Hand(*p.hand);
 }
 
 Player::~Player() {

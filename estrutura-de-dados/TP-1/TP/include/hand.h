@@ -33,7 +33,8 @@ class Hand {
 
         static const int HAND_SIZE = 5;
 
-        Hand() {};
+        Hand();
+        Hand(Hand& h);
         ~Hand();
 
         void setRank(Hand::Rank r) { rank = r; };
@@ -60,14 +61,15 @@ class Hand {
         bool hasTriples() { return singles != NULL && !triples->empty(); };
         bool hasQuads() { return triples != NULL && !quads->empty(); };
 
+        bool operator > (Hand* h);
     private:
-        Hand::Rank rank = Hand::Rank::InvalidRank;
+        Hand::Rank rank;
         Card cards[HAND_SIZE];
 
-        Stack<Card::CardNumber>* singles = new Stack<Card::CardNumber>();
-        Stack<Card::CardNumber>* pairs = new Stack<Card::CardNumber>();
-        Stack<Card::CardNumber>* triples = new Stack<Card::CardNumber>();
-        Stack<Card::CardNumber>* quads = new Stack<Card::CardNumber>();
+        Stack<Card::CardNumber>* singles;
+        Stack<Card::CardNumber>* pairs;
+        Stack<Card::CardNumber>* triples;
+        Stack<Card::CardNumber>* quads;
 
         bool isRoyalStraighFlush();
         bool isStraighFlush();

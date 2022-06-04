@@ -16,15 +16,21 @@ class Game {
         bool isRoundValid = true;
         ifstream in;
 
-        Player* players;
+        Player** players;
+        Player** playersInRound;
 
         void setRound(bool isFirstRound = false);
         void initPlayers();
         void getPlayerRoundInfo(string* name, int* bet);
         Player* createPlayer();
 
-        void handleFirstRound();
-        void handleRound();
+        void sortPlayersByRank();
+        void checkForDraw();
+        void handleDraw();
+
+        void handleRound(bool isFirstRound = false);
+
+        void mountPlayersInRound(bool isFirstRound = false);
     public:
         Game(string inFile);
         ~Game();

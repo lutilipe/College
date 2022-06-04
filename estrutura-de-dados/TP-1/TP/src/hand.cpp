@@ -1,9 +1,9 @@
 #include "hand.h"
 #include "card.h"
+#include "stack.h"
 
 #include <iostream>
 #include "msgassert.h"
-#include "utils.h"
 
 using namespace std;
 
@@ -14,10 +14,44 @@ Hand::~Hand() {
     delete singles;
 }
 
+Hand::Hand() {
+    rank = Hand::Rank::InvalidRank;
+    singles = new Stack<Card::CardNumber>();
+    pairs = new Stack<Card::CardNumber>();
+    triples = new Stack<Card::CardNumber>();
+    quads = new Stack<Card::CardNumber>();
+    for (int i = 0; i < HAND_SIZE; i++) {
+        cards[i] = Card();
+    }
+}
+
+Hand::Hand(Hand& h) {
+    rank = h.rank;
+    singles = new Stack<Card::CardNumber>();
+    pairs = new Stack<Card::CardNumber>();
+    triples = new Stack<Card::CardNumber>();
+    quads = new Stack<Card::CardNumber>();
+    for (int i = 0; i < HAND_SIZE; i++) {
+        cards[i] = Card(h.cards[i].getCard());
+    }    
+}
+
 void Hand::sortCards() {
     erroAssert(this->cards != NULL, "Hand cards not setted!");
-    sort(this->cards, HAND_SIZE);
+
+    // Bubble sort
+    int i = 0, j = 0;
+    for (i = 0; i < HAND_SIZE - 1; i++) {
+        for (j = 0; j < HAND_SIZE - i - 1; j++) {
+            if (cards[j] > cards[j + 1]) {
+                Card tmp = cards[j];
+                cards[j] = cards[j+1];
+                cards[j+1] = tmp;
+            }
+        }
+    }
 }
+
 
 void Hand::setCards(ifstream* in) {
     string tmp;
@@ -25,7 +59,6 @@ void Hand::setCards(ifstream* in) {
         (*in) >> tmp;
         this->cards[i] = Card(tmp);
     }
-
     sortCards();
 }
 
@@ -38,6 +71,10 @@ void Hand::print() {
         }
     }
     cout << endl;
+}
+
+bool Hand::operator>(Hand* h) {
+    return rank > h->getRank();
 }
 
 string Hand::getRankName() {

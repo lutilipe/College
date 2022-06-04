@@ -11,22 +11,19 @@ class Player {
     private:
         string name;
         int amount;
-        bool isPlaying = true;
         int bet = 0;
-        Hand* hand = NULL;
+        Hand* hand = new Hand();
 
     public:
         Player() { name = ""; amount = 0; };
         Player(string n, float a);
+        Player(const Player& p);
         ~Player();
 
         Hand* getHand() { return hand; };
         void setHand(Hand* h);
 
         string getName() { return name; };
-
-        bool getIsPlaying() { return isPlaying; };
-        void setIsPlaying(bool playing) { isPlaying = playing; };
 
         int getAmount() { return amount; };
         void doAnte(int ante);
