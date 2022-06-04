@@ -81,7 +81,7 @@ class Hand {
         int getNumberOfDuplicatesAndBuildBundles();
 
         const string RankNames[11] = {
-            "Invalid",
+            "I",
             "HC",
             "OP",
             "TP",

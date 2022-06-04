@@ -25,8 +25,8 @@ class Game {
         Player* createPlayer();
 
         void sortPlayersByRank();
-        void checkForDraw();
-        void handleDraw();
+        void checkForDraws();
+        void handleDraws();
 
         void handleRound(bool isFirstRound = false);
 

@@ -9,15 +9,9 @@ HDRS = $(INC)/player.h $(INC)/hand.h $(INC)/card.h $(INC)/game.h $(INC)/memlog.h
 CFLAGS = -pg -Wall -c -I$(INC)
 ANALISAMEM = ../analisamem/bin/analisamem
 
-EXE = $(BIN)/poker
+EXE = $(BIN)/tp1
 
-all:  mem perf gprof
-
-mem: $(EXE) $(OUT)
-
-perf: $(EXE) $(OUT)
-
-gprof: $(EXE) $(OUT)
+all: run
 
 run: $(EXE) $(OUT)
 	$(EXE)
@@ -41,7 +35,13 @@ $(OBJ)/card.o: $(HDRS) $(SRC)/card.cpp
 	$(CC) $(CFLAGS) -o $(OBJ)/card.o $(SRC)/card.cpp 
 
 $(OBJ)/memlog.o: $(HDRS) $(SRC)/memlog.cpp
-	$(CC) $(CFLAGS) -o $(OBJ)/memlog.o $(SRC)/memlog.cpp 
+	$(CC) $(CFLAGS) -o $(OBJ)/memlog.o $(SRC)/memlog.cpp
+
+mem: $(EXE) $(OUT)
+
+perf: $(EXE) $(OUT)
+
+gprof: $(EXE) $(OUT)
 	
 clean:
 	rm -f $(EXE) $(OBJS) gmon.out

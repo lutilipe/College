@@ -31,7 +31,7 @@ void deletePlayers(Player** p, int length) {
 Game::~Game() {
     this->in.close();
     deletePlayers(players,totalNumberOfPlayers);
-    deletePlayers(playersInRound,totalNumberOfPlayers);
+    deletePlayers(playersInRound,numberOfPlayersInRound);
 }
 
 Player** createPlayers(int n) {
@@ -131,21 +131,35 @@ void Game::sortPlayersByRank() {
     int i = 0, j = 0;
 
     // Bubble Sort
+    // No entanto, esse sort coloca os maiores valores no inicio
+    // Isso facilitara na remocao e para tratar empates
     for (i = 0; i < this->numberOfPlayersInRound - 1; i++) {
         for (j = 0; j < this->numberOfPlayersInRound - i - 1; j++) {
-            if (*(this->playersInRound[j]->getHand()) > this->playersInRound[j + 1]->getHand()) {
+            if (!(*(this->playersInRound[j]->getHand()) > this->playersInRound[j + 1]->getHand())) {
                 swap(this->playersInRound[j], this->playersInRound[j+1]);
             }
         }
     }
 }
 
-void Game::checkForDraw() {
+void Game::checkForDraws() {
+    // Checa, entre os jogadores da rodada, aqueles que tivere,
+    // o mesmo rank do maior Rank da rodada, que seria o jogador
+    // localizado na primeira posicao. Se for diferente do rank,
+    // elimina o jogador da rodada.
+    int i = 0, initialPlayersInRound = this->numberOfPlayersInRound;
+    Hand::Rank maxRank = this->playersInRound[0]->getHand()->getRank();
 
+    for (i = 1; i < initialPlayersInRound; i++) {
+        Hand::Rank currRank = this->playersInRound[i]->getHand()->getRank();
+        if (currRank != maxRank) {
+            delete this->playersInRound[i];
+            this->numberOfPlayersInRound--;
+        }
+    }
 }
 
-void Game::handleDraw() {
-
+void Game::handleDraws() {
 }
 
 void Game::handleRound(bool isFirstRound) {
@@ -154,11 +168,8 @@ void Game::handleRound(bool isFirstRound) {
         playersInRound[i]->getHand()->rankHand();
     }
     sortPlayersByRank();
-    for(int i = 0; i < this->numberOfPlayersInRound; i++) {
-        cout << playersInRound[i]->getName() << endl;
-        playersInRound[i]->getHand()->print();
-        cout << playersInRound[i]->getHand()->getRankName() << endl << endl;
-    }
+    checkForDraws();
+    handleDraws();
 }
 
 void Game::play() {
