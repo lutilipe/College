@@ -25,17 +25,6 @@ Hand::Hand() {
     }
 }
 
-Hand::Hand(Hand& h) {
-    rank = h.rank;
-    singles = new Stack<Card::CardNumber>();
-    pairs = new Stack<Card::CardNumber>();
-    triples = new Stack<Card::CardNumber>();
-    quads = new Stack<Card::CardNumber>();
-    for (int i = 0; i < HAND_SIZE; i++) {
-        cards[i] = Card(h.cards[i].getCard());
-    }    
-}
-
 void Hand::sortCards() {
     erroAssert(this->cards != NULL, "Hand cards not setted!");
 
@@ -73,8 +62,8 @@ void Hand::print() {
     cout << endl;
 }
 
-bool Hand::operator>(Hand* h) {
-    return rank > h->getRank();
+bool Hand::operator<(Hand* h) {
+    return rank < h->getRank();
 }
 
 string Hand::getRankName() {

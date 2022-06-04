@@ -17,18 +17,20 @@ class Game {
         ifstream in;
 
         Player** players;
-        Player** playersInRound;
+        PlayerRef* playersInRound;
 
         void setRound(bool isFirstRound = false);
         void initPlayers();
         void getPlayerRoundInfo(string* name, int* bet);
         Player* createPlayer();
 
+        void handleRound(bool isFirstRound = false);
+
+        void setPlayersRank();
         void sortPlayersByRank();
         void checkForDraws();
         void handleDraws();
 
-        void handleRound(bool isFirstRound = false);
 
         void mountPlayersInRound(bool isFirstRound = false);
     public:

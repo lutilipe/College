@@ -61,7 +61,7 @@ class Hand {
         bool hasTriples() { return singles != NULL && !triples->empty(); };
         bool hasQuads() { return triples != NULL && !quads->empty(); };
 
-        bool operator > (Hand* h);
+        bool operator < (Hand* h);
     private:
         Hand::Rank rank;
         Card cards[HAND_SIZE];

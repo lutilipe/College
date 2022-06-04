@@ -13,12 +13,6 @@ Player::Player(std::string n, float a) {
     hand = new Hand();
 }
 
-Player::Player(const Player& p) {
-    name = p.name;
-    amount = p.amount;
-    hand = new Hand(*p.hand);
-}
-
 Player::~Player() {
     delete hand;
 }

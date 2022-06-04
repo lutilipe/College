@@ -31,11 +31,16 @@ void deletePlayers(Player** p, int length) {
 Game::~Game() {
     this->in.close();
     deletePlayers(players,totalNumberOfPlayers);
-    deletePlayers(playersInRound,numberOfPlayersInRound);
+    //delete[] playersInRound;
 }
 
 Player** createPlayers(int n) {
     Player** players = new Player*[n];
+    return players;
+}
+
+PlayerRef* createPlayersInRound(int n) {
+    PlayerRef* players = new PlayerRef[n];
     return players;
 }
 
@@ -80,15 +85,11 @@ void Game::initPlayers() {
 }
 
 void Game::mountPlayersInRound(bool isFirstRound) {
-    if (!isFirstRound) {
-        deletePlayers(this->playersInRound, this->totalNumberOfPlayers);
-    }
-
-    this->playersInRound = createPlayers(this->numberOfPlayersInRound);
+    this->playersInRound = createPlayersInRound(this->numberOfPlayersInRound);
     if (isFirstRound) {
         int i = 0;
         for (i = 0; i < this->numberOfPlayersInRound; i ++) {
-            this->playersInRound[i] = new Player(*this->players[i]);
+            this->playersInRound[i].setRef(this->players[i]);
         }
     } else {
         // TODO
@@ -121,10 +122,11 @@ void Game::setRound(bool isFirstRound) {
     }
 }
 
-void swap(Player *& a, Player *& b) {
-    Player* c = a;
-    a = b;
-    b = c;
+void Game::setPlayersRank() {
+    int i = 0;
+    for(i = 0; i < this->numberOfPlayersInRound; i++) {
+        playersInRound[i].getRef()->getHand()->rankHand();
+    }
 }
 
 void Game::sortPlayersByRank() {
@@ -135,8 +137,10 @@ void Game::sortPlayersByRank() {
     // Isso facilitara na remocao e para tratar empates
     for (i = 0; i < this->numberOfPlayersInRound - 1; i++) {
         for (j = 0; j < this->numberOfPlayersInRound - i - 1; j++) {
-            if (!(*(this->playersInRound[j]->getHand()) > this->playersInRound[j + 1]->getHand())) {
-                swap(this->playersInRound[j], this->playersInRound[j+1]);
+            if (*this->playersInRound[j].getRef()->getHand() < this->playersInRound[j + 1].getRef()->getHand()) {
+                Player* tmp = this->playersInRound[j].getRef();
+                this->playersInRound[j].setRef(this->playersInRound[j+1].getRef());
+                this->playersInRound[j+1].setRef(tmp);
             }
         }
     }
@@ -148,12 +152,11 @@ void Game::checkForDraws() {
     // localizado na primeira posicao. Se for diferente do rank,
     // elimina o jogador da rodada.
     int i = 0, initialPlayersInRound = this->numberOfPlayersInRound;
-    Hand::Rank maxRank = this->playersInRound[0]->getHand()->getRank();
+    Hand::Rank maxRank = this->playersInRound[0].getRef()->getHand()->getRank();
 
     for (i = 1; i < initialPlayersInRound; i++) {
-        Hand::Rank currRank = this->playersInRound[i]->getHand()->getRank();
+        Hand::Rank currRank = this->playersInRound[i].getRef()->getHand()->getRank();
         if (currRank != maxRank) {
-            delete this->playersInRound[i];
             this->numberOfPlayersInRound--;
         }
     }
@@ -164,9 +167,7 @@ void Game::handleDraws() {
 
 void Game::handleRound(bool isFirstRound) {
     setRound(isFirstRound);
-    for(int i = 0; i < this->numberOfPlayersInRound; i++) {
-        playersInRound[i]->getHand()->rankHand();
-    }
+    setPlayersRank();
     sortPlayersByRank();
     checkForDraws();
     handleDraws();
