@@ -167,20 +167,17 @@ void Game::checkForDraws() {
     }
 }
 
-void Game::handleWinners() {
-    int i = 0;
-    string rank = this->playersInRound[0].getRef()->getHand()->getRankName();
-    cout << this->numberOfPlayersInRound << " " << 1000 << " " << rank;
-    for (i = 0; i < this->numberOfPlayersInRound; i++) {
-        cout << endl;
-        cout << this->playersInRound->getRef()->getName();
-    }
+Hand::ComparationResult Game::handleComparation(int first, int second) {
+    return playersInRound[first].getRef()->getHand()->compareWithSameRankHand(
+        playersInRound[second].getRef()->getHand()
+    );
 }
 
-Hand::ComparationResult Game::handleComparation(int i, int j) {
-    return playersInRound[i].getRef()->getHand()->compareWithSameRankHand(
-        this->playersInRound[j].getRef()->getHand()
-    );
+void Game::removePlayerFromRound(int idx) {
+    if (idx >= this->numberOfPlayersInRound || idx < 0) return;
+    for(int i = idx; i < this->numberOfPlayersInRound - 1; i++)
+        playersInRound[i].setRef(playersInRound[i+1].getRef());
+    this->numberOfPlayersInRound--;
 }
 
 // Decide o(s) vencedor(es) da rodada
@@ -193,28 +190,32 @@ void Game::handleDraws() {
         return;
     }
 
-    Stack<int>* indexesToRemove = new Stack<int>();
+    int lowerBound = 0;
+    int higherBound = lowerBound + 1;
+    int numberOfComparations = this->numberOfPlayersInRound - 1;
 
-    int l = 0;
-    int r = this->numberOfPlayersInRound - 1;
-    // TODO: use divide and conquer
-    while (l < r) {
-        Hand::ComparationResult res = handleComparation(l, r);
+    while (numberOfComparations > 0) {
+        Hand::ComparationResult res = handleComparation(lowerBound, higherBound);
         if (res == Hand::ComparationResult::FirstWin) {
-            indexesToRemove->push(r);
-            r--;
+            removePlayerFromRound(higherBound);
         } else if (res == Hand::ComparationResult::SecondWin) {
-            indexesToRemove->push(l);
-            l++;
-        } else {
-            l++;
+            removePlayerFromRound(lowerBound);
+        } else if (res == Hand::ComparationResult::Tie) {
+            lowerBound = higherBound;
+            higherBound = lowerBound + 1;
         }
+        numberOfComparations--;
     }
+}
 
-    while (!indexesToRemove->empty()) {
-        int tmp = indexesToRemove->pop();
-        cout << tmp << endl;
-        cout << playersInRound[tmp].getRef()->getName() << endl;
+void Game::handleWinners() {
+    int i = 0;
+    string rank = this->playersInRound[0].getRef()->getHand()->getRankName();
+    int amount = 1000 / this->numberOfPlayersInRound;
+    cout << this->numberOfPlayersInRound << " " << amount << " " << rank;
+    for (i = 0; i < this->numberOfPlayersInRound; i++) {
+        cout << endl;
+        cout << this->playersInRound[i].getRef()->getName();
     }
 }
 
@@ -227,7 +228,7 @@ void Game::handleRound(bool isFirstRound) {
         Game::sortPlayersByRank();
         Game::checkForDraws();
         Game::handleDraws();
-        //Game::handleWinners();
+        Game::handleWinners();
     } catch (RoundException& err) {
         err.handle();
         return;

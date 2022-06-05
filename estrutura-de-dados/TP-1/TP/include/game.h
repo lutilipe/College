@@ -10,7 +10,7 @@ class RoundException {
     public:
         RoundException() {}
 
-        const char* handle() {
+        void handle() {
             // Todo: Write to file
             cout << 0 << " " << 0 << " " << "I" << endl;
         }
@@ -41,7 +41,9 @@ class Game {
         void handleDraws();
         void handleWinners();
 
-        Hand::ComparationResult handleComparation(int i, int j);
+        void removePlayerFromRound(int idx);
+
+        Hand::ComparationResult handleComparation(int first, int second);
 
         void mountPlayersInRound(bool isFirstRound = false);
     public:
