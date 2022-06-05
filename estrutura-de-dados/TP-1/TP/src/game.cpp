@@ -35,7 +35,7 @@ Game::~Game() {
     Game::in.close();
     Game::out.close();
     deletePlayers(players,totalNumberOfPlayers);
-    delete[] playersInRound;
+    delete playersInRound;
 }
 
 Player** createPlayers(int n) {
@@ -75,7 +75,7 @@ Player* Game::createPlayer() {
     }
 
     Player* p = new Player(name, Game::initialAmount);
-    p->getHand()->setCards(&in);
+    p->setHand(&(Game::in));
 
     p->setBet(bet);
     return p;
@@ -96,8 +96,29 @@ void Game::mountPlayersInRound(bool isFirstRound) {
             Game::playersInRound[i].setRef(Game::players[i]);
         }
     } else {
-        // TODO
-        return;
+        int i = 0, j = 0, idx = -1;
+        bool found = false;
+        for (i = 0; i < Game::numberOfPlayersInRound; i++) {
+            found = false;
+            idx = -1;
+            j = 0;
+            string playerName = "";
+            int bet = 0;
+            getPlayerRoundInfo(&playerName, &bet);
+            while (!found && j < Game::totalNumberOfPlayers) {
+                if (playerName == players[j]->getName()) {
+                    found = true;
+                    idx = j;
+                }
+                j++;
+            }
+            if (idx < 0) {
+                throw RoundException();
+            }
+            Game::playersInRound[i].setRef(Game::players[idx]);
+            Game::playersInRound[i].getRef()->setBet(bet);
+            Game::playersInRound[i].getRef()->setHand(&(Game::in));
+        }
     }
 }
 
@@ -121,21 +142,24 @@ void Game::getBetFromPlayersInRound() {
 // jogadores da rodada
 void Game::setRound(bool isFirstRound) {
     Game::resetPot();
-
-    int numberOfPlayers = 0,
-        roundAnteValue = 0;
+    delete playersInRound;
     
-    Game::in >> numberOfPlayers;
-    erroAssert(numberOfPlayers > 0,"Number of players is null!");
-    Game::numberOfPlayersInRound = numberOfPlayers;
+    Game::numberOfPlayersInRound = 0;
+    Game::anteValue = 0;
+    
+    Game::in >> numberOfPlayersInRound;
+    if (numberOfPlayersInRound <= 0) {
+        throw RoundException();
+    }
 
     if (isFirstRound) {
         Game::totalNumberOfPlayers = Game::numberOfPlayersInRound;
     }
 
-    Game::in >> roundAnteValue;
-    erroAssert(roundAnteValue > 0,"Ante value is invalid!");
-    Game::anteValue = roundAnteValue;
+    Game::in >> anteValue;
+    if (anteValue <= 0) {
+        throw RoundException();
+    }
 
     if (isFirstRound) {
         Game::players = createPlayers(Game::totalNumberOfPlayers);
@@ -235,9 +259,8 @@ void Game::handleRoundWinners() {
     int i = 0;
     string rank = Game::playersInRound[0].getRef()->getHand()->getRankName();
     int totalEarnedByEachWinner = Game::pot / Game::numberOfPlayersInRound;
-    out << Game::numberOfPlayersInRound << " " << totalEarnedByEachWinner << " " << rank;
+    out << Game::numberOfPlayersInRound << " " << totalEarnedByEachWinner << " " << rank << endl;
     for (i = 0; i < Game::numberOfPlayersInRound; i++) {
-        out << endl;
         out << Game::playersInRound[i].getRef()->getName() << endl;
         Game::playersInRound[i].getRef()->increaseAmount(totalEarnedByEachWinner);
     }

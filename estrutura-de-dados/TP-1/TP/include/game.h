@@ -6,16 +6,6 @@
 
 using namespace std;
 
-class RoundException {
-    public:
-        RoundException() {}
-
-        void handle(ofstream* out) {
-            string s = "0 0 I";
-            *out << s << endl;
-        }
-};
-
 class Game {
     private:
         int numberOfRounds = 0;
@@ -64,6 +54,16 @@ class Game {
         void resetPot() { pot = 0; };
 
         void play();
+};
+
+class RoundException {
+    public:
+        RoundException() {}
+
+        void handle(ofstream* out) {
+            string s = "0 0 I";
+            *out << s << endl;
+        }
 };
 
 #endif

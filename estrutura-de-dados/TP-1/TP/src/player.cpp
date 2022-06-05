@@ -18,9 +18,10 @@ Player::~Player() {
     delete hand;
 }
 
-void Player::setHand(Hand* h) {
+void Player::setHand(ifstream *in) {
     delete hand;
-    this->hand = h;
+    Player::hand = new Hand();
+    hand->setCards(in);
 }
 
 void Player::doAnte(int ante) {

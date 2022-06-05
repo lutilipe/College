@@ -2,6 +2,7 @@
 #define PLAYER_H
 
 #include <iostream>
+#include <fstream>
 #include "card.h"
 #include "hand.h"
 
@@ -21,7 +22,7 @@ class Player {
         ~Player();
 
         Hand* getHand() { return hand; };
-        void setHand(Hand* h);
+        void setHand(ifstream *in);
 
         string getName() { return name; };
 
