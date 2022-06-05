@@ -69,7 +69,7 @@ Player* Game::createPlayer() {
     Game::getPlayerRoundInfo(&name, &bet);
 
     if (this->initialAmount - bet < 0) {
-        this->isRoundValid = false;
+        throw RoundException();
     }
 
     Player* p = new Player(name, this->initialAmount);
@@ -102,8 +102,6 @@ void Game::mountPlayersInRound(bool isFirstRound) {
 // Cria o setup inicial do round: apostas, pingo,
 // jogadores da rodada
 void Game::setRound(bool isFirstRound) {
-    this->isRoundValid = true;
-
     int numberOfPlayers = 0,
         roundAnteValue = 0;
     
@@ -188,8 +186,7 @@ Hand::ComparationResult Game::handleComparation(int i, int j) {
 // Decide o(s) vencedor(es) da rodada
 void Game::handleDraws() {
     if (this->numberOfPlayersInRound > 4 || this->numberOfPlayersInRound < 0) {
-        this->isRoundValid = false;
-        return;
+        throw RoundException();
     }
 
     if (this->numberOfPlayersInRound == 1) {
@@ -224,12 +221,19 @@ void Game::handleDraws() {
 // Lida com cada round da partida, declarando
 // o(s) vencedor(es)
 void Game::handleRound(bool isFirstRound) {
-    Game::setRound(isFirstRound);
-    Game::setPlayersRank();
-    Game::sortPlayersByRank();
-    Game::checkForDraws();
-    Game::handleDraws();
-    //Game::handleWinners();
+    try {
+        Game::setRound(isFirstRound);
+        Game::setPlayersRank();
+        Game::sortPlayersByRank();
+        Game::checkForDraws();
+        Game::handleDraws();
+        //Game::handleWinners();
+    } catch (RoundException& err) {
+        err.handle();
+        return;
+    } catch (...) {
+        abort();
+    }
 }
 
 // Inicia o jogo

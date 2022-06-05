@@ -6,6 +6,16 @@
 
 using namespace std;
 
+class RoundException {
+    public:
+        RoundException() {}
+
+        const char* handle() {
+            // Todo: Write to file
+            cout << 0 << " " << 0 << " " << "I" << endl;
+        }
+};
+
 class Game {
     private:
         int numberOfRounds = 0;
@@ -13,7 +23,6 @@ class Game {
         int numberOfPlayersInRound = 0;
         int totalNumberOfPlayers = 0;
         int anteValue = 0;
-        bool isRoundValid = true;
         ifstream in;
 
         Player** players;
