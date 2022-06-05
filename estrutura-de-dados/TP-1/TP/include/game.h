@@ -10,9 +10,9 @@ class RoundException {
     public:
         RoundException() {}
 
-        void handle() {
-            // Todo: Write to file
-            cout << 0 << " " << 0 << " " << "I" << endl;
+        void handle(ofstream* out) {
+            string s = "0 0 I";
+            *out << s << endl;
         }
 };
 
@@ -25,6 +25,7 @@ class Game {
         int anteValue = 0;
         int pot = 0;
         ifstream in;
+        ofstream out;
 
         Player** players;
         PlayerRef* playersInRound;
@@ -52,7 +53,7 @@ class Game {
 
         void handleGameWinners();
     public:
-        Game(string inFile);
+        Game(string inFile, string outFile);
         ~Game();
 
         int getNumberOfRounds() { return numberOfRounds; };

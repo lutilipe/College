@@ -7,7 +7,7 @@
 using namespace std;
 
 int main() {
-    Game* game = new Game("entrada.txt");
+    Game* game = new Game("entrada.txt", "saida.txt");
 
     game->play();
 

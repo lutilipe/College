@@ -9,10 +9,11 @@
 
 using namespace std;
 
-Game::Game(string inFile) {
+Game::Game(string inFile, string outFile) {
     int nRounds = 0, iAmount = 0;
 
     Game::in = ifstream(inFile);
+    Game::out = ofstream(outFile);
 
     Game::in >> nRounds >> iAmount;
 
@@ -32,6 +33,7 @@ void deletePlayers(Player** p, int length) {
 
 Game::~Game() {
     Game::in.close();
+    Game::out.close();
     deletePlayers(players,totalNumberOfPlayers);
     delete[] playersInRound;
 }
@@ -233,10 +235,10 @@ void Game::handleRoundWinners() {
     int i = 0;
     string rank = Game::playersInRound[0].getRef()->getHand()->getRankName();
     int totalEarnedByEachWinner = Game::pot / Game::numberOfPlayersInRound;
-    cout << Game::numberOfPlayersInRound << " " << totalEarnedByEachWinner << " " << rank;
+    out << Game::numberOfPlayersInRound << " " << totalEarnedByEachWinner << " " << rank;
     for (i = 0; i < Game::numberOfPlayersInRound; i++) {
-        cout << endl;
-        cout << Game::playersInRound[i].getRef()->getName() << endl;
+        out << endl;
+        out << Game::playersInRound[i].getRef()->getName() << endl;
         Game::playersInRound[i].getRef()->increaseAmount(totalEarnedByEachWinner);
     }
 }
@@ -248,7 +250,7 @@ void swap(Player *& a, Player *& b) {
 }
 
 void Game::handleGameWinners() {
-    cout << "####" << endl;
+    out << "####" << endl;
 
     int i = 0, j = 0;
 
@@ -262,7 +264,7 @@ void Game::handleGameWinners() {
     }
 
     for (i = Game::totalNumberOfPlayers - 1; i >= 0; i--) {
-        cout << Game::players[i]->getName() << " " << Game::players[i]->getAmount() << endl;
+        out << Game::players[i]->getName() << " " << Game::players[i]->getAmount() << endl;
     }
 }
 
@@ -277,7 +279,7 @@ void Game::handleRound(bool isFirstRound) {
         Game::handleDraws();
         Game::handleRoundWinners();
     } catch (RoundException& err) {
-        err.handle();
+        err.handle(&out);
         return;
     } catch (...) {
         abort();
