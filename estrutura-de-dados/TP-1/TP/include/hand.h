@@ -56,17 +56,17 @@ class Hand {
         Stack<Card::CardNumber>* getSinglesBundle() { return singlesBundle; };
         Stack<Card::CardNumber>* getPairsBundle() { return pairsBundle; };
         Stack<Card::CardNumber>* getTriplesBundle() { return triplesBundle; };
-        Stack<Card::CardNumber>* getQuadsBundle() { return pairsBundle; };
+        Stack<Card::CardNumber>* getQuadsBundle() { return quadsBundle; };
 
         void setSinglesBundle(Stack<Card::CardNumber>* c) { singlesBundle = c; };
         void setPairsBundle(Stack<Card::CardNumber>* c) { pairsBundle = c; };
         void setTriplesBundle(Stack<Card::CardNumber>* c) { triplesBundle = c; };
         void setQuadsBundle(Stack<Card::CardNumber>* c) { quadsBundle = c; };
 
-        bool hasSinglesBundle() { return pairsBundle != NULL && !singlesBundle->empty(); };
-        bool hasPairsBundle() { return quadsBundle != NULL && !pairsBundle->empty(); };
-        bool hasTriplesBundle() { return singlesBundle != NULL && !triplesBundle->empty(); };
-        bool hasQuadsBundle() { return triplesBundle != NULL && !quadsBundle->empty(); };
+        bool hasSinglesBundle() { return singlesBundle != NULL && !singlesBundle->empty(); };
+        bool hasPairsBundle() { return pairsBundle != NULL && !pairsBundle->empty(); };
+        bool hasTriplesBundle() { return triplesBundle != NULL && !triplesBundle->empty(); };
+        bool hasQuadsBundle() { return quadsBundle != NULL && !quadsBundle->empty(); };
 
         Hand::ComparationResult compareWithSameRankHand(Hand* handToCompare);
 

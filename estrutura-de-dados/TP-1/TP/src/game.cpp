@@ -272,7 +272,7 @@ void swap(Player *& a, Player *& b) {
     b = c;
 }
 
-void Game::handleGameWinners() {
+void Game::handleGameClassification() {
     out << "####" << endl;
 
     int i = 0, j = 0;
@@ -320,5 +320,5 @@ void Game::play() {
         // Lidar com o restante dos rounds
         Game::handleRound();
     }
-    handleGameWinners();
+    handleGameClassification();
 }

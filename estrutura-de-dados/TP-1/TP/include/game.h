@@ -41,7 +41,7 @@ class Game {
         void getAnteFromAllPlayers();
         void getBetFromPlayersInRound();
 
-        void handleGameWinners();
+        void handleGameClassification();
     public:
         Game(string inFile, string outFile);
         ~Game();
