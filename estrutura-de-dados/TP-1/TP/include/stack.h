@@ -10,19 +10,19 @@ template <class T>
 class Stack;
 
 template <class T>
-class Node {
+class StackNode {
     public:
-        Node() { val = (T) 0; next = NULL; };
+        StackNode() { val = (T) 0; next = NULL; };
     private:
         T val;
-        Node<T> *next;
+        StackNode<T> *next;
         friend class Stack<T>;
 };
 
 template <class T>
 class Stack {
     private:
-        Node<T> *head;
+        StackNode<T> *head;
         int length;
     public:
         Stack();
@@ -36,7 +36,7 @@ class Stack {
 };
 
 template <class T> Stack<T>::Stack() {
-    head = new Node<T>();
+    head = new StackNode<T>();
     length = 0;
 }
 
@@ -52,8 +52,8 @@ template <class T> bool Stack<T>::empty() {
 }
 
 template <class T>void Stack<T>::push(T el) {
-    Node<T> *n = new Node<T>();
-    Node<T> *tmp = head->next;
+    StackNode<T> *n = new StackNode<T>();
+    StackNode<T> *tmp = head->next;
     n->val = el;
     head->next = n;
     n->next = tmp;
@@ -63,7 +63,7 @@ template <class T>void Stack<T>::push(T el) {
 template <class T>T Stack<T>::pop() {
     erroAssert(!empty(), "Stack is empty!");
 
-    Node<T> *tmp = head->next;
+    StackNode<T> *tmp = head->next;
     T v = tmp->val;
     head->next = tmp->next;
     delete tmp;

@@ -33,7 +33,7 @@ class Player {
         int getBet() { return bet; };
 };
 
-class PlayerRef : public Player {
+class PlayerRef {
     private:
         Player* ref;
     public:

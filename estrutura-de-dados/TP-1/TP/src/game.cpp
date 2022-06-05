@@ -1,7 +1,9 @@
 #include "game.h"
 #include "player.h"
+#include "hand.h"
 
 #include <iostream>
+#include <cmath>
 #include <fstream>
 #include "msgassert.h"
 
@@ -31,7 +33,7 @@ void deletePlayers(Player** p, int length) {
 Game::~Game() {
     this->in.close();
     deletePlayers(players,totalNumberOfPlayers);
-    //delete[] playersInRound;
+    delete[] playersInRound;
 }
 
 Player** createPlayers(int n) {
@@ -64,7 +66,7 @@ Player* Game::createPlayer() {
     int bet = 0;
     string name = "";
 
-    getPlayerRoundInfo(&name, &bet);
+    Game::getPlayerRoundInfo(&name, &bet);
 
     if (this->initialAmount - bet < 0) {
         this->isRoundValid = false;
@@ -97,6 +99,8 @@ void Game::mountPlayersInRound(bool isFirstRound) {
     }
 }
 
+// Cria o setup inicial do round: apostas, pingo,
+// jogadores da rodada
 void Game::setRound(bool isFirstRound) {
     this->isRoundValid = true;
 
@@ -118,14 +122,17 @@ void Game::setRound(bool isFirstRound) {
     if (isFirstRound) {
         this->players = createPlayers(this->totalNumberOfPlayers);
         initPlayers();
-        mountPlayersInRound(true);
     }
+
+    Game::mountPlayersInRound(isFirstRound);
 }
 
+// Obtem o rank da mao de cada jogador
+// da rodada
 void Game::setPlayersRank() {
     int i = 0;
     for(i = 0; i < this->numberOfPlayersInRound; i++) {
-        playersInRound[i].getRef()->getHand()->rankHand();
+        this->playersInRound[i].getRef()->getHand()->rankHand();
     }
 }
 
@@ -146,11 +153,11 @@ void Game::sortPlayersByRank() {
     }
 }
 
+// Checa, entre os jogadores da rodada, aqueles que tivere,
+// o mesmo rank do maior Rank da rodada, que seria o jogador
+// localizado na primeira posicao. Se for diferente do rank,
+// elimina o jogador da rodada.
 void Game::checkForDraws() {
-    // Checa, entre os jogadores da rodada, aqueles que tivere,
-    // o mesmo rank do maior Rank da rodada, que seria o jogador
-    // localizado na primeira posicao. Se for diferente do rank,
-    // elimina o jogador da rodada.
     int i = 0, initialPlayersInRound = this->numberOfPlayersInRound;
     Hand::Rank maxRank = this->playersInRound[0].getRef()->getHand()->getRank();
 
@@ -162,20 +169,78 @@ void Game::checkForDraws() {
     }
 }
 
+void Game::handleWinners() {
+    int i = 0;
+    string rank = this->playersInRound[0].getRef()->getHand()->getRankName();
+    cout << this->numberOfPlayersInRound << " " << 1000 << " " << rank;
+    for (i = 0; i < this->numberOfPlayersInRound; i++) {
+        cout << endl;
+        cout << this->playersInRound->getRef()->getName();
+    }
+}
+
+Hand::ComparationResult Game::handleComparation(int i, int j) {
+    return playersInRound[i].getRef()->getHand()->compareWithSameRankHand(
+        this->playersInRound[j].getRef()->getHand()
+    );
+}
+
+// Decide o(s) vencedor(es) da rodada
 void Game::handleDraws() {
+    if (this->numberOfPlayersInRound > 4 || this->numberOfPlayersInRound < 0) {
+        this->isRoundValid = false;
+        return;
+    }
+
+    if (this->numberOfPlayersInRound == 1) {
+        return;
+    }
+
+    Stack<int>* indexesToRemove = new Stack<int>();
+
+    int l = 0;
+    int r = this->numberOfPlayersInRound - 1;
+    // TODO: use divide and conquer
+    while (l < r) {
+        Hand::ComparationResult res = handleComparation(l, r);
+        if (res == Hand::ComparationResult::FirstWin) {
+            indexesToRemove->push(r);
+            r--;
+        } else if (res == Hand::ComparationResult::SecondWin) {
+            indexesToRemove->push(l);
+            l++;
+        } else {
+            l++;
+        }
+    }
+
+    while (!indexesToRemove->empty()) {
+        int tmp = indexesToRemove->pop();
+        cout << tmp << endl;
+        cout << playersInRound[tmp].getRef()->getName() << endl;
+    }
 }
 
+// Lida com cada round da partida, declarando
+// o(s) vencedor(es)
 void Game::handleRound(bool isFirstRound) {
-    setRound(isFirstRound);
-    setPlayersRank();
-    sortPlayersByRank();
-    checkForDraws();
-    handleDraws();
+    Game::setRound(isFirstRound);
+    Game::setPlayersRank();
+    Game::sortPlayersByRank();
+    Game::checkForDraws();
+    Game::handleDraws();
+    //Game::handleWinners();
 }
 
+// Inicia o jogo
 void Game::play() {
-    handleRound(true);
+    // Fazer o setup do primeiro round
+    // Esse setup e' diferente dos outros rounds,
+    // pois cria o array com todos os jogadores
+    Game::handleRound(true);
+
     for (int i = 1; i < this->numberOfRounds; i++) {
-        handleRound();
+        // Lidar com o restante dos rounds
+        Game::handleRound();
     }
 }

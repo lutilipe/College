@@ -37,5 +37,5 @@ bool Card::operator>(Card c) {
 }
 
 void Card::print() {
-    cout << getCard() << endl;
+    cout << Card::getCard() << endl;
 }

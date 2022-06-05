@@ -173,4 +173,3 @@ int finalizaMemLog()
   ml.ativo = MLINATIVO;
   return result;
 }
-

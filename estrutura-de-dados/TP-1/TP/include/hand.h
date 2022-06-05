@@ -31,6 +31,13 @@ class Hand {
             Quad
         };
 
+        enum ComparationResult {
+            InvalidResult,
+            FirstWin,
+            SecondWin,
+            Tie,
+        }; 
+
         static const int HAND_SIZE = 5;
 
         Hand();
@@ -61,11 +68,14 @@ class Hand {
         bool hasTriples() { return singles != NULL && !triples->empty(); };
         bool hasQuads() { return triples != NULL && !quads->empty(); };
 
+        Hand::ComparationResult compareWithSameRankHand(Hand* handToCompare);
+
         bool operator < (Hand* h);
     private:
         Hand::Rank rank;
-        Card cards[HAND_SIZE];
+        Card cards[Hand::HAND_SIZE];
 
+        // Utilizados para comparar maos com mesmo rank
         Stack<Card::CardNumber>* singles;
         Stack<Card::CardNumber>* pairs;
         Stack<Card::CardNumber>* triples;
@@ -79,6 +89,23 @@ class Hand {
         void adjustHighAceStraightSort();
 
         int getNumberOfDuplicatesAndBuildBundles();
+
+        Hand::ComparationResult compareHighCards(Hand* firstHand, Hand* secondHand);
+        Hand::ComparationResult compareFourOfAKind(Hand* firstHand, Hand* secondHand);
+        Hand::ComparationResult compareFullHouse(Hand* firstHand, Hand* secondHand);
+        Hand::ComparationResult compareThreeOfAKind(Hand* firstHand, Hand* secondHand);
+        Hand::ComparationResult comparePairs(Hand* firstHand, Hand* secondHand);
+
+        Hand::ComparationResult compareRepetitions(
+            Hand* firstHand, 
+            Hand* secondHand,
+            Hand::CardRepetition repetition
+        );
+
+        Hand::ComparationResult handleRepetitionsComparation(
+            Stack<Card::CardNumber>* firstReps,
+            Stack<Card::CardNumber>* secondReps
+        );
 
         const string RankNames[11] = {
             "I",

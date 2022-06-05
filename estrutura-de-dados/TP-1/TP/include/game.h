@@ -30,7 +30,9 @@ class Game {
         void sortPlayersByRank();
         void checkForDraws();
         void handleDraws();
+        void handleWinners();
 
+        Hand::ComparationResult handleComparation(int i, int j);
 
         void mountPlayersInRound(bool isFirstRound = false);
     public:
