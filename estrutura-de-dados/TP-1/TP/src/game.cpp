@@ -12,15 +12,15 @@ using namespace std;
 Game::Game(string inFile) {
     int nRounds = 0, iAmount = 0;
 
-    this->in = ifstream(inFile);
+    Game::in = ifstream(inFile);
 
-    this->in >> nRounds >> iAmount;
+    Game::in >> nRounds >> iAmount;
 
     erroAssert(nRounds > 0, "Invalid number of rounds!");
     erroAssert(iAmount > 0, "Invalid initial amount!");
 
-    this->numberOfRounds = nRounds;
-    this->initialAmount = iAmount;
+    Game::numberOfRounds = nRounds;
+    Game::initialAmount = iAmount;
 }
 
 void deletePlayers(Player** p, int length) {
@@ -31,7 +31,7 @@ void deletePlayers(Player** p, int length) {
 }
 
 Game::~Game() {
-    this->in.close();
+    Game::in.close();
     deletePlayers(players,totalNumberOfPlayers);
     delete[] playersInRound;
 }
@@ -49,7 +49,7 @@ PlayerRef* createPlayersInRound(int n) {
 void Game::getPlayerRoundInfo(string* name, int* bet) {
     string tmp;
 
-    while (this->in >> tmp) {
+    while (Game::in >> tmp) {
         try {
             (*bet) = stoi(tmp);
             break;
@@ -68,11 +68,11 @@ Player* Game::createPlayer() {
 
     Game::getPlayerRoundInfo(&name, &bet);
 
-    if (this->initialAmount - bet < 0) {
+    if (Game::initialAmount < 0) {
         throw RoundException();
     }
 
-    Player* p = new Player(name, this->initialAmount);
+    Player* p = new Player(name, Game::initialAmount);
     p->getHand()->setCards(&in);
 
     p->setBet(bet);
@@ -80,18 +80,18 @@ Player* Game::createPlayer() {
 }
 
 void Game::initPlayers() {
-    erroAssert(this->players != NULL, "Players not set!");
-    for (int i = 0; i < this->totalNumberOfPlayers; i++) {
+    erroAssert(Game::players != NULL, "Players not set!");
+    for (int i = 0; i < Game::totalNumberOfPlayers; i++) {
         players[i] = createPlayer();
     }
 }
 
 void Game::mountPlayersInRound(bool isFirstRound) {
-    this->playersInRound = createPlayersInRound(this->numberOfPlayersInRound);
+    Game::playersInRound = createPlayersInRound(Game::numberOfPlayersInRound);
     if (isFirstRound) {
         int i = 0;
-        for (i = 0; i < this->numberOfPlayersInRound; i ++) {
-            this->playersInRound[i].setRef(this->players[i]);
+        for (i = 0; i < Game::numberOfPlayersInRound; i ++) {
+            Game::playersInRound[i].setRef(Game::players[i]);
         }
     } else {
         // TODO
@@ -99,38 +99,59 @@ void Game::mountPlayersInRound(bool isFirstRound) {
     }
 }
 
+void Game::getAnteFromAllPlayers() {
+    int i = 0;
+    for (i = 0; i < Game::totalNumberOfPlayers; i++) {
+        Game::players[i]->doAnte(Game::anteValue);
+        Game::pot += Game::anteValue;
+    }
+}
+
+void Game::getBetFromPlayersInRound() {
+    int i = 0;
+    for (i = 0; i < Game::numberOfPlayersInRound; i++) {
+        Game::playersInRound[i].getRef()->doBet();
+        Game::pot += Game::playersInRound[i].getRef()->getBet();
+    }
+}
+
 // Cria o setup inicial do round: apostas, pingo,
 // jogadores da rodada
 void Game::setRound(bool isFirstRound) {
+    Game::resetPot();
+
     int numberOfPlayers = 0,
         roundAnteValue = 0;
     
-    this->in >> numberOfPlayers;
+    Game::in >> numberOfPlayers;
     erroAssert(numberOfPlayers > 0,"Number of players is null!");
-    this->numberOfPlayersInRound = numberOfPlayers;
+    Game::numberOfPlayersInRound = numberOfPlayers;
 
     if (isFirstRound) {
-        this->totalNumberOfPlayers = this->numberOfPlayersInRound;
+        Game::totalNumberOfPlayers = Game::numberOfPlayersInRound;
     }
 
-    this->in >> roundAnteValue;
+    Game::in >> roundAnteValue;
     erroAssert(roundAnteValue > 0,"Ante value is invalid!");
-    this->anteValue = roundAnteValue;
+    Game::anteValue = roundAnteValue;
 
     if (isFirstRound) {
-        this->players = createPlayers(this->totalNumberOfPlayers);
+        Game::players = createPlayers(Game::totalNumberOfPlayers);
         initPlayers();
     }
 
     Game::mountPlayersInRound(isFirstRound);
+    
+    Game::getAnteFromAllPlayers();
+    Game::getBetFromPlayersInRound();
 }
 
 // Obtem o rank da mao de cada jogador
 // da rodada
 void Game::setPlayersRank() {
     int i = 0;
-    for(i = 0; i < this->numberOfPlayersInRound; i++) {
-        this->playersInRound[i].getRef()->getHand()->rankHand();
+    for(i = 0; i < Game::numberOfPlayersInRound; i++) {
+        Game::playersInRound[i].getRef()->getHand()->rankHand();
     }
 }
 
@@ -140,12 +161,12 @@ void Game::sortPlayersByRank() {
     // Bubble Sort
     // No entanto, esse sort coloca os maiores valores no inicio
     // Isso facilitara na remocao e para tratar empates
-    for (i = 0; i < this->numberOfPlayersInRound - 1; i++) {
-        for (j = 0; j < this->numberOfPlayersInRound - i - 1; j++) {
-            if (*this->playersInRound[j].getRef()->getHand() < this->playersInRound[j + 1].getRef()->getHand()) {
-                Player* tmp = this->playersInRound[j].getRef();
-                this->playersInRound[j].setRef(this->playersInRound[j+1].getRef());
-                this->playersInRound[j+1].setRef(tmp);
+    for (i = 0; i < Game::numberOfPlayersInRound - 1; i++) {
+        for (j = 0; j < Game::numberOfPlayersInRound - i - 1; j++) {
+            if (*Game::playersInRound[j].getRef()->getHand() < Game::playersInRound[j + 1].getRef()->getHand()) {
+                Player* tmp = Game::playersInRound[j].getRef();
+                Game::playersInRound[j].setRef(Game::playersInRound[j+1].getRef());
+                Game::playersInRound[j+1].setRef(tmp);
             }
         }
     }
@@ -156,13 +177,13 @@ void Game::sortPlayersByRank() {
 // localizado na primeira posicao. Se for diferente do rank,
 // elimina o jogador da rodada.
 void Game::checkForDraws() {
-    int i = 0, initialPlayersInRound = this->numberOfPlayersInRound;
-    Hand::Rank maxRank = this->playersInRound[0].getRef()->getHand()->getRank();
+    int i = 0, initialPlayersInRound = Game::numberOfPlayersInRound;
+    Hand::Rank maxRank = Game::playersInRound[0].getRef()->getHand()->getRank();
 
     for (i = 1; i < initialPlayersInRound; i++) {
-        Hand::Rank currRank = this->playersInRound[i].getRef()->getHand()->getRank();
+        Hand::Rank currRank = Game::playersInRound[i].getRef()->getHand()->getRank();
         if (currRank != maxRank) {
-            this->numberOfPlayersInRound--;
+            Game::numberOfPlayersInRound--;
         }
     }
 }
@@ -174,25 +195,25 @@ Hand::ComparationResult Game::handleComparation(int first, int second) {
 }
 
 void Game::removePlayerFromRound(int idx) {
-    if (idx >= this->numberOfPlayersInRound || idx < 0) return;
-    for(int i = idx; i < this->numberOfPlayersInRound - 1; i++)
+    if (idx >= Game::numberOfPlayersInRound || idx < 0) return;
+    for(int i = idx; i < Game::numberOfPlayersInRound - 1; i++)
         playersInRound[i].setRef(playersInRound[i+1].getRef());
-    this->numberOfPlayersInRound--;
+    Game::numberOfPlayersInRound--;
 }
 
 // Decide o(s) vencedor(es) da rodada
 void Game::handleDraws() {
-    if (this->numberOfPlayersInRound > 4 || this->numberOfPlayersInRound < 0) {
+    if (Game::numberOfPlayersInRound > 4 || Game::numberOfPlayersInRound < 0) {
         throw RoundException();
     }
 
-    if (this->numberOfPlayersInRound == 1) {
+    if (Game::numberOfPlayersInRound == 1) {
         return;
     }
 
     int lowerBound = 0;
     int higherBound = lowerBound + 1;
-    int numberOfComparations = this->numberOfPlayersInRound - 1;
+    int numberOfComparations = Game::numberOfPlayersInRound - 1;
 
     while (numberOfComparations > 0) {
         Hand::ComparationResult res = handleComparation(lowerBound, higherBound);
@@ -208,14 +229,40 @@ void Game::handleDraws() {
     }
 }
 
-void Game::handleWinners() {
+void Game::handleRoundWinners() {
     int i = 0;
-    string rank = this->playersInRound[0].getRef()->getHand()->getRankName();
-    int amount = 1000 / this->numberOfPlayersInRound;
-    cout << this->numberOfPlayersInRound << " " << amount << " " << rank;
-    for (i = 0; i < this->numberOfPlayersInRound; i++) {
+    string rank = Game::playersInRound[0].getRef()->getHand()->getRankName();
+    int totalEarnedByEachWinner = Game::pot / Game::numberOfPlayersInRound;
+    cout << Game::numberOfPlayersInRound << " " << totalEarnedByEachWinner << " " << rank;
+    for (i = 0; i < Game::numberOfPlayersInRound; i++) {
         cout << endl;
-        cout << this->playersInRound[i].getRef()->getName();
+        cout << Game::playersInRound[i].getRef()->getName() << endl;
+        Game::playersInRound[i].getRef()->increaseAmount(totalEarnedByEachWinner);
+    }
+}
+
+void swap(Player *& a, Player *& b) {
+    Player* c = a;
+    a = b;
+    b = c;
+}
+
+void Game::handleGameWinners() {
+    cout << "####" << endl;
+
+    int i = 0, j = 0;
+
+    // Bubble Sort
+    for (i = 0; i < Game::totalNumberOfPlayers - 1; i++) {
+        for (j = 0; j < Game::totalNumberOfPlayers - i - 1; j++) {
+            if (Game::players[j]->getAmount() > Game::players[j+1]->getAmount()) {
+                swap(Game::players[j], Game::players[j+1]);
+            }
+        }
+    }
+
+    for (i = Game::totalNumberOfPlayers - 1; i >= 0; i--) {
+        cout << Game::players[i]->getName() << " " << Game::players[i]->getAmount() << endl;
     }
 }
 
@@ -228,7 +275,7 @@ void Game::handleRound(bool isFirstRound) {
         Game::sortPlayersByRank();
         Game::checkForDraws();
         Game::handleDraws();
-        Game::handleWinners();
+        Game::handleRoundWinners();
     } catch (RoundException& err) {
         err.handle();
         return;
@@ -244,8 +291,9 @@ void Game::play() {
     // pois cria o array com todos os jogadores
     Game::handleRound(true);
 
-    for (int i = 1; i < this->numberOfRounds; i++) {
+    for (int i = 1; i < Game::numberOfRounds; i++) {
         // Lidar com o restante dos rounds
         Game::handleRound();
     }
+    handleGameWinners();
 }

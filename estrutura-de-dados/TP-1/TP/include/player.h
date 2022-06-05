@@ -26,6 +26,8 @@ class Player {
         string getName() { return name; };
 
         int getAmount() { return amount; };
+        void increaseAmount(int n) { amount += n; };
+
         void doAnte(int ante);
         void doBet();
 

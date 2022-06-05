@@ -1,6 +1,7 @@
 #include "card.h"
 #include "player.h"
 #include "msgassert.h"
+#include "game.h"
 
 #include <iostream>
 #include <fstream>
@@ -24,12 +25,16 @@ void Player::setHand(Hand* h) {
 
 void Player::doAnte(int ante) {
     int tmp = this->amount - ante;
-    erroAssert(tmp >= 0, "Player can not have negative amount!");
+    if (tmp < 0) {
+        throw RoundException();
+    }
     this->amount = tmp;
 }
 
 void Player::doBet() {
-    int tmp = this->amount - bet;
-    erroAssert(tmp >= 0, "Player can not have negative amount!");
+    int tmp = this->amount - this->bet;
+    if (tmp < 0) {
+        throw RoundException();
+    }
     this->amount = tmp;
 }

@@ -1,7 +1,6 @@
 #include "hand.h"
 #include "card.h"
 #include "stack.h"
-#include "queue.h"
 
 #include <iostream>
 #include "msgassert.h"

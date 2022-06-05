@@ -23,6 +23,7 @@ class Game {
         int numberOfPlayersInRound = 0;
         int totalNumberOfPlayers = 0;
         int anteValue = 0;
+        int pot = 0;
         ifstream in;
 
         Player** players;
@@ -39,19 +40,27 @@ class Game {
         void sortPlayersByRank();
         void checkForDraws();
         void handleDraws();
-        void handleWinners();
+        void handleRoundWinners();
 
         void removePlayerFromRound(int idx);
 
         Hand::ComparationResult handleComparation(int first, int second);
 
         void mountPlayersInRound(bool isFirstRound = false);
+        void getAnteFromAllPlayers();
+        void getBetFromPlayersInRound();
+
+        void handleGameWinners();
     public:
         Game(string inFile);
         ~Game();
 
         int getNumberOfRounds() { return numberOfRounds; };
         int getInitialAmount() { return initialAmount; };
+
+        void increasePot(int n) { pot += n; };
+        int getPot() { return pot; };
+        void resetPot() { pot = 0; };
 
         void play();
 };
