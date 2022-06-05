@@ -53,20 +53,20 @@ class Hand {
         void sortCards();
         void print();
 
-        Stack<Card::CardNumber>* getSingles() { return singles; };
-        Stack<Card::CardNumber>* getPairs() { return pairs; };
-        Stack<Card::CardNumber>* getTriples() { return triples; };
-        Stack<Card::CardNumber>* getQuads() { return pairs; };
+        Stack<Card::CardNumber>* getSinglesBundle() { return singlesBundle; };
+        Stack<Card::CardNumber>* getPairsBundle() { return pairsBundle; };
+        Stack<Card::CardNumber>* getTriplesBundle() { return triplesBundle; };
+        Stack<Card::CardNumber>* getQuadsBundle() { return pairsBundle; };
 
-        void setSingles(Stack<Card::CardNumber>* c) { singles = c; };
-        void setPairs(Stack<Card::CardNumber>* c) { pairs = c; };
-        void setTriples(Stack<Card::CardNumber>* c) { triples = c; };
-        void setQuads(Stack<Card::CardNumber>* c) { quads = c; };
+        void setSinglesBundle(Stack<Card::CardNumber>* c) { singlesBundle = c; };
+        void setPairsBundle(Stack<Card::CardNumber>* c) { pairsBundle = c; };
+        void setTriplesBundle(Stack<Card::CardNumber>* c) { triplesBundle = c; };
+        void setQuadsBundle(Stack<Card::CardNumber>* c) { quadsBundle = c; };
 
-        bool hasSingles() { return pairs != NULL && !singles->empty(); };
-        bool hasPairs() { return quads != NULL && !pairs->empty(); };
-        bool hasTriples() { return singles != NULL && !triples->empty(); };
-        bool hasQuads() { return triples != NULL && !quads->empty(); };
+        bool hasSinglesBundle() { return pairsBundle != NULL && !singlesBundle->empty(); };
+        bool hasPairsBundle() { return quadsBundle != NULL && !pairsBundle->empty(); };
+        bool hasTriplesBundle() { return singlesBundle != NULL && !triplesBundle->empty(); };
+        bool hasQuadsBundle() { return triplesBundle != NULL && !quadsBundle->empty(); };
 
         Hand::ComparationResult compareWithSameRankHand(Hand* handToCompare);
 
@@ -76,10 +76,10 @@ class Hand {
         Card cards[Hand::HAND_SIZE];
 
         // Utilizados para comparar maos com mesmo rank
-        Stack<Card::CardNumber>* singles;
-        Stack<Card::CardNumber>* pairs;
-        Stack<Card::CardNumber>* triples;
-        Stack<Card::CardNumber>* quads;
+        Stack<Card::CardNumber>* singlesBundle;
+        Stack<Card::CardNumber>* pairsBundle;
+        Stack<Card::CardNumber>* triplesBundle;
+        Stack<Card::CardNumber>* quadsBundle;
 
         bool isRoyalStraighFlush();
         bool isStraighFlush();

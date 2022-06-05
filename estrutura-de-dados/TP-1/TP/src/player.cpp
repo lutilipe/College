@@ -25,17 +25,17 @@ void Player::setHand(ifstream *in) {
 }
 
 void Player::doAnte(int ante) {
-    int tmp = this->amount - ante;
+    int tmp = Player::amount - ante;
     if (tmp < 0) {
         throw RoundException();
     }
-    this->amount = tmp;
+    Player::amount = tmp;
 }
 
 void Player::doBet() {
-    int tmp = this->amount - this->bet;
+    int tmp = Player::amount - Player::bet;
     if (tmp < 0) {
         throw RoundException();
     }
-    this->amount = tmp;
+    Player::amount = tmp;
 }

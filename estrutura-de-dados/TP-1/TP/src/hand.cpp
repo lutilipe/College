@@ -8,25 +8,25 @@
 using namespace std;
 
 Hand::~Hand() {
-    delete pairs;
-    delete quads;
-    delete triples;
-    delete singles;
+    delete pairsBundle;
+    delete quadsBundle;
+    delete triplesBundle;
+    delete singlesBundle;
 }
 
 Hand::Hand() {
     rank = Hand::Rank::InvalidRank;
-    singles = new Stack<Card::CardNumber>();
-    pairs = new Stack<Card::CardNumber>();
-    triples = new Stack<Card::CardNumber>();
-    quads = new Stack<Card::CardNumber>();
+    singlesBundle = new Stack<Card::CardNumber>();
+    pairsBundle = new Stack<Card::CardNumber>();
+    triplesBundle = new Stack<Card::CardNumber>();
+    quadsBundle = new Stack<Card::CardNumber>();
     for (int i = 0; i < Hand::HAND_SIZE; i++) {
         cards[i] = Card();
     }
 }
 
 void Hand::sortCards() {
-    erroAssert(this->cards != NULL, "Hand cards are not setted!");
+    erroAssert(Hand::cards != NULL, "Hand cards are not setted!");
 
     // Bubble sort
     int i = 0, j = 0;
@@ -46,7 +46,7 @@ void Hand::setCards(ifstream* in) {
     string tmp;
     for (int i = 0; i < Hand::HAND_SIZE; i++) {
         (*in) >> tmp;
-        this->cards[i] = Card(tmp);
+        Hand::cards[i] = Card(tmp);
     }
     sortCards();
 }
@@ -54,9 +54,9 @@ void Hand::setCards(ifstream* in) {
 void Hand::print() {
     for (int i = 0; i < Hand::HAND_SIZE; i++) {
         if (i != Hand::HAND_SIZE - 1) {
-            cout << this->cards[i].getCard() << " ";
+            cout << Hand::cards[i].getCard() << " ";
         } else {
-            cout << this->cards[i].getCard();
+            cout << Hand::cards[i].getCard();
         }
     }
     cout << endl;
@@ -67,9 +67,9 @@ bool Hand::operator<(Hand* h) {
 }
 
 string Hand::getRankName() {
-    bool isRankValid = this->rank != Hand::Rank::InvalidRank;
+    bool isRankValid = Hand::rank != Hand::Rank::InvalidRank;
     avisoAssert(isRankValid, "Hand rank is not setted!");
-    return RankNames[this->rank];
+    return RankNames[Hand::rank];
 };
 
 /* Criar bundles (stacks) com cada repeticao
@@ -94,7 +94,7 @@ int Hand::getNumberOfDuplicatesAndBuildBundles() {
     for (i = 0; i < Hand::HAND_SIZE; i++) {
         // Como o valor das cartas comeca em 1,
         // e' necessaria a subtracao
-        duplicates[this->cards[i].getValue() - FACTOR_TO_PARSE_CARD] += 1;
+        duplicates[Hand::cards[i].getValue() - FACTOR_TO_PARSE_CARD] += 1;
     }
 
     // Para cada valor do vetor "duplicate",
@@ -106,47 +106,47 @@ int Hand::getNumberOfDuplicatesAndBuildBundles() {
         if (reps == 0) continue;
         Card::CardNumber c = (Card::CardNumber) (i + FACTOR_TO_PARSE_CARD);
         if (reps == Hand::CardRepetition::Single) {
-            this->singles->push((c));
+            Hand::singlesBundle->push((c));
             continue;
         } else if (reps == Hand::CardRepetition::Pair) {
-            this->pairs->push((c));
+            Hand::pairsBundle->push((c));
             continue;
         } else if (reps == Hand::CardRepetition::Triple) {
-            this->triples->push((c));
+            Hand::triplesBundle->push((c));
             continue;
         } else if (reps == Hand::CardRepetition::Quad) {
-            this->quads->push((c));
+            Hand::quadsBundle->push((c));
             continue;
         }
     }
 
     return 
-        this->singles->size() + 
-        this->pairs->size() + 
-        this->quads->size() + 
-        this->triples->size();
+        Hand::singlesBundle->size() + 
+        Hand::pairsBundle->size() + 
+        Hand::quadsBundle->size() + 
+        Hand::triplesBundle->size();
 }
 
 // Ajustar mao quando o Às for a carta mais valiosa
 void Hand::adjustHighAceStraightSort() {
-    Card::CardNumber firstCard = this->cards[0].getValue();
+    Card::CardNumber firstCard = Hand::cards[0].getValue();
     erroAssert(firstCard == Card::Ace, "This is not an high ace hand!");
-    Card tmp = this->cards[0];
-    this->cards[0] = this->cards[1];
-    this->cards[1] = this->cards[2];
-    this->cards[2] = this->cards[3];
-    this->cards[3] = this->cards[4];
-    this->cards[4] = tmp;
+    Card tmp = Hand::cards[0];
+    Hand::cards[0] = Hand::cards[1];
+    Hand::cards[1] = Hand::cards[2];
+    Hand::cards[2] = Hand::cards[3];
+    Hand::cards[3] = Hand::cards[4];
+    Hand::cards[4] = tmp;
 }
 
 bool Hand::isHighAceStraight() {
     bool isHighAceStraight = false;
 
-    if (this->cards[0].getValue()  == Card::Ace &&
-        this->cards[1].getValue()  == Card::Ten &&
-        this->cards[2].getValue() == Card::Jack && 
-        this->cards[3].getValue()  == Card::Queen && 
-        this->cards[4].getValue() == Card::King)
+    if (Hand::cards[0].getValue()  == Card::Ace &&
+        Hand::cards[1].getValue()  == Card::Ten &&
+        Hand::cards[2].getValue() == Card::Jack && 
+        Hand::cards[3].getValue()  == Card::Queen && 
+        Hand::cards[4].getValue() == Card::King)
     {
         isHighAceStraight = true;
     }
@@ -155,20 +155,20 @@ bool Hand::isHighAceStraight() {
 }
 
 bool Hand::isStraight() {
-    erroAssert(!!this->cards, "Hand is empty!");
+    erroAssert(!!Hand::cards, "Hand is empty!");
     bool isStraight = false;
 
-    if (this->cards[1].getValue() == 
-        this->cards[0].getValue() + 1 
+    if (Hand::cards[1].getValue() == 
+        Hand::cards[0].getValue() + 1 
             &&
-        this->cards[2].getValue() == 
-        this->cards[1].getValue() + 1 
+        Hand::cards[2].getValue() == 
+        Hand::cards[1].getValue() + 1 
             &&
-        this->cards[3].getValue() == 
-        this->cards[2].getValue() + 1 
+        Hand::cards[3].getValue() == 
+        Hand::cards[2].getValue() + 1 
             &&
-        this->cards[4].getValue() == 
-        this->cards[3].getValue() + 1) {
+        Hand::cards[4].getValue() == 
+        Hand::cards[3].getValue() + 1) {
         isStraight = true;
     }
     /* NOTA:
@@ -183,10 +183,10 @@ bool Hand::isStraight() {
 }
 
 bool Hand::isFlush() {
-    erroAssert(!!this->cards, "Hand is empty!");
-    Card::Suit firstSuit = this->cards[0].getSuit();
+    erroAssert(!!Hand::cards, "Hand is empty!");
+    Card::Suit firstSuit = Hand::cards[0].getSuit();
     for (int i = 1; i < Hand::HAND_SIZE; i++) {
-        if (this->cards[i].getSuit() != firstSuit) {
+        if (Hand::cards[i].getSuit() != firstSuit) {
             return false;
         }
     }
@@ -237,7 +237,7 @@ void Hand::rankHand() {
 
     switch(combinationId) {
         case FOUR_OF_KIND_OR_FULL_HOUSE_COMBINATION:
-            if (Hand::hasQuads()) {
+            if (Hand::hasQuadsBundle()) {
                 Hand::setRank(Hand::Rank::FourOfAKind);
             } else {
                 Hand::setRank(Hand::Rank::FullHouse);
@@ -245,7 +245,7 @@ void Hand::rankHand() {
         break;
 
         case TWO_PAIRS_OR_THREE_OF_A_KIND_COMBINATION:
-            if (Hand::hasTriples()) {
+            if (Hand::hasTriplesBundle()) {
                 Hand::setRank(Hand::Rank::ThreeOfAKind);
             } else {
                 Hand::setRank(Hand::Rank::TwoPairs);
@@ -311,32 +311,32 @@ Hand::ComparationResult Hand::compareRepetitions(
     switch (repetition) {
         case Hand::CardRepetition::Single: {
             result = Hand::handleRepetitionsComparation(
-                firstHand->getSingles(),
-                secondHand->getSingles()
+                firstHand->getSinglesBundle(),
+                secondHand->getSinglesBundle()
             );
             break;
         }
 
         case Hand::CardRepetition::Pair: {
             result = Hand::handleRepetitionsComparation(
-                firstHand->getPairs(),
-                secondHand->getPairs()
+                firstHand->getPairsBundle(),
+                secondHand->getPairsBundle()
             );
             break;
         }
         
         case Hand::CardRepetition::Triple: {
             result = Hand::handleRepetitionsComparation(
-                firstHand->getTriples(),
-                secondHand->getTriples()
+                firstHand->getTriplesBundle(),
+                secondHand->getTriplesBundle()
             );
             break;
         }
 
         case Hand::CardRepetition::Quad: {
             result = Hand::handleRepetitionsComparation(
-                firstHand->getQuads(),
-                secondHand->getQuads()
+                firstHand->getQuadsBundle(),
+                secondHand->getQuadsBundle()
             );
             break;
         }
@@ -442,7 +442,7 @@ Hand::ComparationResult Hand::compareWithSameRankHand(
 ) {
     Hand::ComparationResult result = Hand::ComparationResult::InvalidResult;
 
-    switch (this->rank) {
+    switch (Hand::rank) {
        case Hand::Rank::RoyalStraightFlush: {
             result = Hand::ComparationResult::Tie;
             break;
