@@ -30,7 +30,9 @@ void parseArgs(int argc,char ** argv) {
 int main(int argc, char ** argv) {
     parseArgs(argc, argv);
 
-    if (regMem && strlen(logFilename) > 0) {
+    regMem = regMem && strlen(logFilename) > 0;
+
+    if (regMem) {
         iniciaMemLog(logFilename);
         ativaMemLog();
     } else {

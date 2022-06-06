@@ -37,12 +37,16 @@ $(OBJ)/card.o: $(HDRS) $(SRC)/card.cpp
 $(OBJ)/memlog.o: $(HDRS) $(SRC)/memlog.cpp
 	$(CC) $(CFLAGS) -o $(OBJ)/memlog.o $(SRC)/memlog.cpp
 
-mem: $(EXE) $(OUT)
-	$(EXE) -l -p output.txt
+mem: $(EXE)
+	$(EXE) -l -p /tmp/poker_mem.out
+	rm -rf /tmp/pokerest
+	mkdir /tmp/pokerest
+	$(ANALISAMEM) -i /tmp/poker_mem.out -p /tmp/pokerest/pokerest
+	gnuplot /tmp/pokerest/*.gp
 
-perf: $(EXE) $(OUT)
+perf: $(EXE)
 
-gprof: $(EXE) $(OUT)
+gprof: $(EXE)
 	
 clean:
 	rm -f $(EXE) $(OBJS) gmon.out

@@ -85,7 +85,7 @@ Player* Game::createPlayer(int id) {
 void Game::initPlayers() {
     erroAssert(Game::players != NULL, "Players not set!");
     for (int i = 0; i < Game::totalNumberOfPlayers; i++) {
-        int id = i + 1;
+        int id = i;
         players[i] = createPlayer(id);
         LEMEMLOG((long int)(&(players[i])),sizeof(Player),players[i]->getId());
     }

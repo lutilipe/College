@@ -18,7 +18,7 @@ class Player {
         int id;
 
     public:
-        Player() { name = ""; amount = 0; id = 0; };
+        Player() { name = ""; amount = 0; id = -1; };
         Player(string n, float a, int id);
         ~Player();
 
