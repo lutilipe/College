@@ -15,10 +15,11 @@ class Player {
         int bet = 0;
         Hand* hand = new Hand();
         friend class PlayerRef;
+        int id;
 
     public:
-        Player() { name = ""; amount = 0; };
-        Player(string n, float a);
+        Player() { name = ""; amount = 0; id = 0; };
+        Player(string n, float a, int id);
         ~Player();
 
         Hand* getHand() { return hand; };
@@ -35,6 +36,8 @@ class Player {
         void setBet(int b) { bet = b; };
         int getBet() { return bet; };
         void resetBet() { bet = 0; };
+
+        int getId() { return id; };
 };
 
 class PlayerRef {

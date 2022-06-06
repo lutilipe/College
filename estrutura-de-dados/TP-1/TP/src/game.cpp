@@ -1,6 +1,7 @@
 #include "game.h"
 #include "player.h"
 #include "hand.h"
+#include "memlog.h"
 
 #include <iostream>
 #include <cmath>
@@ -64,7 +65,7 @@ void Game::getPlayerRoundInfo(string* name, int* bet) {
     }
 }
 
-Player* Game::createPlayer() {
+Player* Game::createPlayer(int id) {
     int bet = 0;
     string name = "";
 
@@ -74,7 +75,7 @@ Player* Game::createPlayer() {
         throw RoundException();
     }
 
-    Player* p = new Player(name, Game::initialAmount);
+    Player* p = new Player(name, Game::initialAmount, id);
     p->setHand(&(Game::in));
 
     p->setBet(bet);
@@ -84,7 +85,9 @@ Player* Game::createPlayer() {
 void Game::initPlayers() {
     erroAssert(Game::players != NULL, "Players not set!");
     for (int i = 0; i < Game::totalNumberOfPlayers; i++) {
-        players[i] = createPlayer();
+        int id = i + 1;
+        players[i] = createPlayer(id);
+        LEMEMLOG((long int)(&(players[i])),sizeof(Player),players[i]->getId());
     }
 }
 

@@ -23,7 +23,7 @@ class Game {
         void setRound(bool isFirstRound = false);
         void initPlayers();
         void getPlayerRoundInfo(string* name, int* bet);
-        Player* createPlayer();
+        Player* createPlayer(int id);
 
         void handleRound(bool isFirstRound = false);
 

@@ -38,6 +38,8 @@ $(OBJ)/memlog.o: $(HDRS) $(SRC)/memlog.cpp
 	$(CC) $(CFLAGS) -o $(OBJ)/memlog.o $(SRC)/memlog.cpp
 
 mem: $(EXE) $(OUT)
+	$(EXE) -l -p output.txt
+
 perf: $(EXE) $(OUT)
 
 gprof: $(EXE) $(OUT)

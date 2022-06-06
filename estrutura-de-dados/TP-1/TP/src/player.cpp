@@ -8,9 +8,10 @@
 
 using namespace std;
 
-Player::Player(std::string n, float a) {
+Player::Player(std::string n, float a, int i) {
     name = n;
     amount = a;
+    id = i;
     hand = new Hand();
 }
 
