@@ -38,10 +38,13 @@ class Game {
         Hand::ComparationResult handleComparation(int first, int second);
 
         void mountPlayersInRound(bool isFirstRound = false);
+        void validateRound();
         void getAnteFromAllPlayers();
         void getBetFromPlayersInRound();
 
         void handleGameClassification();
+
+        void resetRound();
     public:
         Game(string inFile, string outFile);
         ~Game();

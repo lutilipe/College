@@ -122,6 +122,18 @@ void Game::mountPlayersInRound(bool isFirstRound) {
     }
 }
 
+void Game::validateRound() {
+    int i = 0;
+
+    for (i = 0; i < Game::totalNumberOfPlayers; i++) {
+        int totalToDiscount =
+            Game::players[i]->getAmount() - Game::players[i]->getBet() - Game::anteValue;
+        if (totalToDiscount < 0) {
+            throw RoundException();
+        }
+    }
+}
+
 void Game::getAnteFromAllPlayers() {
     int i = 0;
     for (i = 0; i < Game::totalNumberOfPlayers; i++) {
@@ -138,11 +150,20 @@ void Game::getBetFromPlayersInRound() {
     }
 }
 
+void Game::resetRound() {
+    Game::resetPot();
+    delete playersInRound;
+
+    int i = 0;
+    for (i = 0; i < Game::totalNumberOfPlayers; i++) {
+        Game::players[i]->resetBet();
+    }
+}
+
 // Cria o setup inicial do round: apostas, pingo,
 // jogadores da rodada
 void Game::setRound(bool isFirstRound) {
-    Game::resetPot();
-    delete playersInRound;
+    Game::resetRound();
     
     Game::numberOfPlayersInRound = 0;
     Game::anteValue = 0;
@@ -167,6 +188,8 @@ void Game::setRound(bool isFirstRound) {
     }
 
     Game::mountPlayersInRound(isFirstRound);
+
+    Game::validateRound();
     
     Game::getAnteFromAllPlayers();
     Game::getBetFromPlayersInRound();

@@ -34,6 +34,7 @@ class Player {
 
         void setBet(int b) { bet = b; };
         int getBet() { return bet; };
+        void resetBet() { bet = 0; };
 };
 
 class PlayerRef {
