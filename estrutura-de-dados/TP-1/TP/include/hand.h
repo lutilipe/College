@@ -40,12 +40,11 @@ class Hand {
 
         static const int HAND_SIZE = 5;
 
-        Hand();
-        Hand(Hand& h);
+        Hand(int id);
         ~Hand();
 
-        void setRank(Hand::Rank r) { rank = r; };
-        Hand::Rank getRank() { return rank; };
+        void setRank(Hand::Rank r);
+        Hand::Rank getRank();
         string getRankName();
         void rankHand();
 
@@ -72,6 +71,7 @@ class Hand {
 
         bool operator < (Hand* h);
     private:
+        int id = -1;
         Hand::Rank rank;
         Card cards[Hand::HAND_SIZE];
 

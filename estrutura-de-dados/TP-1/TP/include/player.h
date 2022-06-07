@@ -13,29 +13,29 @@ class Player {
         string name;
         int amount;
         int bet = 0;
-        Hand* hand = new Hand();
+        Hand* hand;
         friend class PlayerRef;
-        int id;
+        int id = -1;
 
     public:
-        Player() { name = ""; amount = 0; id = -1; };
+        Player() { name = ""; amount = 0; };
         Player(string n, float a, int id);
         ~Player();
 
-        Hand* getHand() { return hand; };
+        Hand* getHand();
         void setHand(ifstream *in);
 
-        string getName() { return name; };
+        string getName();
 
-        int getAmount() { return amount; };
-        void increaseAmount(int n) { amount += n; };
+        int getAmount();
+        void increaseAmount(int n);
 
         void doAnte(int ante);
         void doBet();
 
-        void setBet(int b) { bet = b; };
-        int getBet() { return bet; };
-        void resetBet() { bet = 0; };
+        void setBet(int b);
+        int getBet();
+        void resetBet();
 
         int getId() { return id; };
 };
@@ -45,8 +45,8 @@ class PlayerRef {
         Player* ref;
     public:
         PlayerRef() { ref = NULL; };
-        Player* getRef() { return ref; };
-        void setRef(Player* r) { ref = r; };
+        Player* getRef();
+        void setRef(Player* r);
 };
 
 #endif

@@ -1,45 +1,13 @@
-10 1000
-5 50
-lrbbmqbh 100 11P 3C 8C 13E 4C
-arzowkkyhid 200 12C 10P 6P 1E 7E
-scdxrjm 150 5E 6E 9O 2P 6O
-frxsjybldbef 200 11P 12O 8C 6O 1E
-rcbynecdyg 100 3O 3O 11P 4O 7E
-3 50
-lrbbmqbh 100 2C 8O 2E 7O 2C
-arzowkkyhid 200 4O 3P 9P 5E 11O
-scdxrjm 100 8O 10C 10C 4P 4P
-2 50
-lrbbmqbh 50 5C 9C 4O 7C 1P
-arzowkkyhid 150 10C 10O 12O 1P 10E
+3 1000
 4 50
-lrbbmqbh 200 10P 9E 12E 7C 5P
-arzowkkyhid 200 12P 10C 11O 5P 9C
-scdxrjm 50 8E 4O 13E 4P 8E
-frxsjybldbef 200 4C 8O 2C 13O 9O
-5 50
-lrbbmqbh 50 3O 4O 3O 4O 10E
-arzowkkyhid 150 13E 9C 12O 4P 12O
-scdxrjm 100 9O 2P 3C 7C 8E
-frxsjybldbef 100 1O 5C 6E 12C 3E
-rcbynecdyg 200 10E 8O 9C 11O 13E
-3 50
-lrbbmqbh 200 8C 10O 3O 7O 3C
-arzowkkyhid 200 9C 5O 10P 2O 13O
-scdxrjm 150 12O 9O 5C 7C 8E
-3 50
-lrbbmqbh 150 3C 6O 6C 13C 2O
-arzowkkyhid 200 5P 4O 13C 5O 10C
-scdxrjm 150 10E 5E 7P 8P 10E
-3 50
-lrbbmqbh 150 2C 13P 5P 8P 11P
-arzowkkyhid 150 3C 3P 1C 8C 12E
-scdxrjm 150 4O 3E 11O 8C 12C
-3 50
-lrbbmqbh 50 1E 12O 6P 4P 5E
-arzowkkyhid 200 2C 1P 6E 5P 7P
-scdxrjm 150 6C 2O 8O 2C 8E
-3 50
-lrbbmqbh 200 9C 10O 10C 4E 6E
-arzowkkyhid 100 11O 9E 11P 4O 4C
-scdxrjm 150 5O 11E 11E 9O 5O
+Giovanni 100 6O 3P 10E 11O 1O
+Thiago 100 12O 7P 12C 1O 13C
+Gisele 300 12E 10C 11C 9C 13E
+Wagner 50 5P 12P 5E 2E 1P
+2 50
+Wagner 200 2P 13E 9E 12C 2O
+Gisele 350 11P 9P 2E 6E 4P
+3 100
+Thiago 250 1O 4P 1E 3O 8O
+Gisele 100 9C 8C 8C 2C 6C
+Giovanni 150 4P 12P 8E 12E 2P

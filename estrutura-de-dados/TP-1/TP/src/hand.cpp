@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include "msgassert.h"
+#include "memlog.h"
 
 using namespace std;
 
@@ -14,16 +15,28 @@ Hand::~Hand() {
     delete singlesBundle;
 }
 
-Hand::Hand() {
+Hand::Hand(int i) {
+    id = i;
     rank = Hand::Rank::InvalidRank;
-    singlesBundle = new Stack<Card::CardNumber>();
-    pairsBundle = new Stack<Card::CardNumber>();
-    triplesBundle = new Stack<Card::CardNumber>();
-    quadsBundle = new Stack<Card::CardNumber>();
+    singlesBundle = new Stack<Card::CardNumber>(Hand::id);
+    pairsBundle = new Stack<Card::CardNumber>(Hand::id);
+    triplesBundle = new Stack<Card::CardNumber>(Hand::id);
+    quadsBundle = new Stack<Card::CardNumber>(Hand::id);
     for (int i = 0; i < Hand::HAND_SIZE; i++) {
         cards[i] = Card();
+        ESCREVEMEMLOG((long int)(&(cards[i])),sizeof(Card),Hand::id);
     }
 }
+
+void Hand::setRank(Hand::Rank r) {
+    ESCREVEMEMLOG((long int)(&(rank)),sizeof(Hand::Rank),Hand::id);
+    rank = r; 
+};
+
+Hand::Rank Hand::getRank() {
+    LEMEMLOG((long int)(&(rank)),sizeof(Hand::Rank),Hand::id);
+    return rank; 
+};
 
 void Hand::sortCards() {
     erroAssert(Hand::cards != NULL, "Hand cards are not setted!");
@@ -41,12 +54,12 @@ void Hand::sortCards() {
     }
 }
 
-
 void Hand::setCards(ifstream* in) {
     string tmp;
     for (int i = 0; i < Hand::HAND_SIZE; i++) {
         (*in) >> tmp;
-        Hand::cards[i] = Card(tmp);
+        Hand::cards[i] = Card(tmp, Hand::id);
+        ESCREVEMEMLOG((long int)(&(cards[i])),sizeof(Card),Hand::id);
     }
     sortCards();
 }
@@ -63,11 +76,11 @@ void Hand::print() {
 }
 
 bool Hand::operator<(Hand* h) {
-    return rank < h->getRank();
+    return Hand::getRank() < h->getRank();
 }
 
 string Hand::getRankName() {
-    bool isRankValid = Hand::rank != Hand::Rank::InvalidRank;
+    bool isRankValid = Hand::getRank() != Hand::Rank::InvalidRank;
     avisoAssert(isRankValid, "Hand rank is not setted!");
     return RankNames[Hand::rank];
 };
@@ -87,6 +100,7 @@ int Hand::getNumberOfDuplicatesAndBuildBundles() {
     // Inicializa duplicates com 0;
     for (i = 0; i < maxCardNumber; i++) {
         duplicates[i] = 0;
+        ESCREVEMEMLOG((long int)(&(duplicates[i])),sizeof(int),Hand::id);
     }
 
     // Soma 1 em cada posicacao do vetor referente
@@ -94,7 +108,9 @@ int Hand::getNumberOfDuplicatesAndBuildBundles() {
     for (i = 0; i < Hand::HAND_SIZE; i++) {
         // Como o valor das cartas comeca em 1,
         // e' necessaria a subtracao
-        duplicates[Hand::cards[i].getValue() - FACTOR_TO_PARSE_CARD] += 1;
+        int index = Hand::cards[i].getValue() - FACTOR_TO_PARSE_CARD ;
+        duplicates[index] += 1;
+        ESCREVEMEMLOG((long int)(&(duplicates[index])),sizeof(int),Hand::id);
     }
 
     // Para cada valor do vetor "duplicate",
@@ -102,6 +118,7 @@ int Hand::getNumberOfDuplicatesAndBuildBundles() {
     // as pilhas com cada repeticao
     for (i = 0; i < maxCardNumber; i++) {
         int reps = duplicates[i];
+        LEMEMLOG((long int)(&(duplicates[i])),sizeof(int),Hand::id);
         erroAssert(!(reps > 4), "Error during build repetitions!");
         if (reps == 0) continue;
         Card::CardNumber c = (Card::CardNumber) (i + FACTOR_TO_PARSE_CARD);
@@ -268,8 +285,8 @@ Hand::ComparationResult Hand::handleRepetitionsComparation(
 ) {
     Hand::ComparationResult result = Hand::ComparationResult::Tie;
 
-    Stack<Card::CardNumber>* firstRepsValues = new Stack<Card::CardNumber>();
-    Stack<Card::CardNumber>* secondRepsValues = new Stack<Card::CardNumber>();
+    Stack<Card::CardNumber>* firstRepsValues = new Stack<Card::CardNumber>(Hand::id);
+    Stack<Card::CardNumber>* secondRepsValues = new Stack<Card::CardNumber>(Hand::id);
 
     while (!firstReps->empty() && !secondReps->empty()) {
         Card::CardNumber f = firstReps->pop();

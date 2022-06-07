@@ -37,9 +37,9 @@ class Card {
         };
 
         Card() { value = Card::CardNumber::InvalidNumber; suit = Card::Suit::InvalidSuit; };
-        Card(string card);
-        Card::CardNumber getValue() { return value; };
-        Card::Suit getSuit() { return suit; };
+        Card(string card, int id);
+        Card::CardNumber getValue();
+        Card::Suit getSuit();
         void print();
         string getCard();
 
@@ -47,6 +47,7 @@ class Card {
     private:
         Card::CardNumber value;
         Card::Suit suit;
+        int id = -1;
 };
 
 #endif
