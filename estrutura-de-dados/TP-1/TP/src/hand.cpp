@@ -101,7 +101,6 @@ int Hand::getNumberOfDuplicatesAndBuildBundles() {
     // Inicializa duplicates com 0;
     for (i = 0; i < maxNumber; i++) {
         duplicates[i] = 0;
-        ESCREVEMEMLOG((long int)(&(duplicates[i])),sizeof(int),Hand::id);
     }
 
     // Soma 1 em cada posicacao do vetor referente
@@ -111,7 +110,6 @@ int Hand::getNumberOfDuplicatesAndBuildBundles() {
         // e' necessaria a subtracao
         int index = Hand::cards[i].getValue() - FACTOR_TO_PARSE_CARD ;
         duplicates[index] += 1;
-        ESCREVEMEMLOG((long int)(&(duplicates[index])),sizeof(int),Hand::id);
     }
 
     // Para cada valor do vetor "duplicate",
@@ -119,7 +117,6 @@ int Hand::getNumberOfDuplicatesAndBuildBundles() {
     // as pilhas com cada repeticao
     for (i = 0; i < maxNumber; i++) {
         int reps = duplicates[i];
-        LEMEMLOG((long int)(&(duplicates[i])),sizeof(int),Hand::id);
         erroAssert(!(reps > 4), "Error during build repetitions!");
         if (reps == 0) continue;
         Card::Number c = (Card::Number) (i + FACTOR_TO_PARSE_CARD);

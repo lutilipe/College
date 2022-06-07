@@ -29,12 +29,11 @@ Card::Card(std::string card, int i) {
 }
 
 Card::Number Card::getValue() {
-    LEMEMLOG((long int)(&(value)),sizeof(int),Card::id);
     return value; 
 };
 
 Card::Suit Card::getSuit() { 
-    LEMEMLOG((long int)(&(suit)),sizeof(string),Card::id);
+    LEMEMLOG((long int)(&(suit)),sizeof(Card::Suit),Card::id);
     return suit; 
 };
 
