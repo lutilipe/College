@@ -134,7 +134,8 @@ void Game::validateRound() {
     for (i = 0; i < Game::totalNumberOfPlayers; i++) {
         int totalToDiscount =
             Game::players[i]->getAmount() - Game::players[i]->getBet() - Game::anteValue;
-        if (totalToDiscount < 0) {
+        bool betIsFiftyMultiple = (Game::players[i]->getBet() % 50) == 0;
+        if (totalToDiscount < 0 || !betIsFiftyMultiple) {
             throw RoundException();
         }
     }
@@ -287,10 +288,25 @@ void Game::handleDraws() {
 // Formata a saida com o nome e valor recebido
 // pelos ganhadores da rodada
 void Game::handleRoundWinners() {
-    int i = 0;
+    int i = 0, j = 0;
     string rank = Game::playersInRound[0].getRef()->getHand()->getRankName();
     int totalEarnedByEachWinner = Game::pot / Game::numberOfPlayersInRound;
     out << Game::numberOfPlayersInRound << " " << totalEarnedByEachWinner << " " << rank << endl;
+
+    if (Game::numberOfPlayersInRound > 1) {
+        // Bubble Sort para ordernar os jogadores que empataram
+        // em ordem alfabetica
+        for (i = 0; i < Game::numberOfPlayersInRound - 1; i++) {
+            for (j = 0; j < Game::numberOfPlayersInRound - i - 1; j++) {
+                if (Game::playersInRound[j].getRef()->getName() > Game::playersInRound[j+1].getRef()->getName()) {
+                    Player* tmp = Game::playersInRound[j].getRef();
+                    Game::playersInRound[j].setRef(Game::playersInRound[j+1].getRef());
+                    Game::playersInRound[j+1].setRef(tmp);
+                }
+            }
+        }
+    }
+
     for (i = 0; i < Game::numberOfPlayersInRound; i++) {
         out << Game::playersInRound[i].getRef()->getName() << endl;
         Game::playersInRound[i].getRef()->increaseAmount(totalEarnedByEachWinner);
