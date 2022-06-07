@@ -1,6 +1,7 @@
 #include "hand.h"
 #include "card.h"
 #include "stack.h"
+#include "game.h"
 
 #include <iostream>
 #include "msgassert.h"
@@ -180,15 +181,16 @@ bool Hand::isStraight() {
 
     if (Hand::cards[1].getValue() == 
         Hand::cards[0].getValue() + 1 
-            &&
+        &&
         Hand::cards[2].getValue() == 
         Hand::cards[1].getValue() + 1 
-            &&
+        &&
         Hand::cards[3].getValue() == 
         Hand::cards[2].getValue() + 1 
-            &&
+        &&
         Hand::cards[4].getValue() == 
-        Hand::cards[3].getValue() + 1) {
+        Hand::cards[3].getValue() + 1) 
+    {
         isStraight = true;
     }
     /* NOTA:
@@ -215,18 +217,22 @@ bool Hand::isFlush() {
 }
 
 void Hand::rankHand() {
-    // Essa combinacao ocorre se sao passadas 5
-    // cartas iguais, tornando a mao invalida
-    const int INVALID_COMBINATION = 1;
+    enum Combinations {
+        // Essa combinacao ocorre se sao passadas 5
+        // cartas iguais, tornando a mao invalida
+        INVALID_COMBINATION = 1,
 
-    const int FOUR_OF_KIND_OR_FULL_HOUSE_COMBINATION = 2;
-    const int TWO_PAIRS_OR_THREE_OF_A_KIND_COMBINATION = 3;
-    const int ONE_PAIR_COMBINATION = 4;
-    const int OTHER_COMBINATION = 5;
+        FOUR_OF_KIND_OR_FULL_HOUSE_COMBINATION = 2,
+        TWO_PAIRS_OR_THREE_OF_A_KIND_COMBINATION = 3,
+        ONE_PAIR_COMBINATION = 4,
+        OTHER_COMBINATION = 5,
+    };
 
     int combinationId = Hand::getNumberOfDuplicatesAndBuildBundles();
 
-    erroAssert(combinationId != INVALID_COMBINATION, "Invalid combiantion -> 5 equal cards!");
+    if (combinationId == Combinations::INVALID_COMBINATION) {
+        throw RoundException();
+    }
 
     bool handIsFlush = Hand::isFlush();
     bool handIsStraight = Hand::isStraight();
@@ -257,7 +263,7 @@ void Hand::rankHand() {
     }
 
     switch(combinationId) {
-        case FOUR_OF_KIND_OR_FULL_HOUSE_COMBINATION:
+        case Combinations::FOUR_OF_KIND_OR_FULL_HOUSE_COMBINATION:
             if (Hand::hasQuadsBundle()) {
                 Hand::setRank(Hand::Rank::FourOfAKind);
             } else {
@@ -265,7 +271,7 @@ void Hand::rankHand() {
             }
         break;
 
-        case TWO_PAIRS_OR_THREE_OF_A_KIND_COMBINATION:
+        case Combinations::TWO_PAIRS_OR_THREE_OF_A_KIND_COMBINATION:
             if (Hand::hasTriplesBundle()) {
                 Hand::setRank(Hand::Rank::ThreeOfAKind);
             } else {
@@ -273,16 +279,17 @@ void Hand::rankHand() {
             }
         break;
 
-        case ONE_PAIR_COMBINATION:
+        case Combinations::ONE_PAIR_COMBINATION:
             Hand::setRank(Hand::Rank::OnePair);
             break;
 
-        case OTHER_COMBINATION:
+        case Combinations::OTHER_COMBINATION:
             Hand::setRank(Hand::Rank::HighCard);
         break;
     }
 }
 
+// Lida com as cartas repetidas nas maos de dois jogadoeres.
 Hand::ComparationResult Hand::handleRepetitionsComparation(
     Stack<Card::Number>* firstReps,
     Stack<Card::Number>* secondReps
@@ -292,6 +299,8 @@ Hand::ComparationResult Hand::handleRepetitionsComparation(
     Stack<Card::Number>* firstRepsValues = new Stack<Card::Number>(Hand::id);
     Stack<Card::Number>* secondRepsValues = new Stack<Card::Number>(Hand::id);
 
+    // Compara cada carta de cada jogador. As cartas estao ordenadas
+    // na pilha do maior para o menor
     while (!firstReps->empty() && !secondReps->empty()) {
         Card::Number f = firstReps->pop();
         Card::Number s = secondReps->pop();

@@ -125,6 +125,9 @@ void Game::mountPlayersInRound(bool isFirstRound) {
     }
 }
 
+// Checa se todos os players conseguem fazer
+// o ping + aposta (esse ultimo somente se ele
+// estiver na rodada).
 void Game::validateRound() {
     int i = 0;
 
