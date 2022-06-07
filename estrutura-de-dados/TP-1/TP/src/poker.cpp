@@ -30,10 +30,13 @@ void parseArgs(int argc,char ** argv) {
 int main(int argc, char ** argv) {
     parseArgs(argc, argv);
 
-    regMem = regMem && strlen(logFilename) > 0;
+    bool logEnabled = strlen(logFilename) > 0;
+
+    if (logEnabled) {
+        iniciaMemLog(logFilename);
+    }
 
     if (regMem) {
-        iniciaMemLog(logFilename);
         ativaMemLog();
     } else {
         desativaMemLog();
@@ -44,5 +47,5 @@ int main(int argc, char ** argv) {
 
     delete game;
 
-    return regMem ? desativaMemLog() : 0;
+    return logEnabled ? desativaMemLog() : 0;
 }

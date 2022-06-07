@@ -1,5 +1,11 @@
-1 1000
+2 1000
+5 50
+lrbbmqbh 100 11P 3C 8C 13E 4C
+arzowkkyhid 200 12C 10P 6P 1E 7E
+scdxrjm 150 5E 6E 9O 2P 6O
+frxsjybldbef 200 11P 12O 8C 6O 1E
+rcbynecdyg 100 3O 3O 11P 4O 7E
 3 50
-b 100 11P 3C 8C 13E 4C
-c 200 11P 3C 8C 13E 4C
-a 200 11P 3C 8C 13E 4C
+lrbbmqbh 100 2C 8O 2E 7O 2C
+arzowkkyhid 200 4O 3P 9P 5E 11O
+scdxrjm 100 8O 10C 10C 4P 4P

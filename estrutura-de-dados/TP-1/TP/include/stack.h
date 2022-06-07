@@ -32,6 +32,7 @@ class Stack {
 
         void push(T el);
         bool empty();
+        void clean();
         T pop();
         int size();
         T top();
@@ -43,24 +44,28 @@ template <class T> Stack<T>::Stack(int i) {
     length = 0;
 }
 
-template <class T> Stack<T>::~Stack() {
+template <class T> void Stack<T>::clean() {
     while(!empty()) {
         pop();
     }
+}
+
+template <class T> Stack<T>::~Stack() {
+    Stack::clean();
     delete head;
 }
 
 template <class T> bool Stack<T>::empty() {
-    LEMEMLOG((long int)(&(length)),sizeof(int),Stack::id);
+    //LEMEMLOG((long int)(&(length)),sizeof(int),Stack::id);
     return length == 0;
 }
 
 template <class T>void Stack<T>::push(T el) {
     StackNode<T> *n = new StackNode<T>();
-    LEMEMLOG((long int)(&(head->next)),sizeof(StackNode<T>),Stack::id);
+    //LEMEMLOG((long int)(&(head->next)),sizeof(StackNode<T>),Stack::id);
     StackNode<T> *tmp = head->next;
     n->val = el;
-    ESCREVEMEMLOG((long int)(&(head->next)),sizeof(StackNode<T>),Stack::id);
+    //ESCREVEMEMLOG((long int)(&(head->next)),sizeof(StackNode<T>),Stack::id);
     head->next = n;
     n->next = tmp;
     length++;
@@ -69,10 +74,10 @@ template <class T>void Stack<T>::push(T el) {
 template <class T>T Stack<T>::pop() {
     erroAssert(!empty(), "Stack is empty!");
 
-    LEMEMLOG((long int)(&(head->next)),sizeof(StackNode<T>),Stack::id);
+    //LEMEMLOG((long int)(&(head->next)),sizeof(StackNode<T>),Stack::id);
     StackNode<T> *tmp = head->next;
     T v = tmp->val;
-    ESCREVEMEMLOG((long int)(&(head->next)),sizeof(StackNode<T>),Stack::id);
+    //ESCREVEMEMLOG((long int)(&(head->next)),sizeof(StackNode<T>),Stack::id);
     head->next = tmp->next;
     delete tmp;
     length--;
@@ -81,12 +86,12 @@ template <class T>T Stack<T>::pop() {
 
 template <class T>T Stack<T>::top() {
     erroAssert(!empty(), "Stack is empty!");
-    LEMEMLOG((long int)(&(head->next->val)),sizeof(T),Stack::id);
+    //LEMEMLOG((long int)(&(head->next->val)),sizeof(T),Stack::id);
     return this->head->next->val;
 }
 
 template <class T> int Stack<T>::size() {
-    LEMEMLOG((long int)(&(length)),sizeof(int),Stack::id);
+    //LEMEMLOG((long int)(&(length)),sizeof(int),Stack::id);
     return length;
 }
 

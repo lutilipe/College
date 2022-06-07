@@ -90,6 +90,8 @@ class Hand {
 
         int getNumberOfDuplicatesAndBuildBundles();
 
+        void resetHand();
+
         Hand::ComparationResult compareHighCards(Hand* firstHand, Hand* secondHand);
         Hand::ComparationResult compareFourOfAKind(Hand* firstHand, Hand* secondHand);
         Hand::ComparationResult compareFullHouse(Hand* firstHand, Hand* secondHand);

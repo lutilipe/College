@@ -25,17 +25,17 @@ Hand::Hand(int i) {
     quadsBundle = new Stack<Card::Number>(Hand::id);
     for (int i = 0; i < Hand::HAND_SIZE; i++) {
         cards[i] = Card();
-        ESCREVEMEMLOG((long int)(&(cards[i])),sizeof(Card),Hand::id);
+        //ESCREVEMEMLOG((long int)(&(cards[i])),sizeof(Card),Hand::id);
     }
 }
 
 void Hand::setRank(Hand::Rank r) {
-    ESCREVEMEMLOG((long int)(&(rank)),sizeof(Hand::Rank),Hand::id);
+    //ESCREVEMEMLOG((long int)(&(rank)),sizeof(Hand::Rank),Hand::id);
     rank = r; 
 };
 
 Hand::Rank Hand::getRank() {
-    LEMEMLOG((long int)(&(rank)),sizeof(Hand::Rank),Hand::id);
+    //LEMEMLOG((long int)(&(rank)),sizeof(Hand::Rank),Hand::id);
     return rank; 
 };
 
@@ -55,12 +55,20 @@ void Hand::sortCards() {
     }
 }
 
+void Hand::resetHand() {
+    Hand::singlesBundle->clean();
+    Hand::pairsBundle->clean();
+    Hand::triplesBundle->clean();
+    Hand::quadsBundle->clean();
+}
+
 void Hand::setCards(ifstream* in) {
     string tmp;
+    Hand::resetHand();
     for (int i = 0; i < Hand::HAND_SIZE; i++) {
         (*in) >> tmp;
         Hand::cards[i] = Card(tmp, Hand::id);
-        ESCREVEMEMLOG((long int)(&(cards[i])),sizeof(Card),Hand::id);
+        //ESCREVEMEMLOG((long int)(&(cards[i])),sizeof(Card),Hand::id);
     }
     sortCards();
 }

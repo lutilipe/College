@@ -47,6 +47,8 @@ mem: $(EXE)
 perf: $(EXE)
 
 gprof: $(EXE)
+	$(EXE) -p /tmp/pokergprof.out 
+	gprof $(EXE) gmon.out > /tmp/pokergprof.txt
 	
 clean:
 	rm -f $(EXE) $(OBJS) gmon.out
