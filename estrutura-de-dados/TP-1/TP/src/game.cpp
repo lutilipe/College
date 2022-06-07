@@ -209,12 +209,12 @@ void Game::setPlayersRank() {
     }
 }
 
+// Bubble Sort
+// No entanto, esse sort coloca os maiores valores no inicio
+// Isso facilitara na remocao e para tratar empates
 void Game::sortPlayersByRank() {
     int i = 0, j = 0;
 
-    // Bubble Sort
-    // No entanto, esse sort coloca os maiores valores no inicio
-    // Isso facilitara na remocao e para tratar empates
     for (i = 0; i < Game::numberOfPlayersInRound - 1; i++) {
         for (j = 0; j < Game::numberOfPlayersInRound - i - 1; j++) {
             if (*Game::playersInRound[j].getRef()->getHand() < Game::playersInRound[j + 1].getRef()->getHand()) {
@@ -256,11 +256,9 @@ void Game::removePlayerFromRound(int idx) {
 }
 
 // Decide o(s) vencedor(es) da rodada
+// Ao final, irao sobrar apenas os vencedores
+// no vetor de jogadores da rodada
 void Game::handleDraws() {
-    if (Game::numberOfPlayersInRound > 4 || Game::numberOfPlayersInRound < 0) {
-        throw RoundException();
-    }
-
     if (Game::numberOfPlayersInRound == 1) {
         return;
     }
@@ -283,6 +281,8 @@ void Game::handleDraws() {
     }
 }
 
+// Formata a saida com o nome e valor recebido
+// pelos ganhadores da rodada
 void Game::handleRoundWinners() {
     int i = 0;
     string rank = Game::playersInRound[0].getRef()->getHand()->getRankName();

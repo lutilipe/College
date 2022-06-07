@@ -11,9 +11,8 @@ using namespace std;
 
 class Card {
     public:
-        enum CardNumber {
+        enum Number {
             InvalidNumber,
-            Ace,
             Two,
             Three,
             Four,
@@ -26,6 +25,7 @@ class Card {
             Jack,
             Queen,
             King,
+            Ace,
         };
 
         enum Suit {
@@ -36,16 +36,16 @@ class Card {
             Paus = 'P',
         };
 
-        Card() { value = Card::CardNumber::InvalidNumber; suit = Card::Suit::InvalidSuit; };
+        Card() { value = Card::Number::InvalidNumber; suit = Card::Suit::InvalidSuit; };
         Card(string card, int id);
-        Card::CardNumber getValue();
+        Card::Number getValue();
         Card::Suit getSuit();
         void print();
         string getCard();
 
         bool operator > (Card c);
     private:
-        Card::CardNumber value;
+        Card::Number value;
         Card::Suit suit;
         int id = -1;
 };

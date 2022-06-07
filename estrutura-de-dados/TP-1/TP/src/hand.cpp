@@ -18,10 +18,10 @@ Hand::~Hand() {
 Hand::Hand(int i) {
     id = i;
     rank = Hand::Rank::InvalidRank;
-    singlesBundle = new Stack<Card::CardNumber>(Hand::id);
-    pairsBundle = new Stack<Card::CardNumber>(Hand::id);
-    triplesBundle = new Stack<Card::CardNumber>(Hand::id);
-    quadsBundle = new Stack<Card::CardNumber>(Hand::id);
+    singlesBundle = new Stack<Card::Number>(Hand::id);
+    pairsBundle = new Stack<Card::Number>(Hand::id);
+    triplesBundle = new Stack<Card::Number>(Hand::id);
+    quadsBundle = new Stack<Card::Number>(Hand::id);
     for (int i = 0; i < Hand::HAND_SIZE; i++) {
         cards[i] = Card();
         ESCREVEMEMLOG((long int)(&(cards[i])),sizeof(Card),Hand::id);
@@ -92,13 +92,13 @@ string Hand::getRankName() {
 */
 int Hand::getNumberOfDuplicatesAndBuildBundles() {
     int i = 0;
-    Card::CardNumber maxCardNumber = Card::King;
+    Card::Number maxNumber = Card::Ace;
     const int FACTOR_TO_PARSE_CARD = 1;
 
-    int duplicates[maxCardNumber];
+    int duplicates[maxNumber];
 
     // Inicializa duplicates com 0;
-    for (i = 0; i < maxCardNumber; i++) {
+    for (i = 0; i < maxNumber; i++) {
         duplicates[i] = 0;
         ESCREVEMEMLOG((long int)(&(duplicates[i])),sizeof(int),Hand::id);
     }
@@ -116,12 +116,12 @@ int Hand::getNumberOfDuplicatesAndBuildBundles() {
     // Para cada valor do vetor "duplicate",
     // e' checada a repeticao para "buildar"
     // as pilhas com cada repeticao
-    for (i = 0; i < maxCardNumber; i++) {
+    for (i = 0; i < maxNumber; i++) {
         int reps = duplicates[i];
         LEMEMLOG((long int)(&(duplicates[i])),sizeof(int),Hand::id);
         erroAssert(!(reps > 4), "Error during build repetitions!");
         if (reps == 0) continue;
-        Card::CardNumber c = (Card::CardNumber) (i + FACTOR_TO_PARSE_CARD);
+        Card::Number c = (Card::Number) (i + FACTOR_TO_PARSE_CARD);
         if (reps == Hand::CardRepetition::Single) {
             Hand::singlesBundle->push((c));
             continue;
@@ -144,31 +144,34 @@ int Hand::getNumberOfDuplicatesAndBuildBundles() {
         Hand::triplesBundle->size();
 }
 
-// Ajustar mao quando o Às for a carta mais valiosa
-void Hand::adjustHighAceStraightSort() {
-    Card::CardNumber firstCard = Hand::cards[0].getValue();
-    erroAssert(firstCard == Card::Ace, "This is not an high ace hand!");
+// Ajustar mao quando o Às for a carta menos valiosa
+// Isso ocorre em sequencias Straigth do As ao 5
+void Hand::adjustLowerAceStraight() {
+    Card::Number lastCard = Hand::cards[Hand::HAND_SIZE - 1].getValue();
+    if (!(lastCard == Card::Ace)) {
+        return;
+    }
     Card tmp = Hand::cards[0];
-    Hand::cards[0] = Hand::cards[1];
-    Hand::cards[1] = Hand::cards[2];
-    Hand::cards[2] = Hand::cards[3];
-    Hand::cards[3] = Hand::cards[4];
-    Hand::cards[4] = tmp;
+    Hand::cards[0] = Hand::cards[4];
+    Hand::cards[1] = tmp;
+    Hand::cards[2] = Hand::cards[1];
+    Hand::cards[3] = Hand::cards[2];
+    Hand::cards[4] = Hand::cards[3];
 }
 
-bool Hand::isHighAceStraight() {
-    bool isHighAceStraight = false;
+bool Hand::isLowerAceStraight() {
+    bool isLowerAceStraight = false;
 
-    if (Hand::cards[0].getValue()  == Card::Ace &&
-        Hand::cards[1].getValue()  == Card::Ten &&
-        Hand::cards[2].getValue() == Card::Jack && 
-        Hand::cards[3].getValue()  == Card::Queen && 
-        Hand::cards[4].getValue() == Card::King)
+    if (Hand::cards[0].getValue()  == Card::Two &&
+        Hand::cards[1].getValue() == Card::Three && 
+        Hand::cards[2].getValue()  == Card::Four && 
+        Hand::cards[3].getValue() == Card::Five &&
+        Hand::cards[4].getValue()  == Card::Ace)
     {
-        isHighAceStraight = true;
+        isLowerAceStraight = true;
     }
 
-    return isHighAceStraight;
+    return isLowerAceStraight;
 }
 
 bool Hand::isStraight() {
@@ -190,9 +193,10 @@ bool Hand::isStraight() {
     }
     /* NOTA:
     *  O rank straight pode ocorrer com a
-    *  carta Às (Ace) sendo a mais valiosa
+    *  carta Às (Ace) sendo a menos valiosa.
+    *  Ex: As, 2, 3, 4, 5
     */
-    else if (Hand::isHighAceStraight()) {
+    else if (Hand::isLowerAceStraight()) {
         isStraight = true;
     }
       
@@ -229,21 +233,21 @@ void Hand::rankHand() {
 
     if (handIsStraight) {
         if (handIsFlush) {
-            if (cards[0].getValue() == Card::CardNumber::Ace &&
-                cards[Hand::HAND_SIZE - 1].getValue() == Card::CardNumber::King) {
-                // Nesse caso, o As esta na primeira posicao. No entanto
-                // ele e' a carta mais valiosa nessa combinacao.
-                Hand::adjustHighAceStraightSort();
+            if (cards[0].getValue() == Card::Number::Ten &&
+                cards[Hand::HAND_SIZE - 1].getValue() == Card::Number::Ace) {
                 Hand::setRank(Hand::Rank::RoyalStraightFlush);
                 return;
             } else {
                 Hand::setRank(Hand::Rank::StraightFlush);
+                if (Hand::isLowerAceStraight()) {
+                    Hand::adjustLowerAceStraight();
+                }
                 return;
             }
         } else {
             Hand::setRank(Hand::Rank::Straight);
-            if (Hand::isHighAceStraight()) {
-                Hand::adjustHighAceStraightSort();
+            if (Hand::isLowerAceStraight()) {
+                Hand::adjustLowerAceStraight();
             }
             return;
         }
@@ -280,17 +284,17 @@ void Hand::rankHand() {
 }
 
 Hand::ComparationResult Hand::handleRepetitionsComparation(
-    Stack<Card::CardNumber>* firstReps,
-    Stack<Card::CardNumber>* secondReps
+    Stack<Card::Number>* firstReps,
+    Stack<Card::Number>* secondReps
 ) {
     Hand::ComparationResult result = Hand::ComparationResult::Tie;
 
-    Stack<Card::CardNumber>* firstRepsValues = new Stack<Card::CardNumber>(Hand::id);
-    Stack<Card::CardNumber>* secondRepsValues = new Stack<Card::CardNumber>(Hand::id);
+    Stack<Card::Number>* firstRepsValues = new Stack<Card::Number>(Hand::id);
+    Stack<Card::Number>* secondRepsValues = new Stack<Card::Number>(Hand::id);
 
     while (!firstReps->empty() && !secondReps->empty()) {
-        Card::CardNumber f = firstReps->pop();
-        Card::CardNumber s = secondReps->pop();
+        Card::Number f = firstReps->pop();
+        Card::Number s = secondReps->pop();
 
         firstRepsValues->push(f);
         secondRepsValues->push(s);
@@ -304,6 +308,7 @@ Hand::ComparationResult Hand::handleRepetitionsComparation(
         }
     }
 
+    // Repoe na pilha os valores removidos
     while (!firstRepsValues->empty()) {
         firstReps->push(firstRepsValues->pop());
     }

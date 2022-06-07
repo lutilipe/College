@@ -10,18 +10,25 @@ Card::Card(std::string card, int i) {
     id = i;
     
     string subHand;
-    Card::CardNumber v = Card::CardNumber::InvalidNumber;
+    Card::Number v = Card::Number::InvalidNumber;
 
     erroAssert((card != "" && card != " "), "Invalid card!");
 
     Card::suit = (Card::Suit) card[card.size() - 1];
 
     card.pop_back();
-    v = (Card::CardNumber) stoi(card);
+    v = (Card::Number) stoi(card);
+
+    // Ajustar para o As para ser carta mais valiosa
+    if (v == 1) {
+        v = Card::Number::Ace;
+    } else {
+        v = (Card::Number) (((int) v) - 1);
+    }
     Card::value = v;
 }
 
-Card::CardNumber Card::getValue() {
+Card::Number Card::getValue() {
     LEMEMLOG((long int)(&(value)),sizeof(int),Card::id);
     return value; 
 };

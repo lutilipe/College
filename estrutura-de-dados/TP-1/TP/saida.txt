@@ -1,11 +1,5 @@
-1 750 S
-Gisele
-1 750 OP
-Wagner
-1 900 F
-Gisele
+1 400 RSF
+Giovanni
 ####
-Gisele 1700
-Wagner 1300
-Giovanni 550
-Thiago 450
+Giovanni 1250
+John 750

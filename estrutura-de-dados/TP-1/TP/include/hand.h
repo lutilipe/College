@@ -52,15 +52,15 @@ class Hand {
         void sortCards();
         void print();
 
-        Stack<Card::CardNumber>* getSinglesBundle() { return singlesBundle; };
-        Stack<Card::CardNumber>* getPairsBundle() { return pairsBundle; };
-        Stack<Card::CardNumber>* getTriplesBundle() { return triplesBundle; };
-        Stack<Card::CardNumber>* getQuadsBundle() { return quadsBundle; };
+        Stack<Card::Number>* getSinglesBundle() { return singlesBundle; };
+        Stack<Card::Number>* getPairsBundle() { return pairsBundle; };
+        Stack<Card::Number>* getTriplesBundle() { return triplesBundle; };
+        Stack<Card::Number>* getQuadsBundle() { return quadsBundle; };
 
-        void setSinglesBundle(Stack<Card::CardNumber>* c) { singlesBundle = c; };
-        void setPairsBundle(Stack<Card::CardNumber>* c) { pairsBundle = c; };
-        void setTriplesBundle(Stack<Card::CardNumber>* c) { triplesBundle = c; };
-        void setQuadsBundle(Stack<Card::CardNumber>* c) { quadsBundle = c; };
+        void setSinglesBundle(Stack<Card::Number>* c) { singlesBundle = c; };
+        void setPairsBundle(Stack<Card::Number>* c) { pairsBundle = c; };
+        void setTriplesBundle(Stack<Card::Number>* c) { triplesBundle = c; };
+        void setQuadsBundle(Stack<Card::Number>* c) { quadsBundle = c; };
 
         bool hasSinglesBundle() { return singlesBundle != NULL && !singlesBundle->empty(); };
         bool hasPairsBundle() { return pairsBundle != NULL && !pairsBundle->empty(); };
@@ -76,17 +76,17 @@ class Hand {
         Card cards[Hand::HAND_SIZE];
 
         // Utilizados para comparar maos com mesmo rank
-        Stack<Card::CardNumber>* singlesBundle;
-        Stack<Card::CardNumber>* pairsBundle;
-        Stack<Card::CardNumber>* triplesBundle;
-        Stack<Card::CardNumber>* quadsBundle;
+        Stack<Card::Number>* singlesBundle;
+        Stack<Card::Number>* pairsBundle;
+        Stack<Card::Number>* triplesBundle;
+        Stack<Card::Number>* quadsBundle;
 
         bool isRoyalStraighFlush();
         bool isStraighFlush();
         bool isFlush();
         bool isStraight();
-        bool isHighAceStraight();
-        void adjustHighAceStraightSort();
+        bool isLowerAceStraight();
+        void adjustLowerAceStraight();
 
         int getNumberOfDuplicatesAndBuildBundles();
 
@@ -103,8 +103,8 @@ class Hand {
         );
 
         Hand::ComparationResult handleRepetitionsComparation(
-            Stack<Card::CardNumber>* firstReps,
-            Stack<Card::CardNumber>* secondReps
+            Stack<Card::Number>* firstReps,
+            Stack<Card::Number>* secondReps
         );
 
         const string RankNames[11] = {
