@@ -87,7 +87,7 @@ void Game::initPlayers() {
     for (int i = 0; i < Game::totalNumberOfPlayers; i++) {
         int id = i;
         players[i] = createPlayer(id);
-        //ESCREVEMEMLOG((long int)(&(players[i])),sizeof(Player),players[i]->getId());
+        ESCREVEMEMLOG((long int)(&(players[i])),sizeof(Player),players[i]->getId());
     }
 }
 
@@ -160,7 +160,6 @@ void Game::getBetFromPlayersInRound() {
 void Game::resetRound() {
     Game::resetPot();
     delete playersInRound;
-
     int i = 0;
     for (i = 0; i < Game::totalNumberOfPlayers; i++) {
         Game::players[i]->resetBet();
@@ -315,11 +314,11 @@ void Game::handleRoundWinners() {
 
 void swap(Player *& a, Player *& b) {
     Player* c = a;
-    //LEMEMLOG((long int)(&(a)),sizeof(Player),a->getId());
+    LEMEMLOG((long int)(&(a)),sizeof(Player),a->getId());
     a = b;
-    //ESCREVEMEMLOG((long int)(&(a)),sizeof(Player),a->getId());
+    ESCREVEMEMLOG((long int)(&(a)),sizeof(Player),a->getId());
     b = c;
-    //ESCREVEMEMLOG((long int)(&(b)),sizeof(Player),b->getId());
+    ESCREVEMEMLOG((long int)(&(b)),sizeof(Player),b->getId());
 }
 
 void Game::handleGameClassification() {

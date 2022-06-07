@@ -33,7 +33,7 @@ Card::Number Card::getValue() {
 };
 
 Card::Suit Card::getSuit() { 
-    //LEMEMLOG((long int)(&(suit)),sizeof(Card::Suit),Card::id);
+    LEMEMLOG((long int)(&(suit)),sizeof(Card::Suit),Card::id);
     return suit; 
 };
 

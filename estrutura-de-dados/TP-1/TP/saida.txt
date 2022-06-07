@@ -1,10 +1,10 @@
-1 1000 OP
-scdxrjm
-1 650 TK
-lrbbmqbh
+1 600 OP
+c
+1 550 TK
+a
+1 350 TK
+c
 ####
-scdxrjm 1650
-lrbbmqbh 1350
-rcbynecdyg 800
-frxsjybldbef 700
-arzowkkyhid 500
+c 1400
+a 1200
+b 400
