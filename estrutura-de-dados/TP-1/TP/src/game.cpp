@@ -132,10 +132,11 @@ void Game::validateRound() {
     int i = 0;
 
     for (i = 0; i < Game::totalNumberOfPlayers; i++) {
+        int bet = Game::players[i]->getBet();
         int totalToDiscount =
-            Game::players[i]->getAmount() - Game::players[i]->getBet() - Game::anteValue;
-        bool betIsFiftyMultiple = (Game::players[i]->getBet() % 50) == 0;
-        if (totalToDiscount < 0 || !betIsFiftyMultiple) {
+            Game::players[i]->getAmount() - bet - Game::anteValue;
+        bool betIsFiftyMultiple = (bet % 50) == 0;
+        if (totalToDiscount < 0 || !betIsFiftyMultiple || bet == 0) {
             throw RoundException();
         }
     }
