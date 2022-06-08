@@ -45,6 +45,7 @@ mem: $(EXE)
 	gnuplot /tmp/pokerest/*.gp
 
 perf: $(EXE)
+	$(EXE) -p /tmp/poker1m.out
 
 gprof: $(EXE)
 	$(EXE) -p /tmp/pokergprof.out 

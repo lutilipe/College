@@ -91,6 +91,15 @@ void Game::initPlayers() {
     }
 }
 
+void handleInvalid(ifstream* in) {
+    int c = Hand::HAND_SIZE;
+    string tmp;
+    while (c>0) {
+        (*in) >> tmp;
+        c--;
+    }
+}
+
 void Game::mountPlayersInRound(bool isFirstRound) {
     Game::playersInRound = createPlayersInRound(Game::numberOfPlayersInRound);
     if (isFirstRound) {
@@ -101,6 +110,7 @@ void Game::mountPlayersInRound(bool isFirstRound) {
     } else {
         int i = 0, j = 0, idx = -1;
         bool found = false;
+        bool isValidRound = true;
         for (i = 0; i < Game::numberOfPlayersInRound; i++) {
             found = false;
             idx = -1;
@@ -108,19 +118,28 @@ void Game::mountPlayersInRound(bool isFirstRound) {
             string playerName = "";
             int bet = 0;
             getPlayerRoundInfo(&playerName, &bet);
-            while (!found && j < Game::totalNumberOfPlayers) {
-                if (playerName == players[j]->getName()) {
-                    found = true;
-                    idx = j;
+            if (isValidRound) {
+                while (!found && j < Game::totalNumberOfPlayers) {
+                    if (playerName == players[j]->getName()) {
+                        found = true;
+                        idx = j;
+                    }
+                    j++;
                 }
-                j++;
             }
-            if (idx < 0) {
-                throw RoundException();
+
+            bool betIsFiftyMultiple = (bet % 50) == 0;
+            if (idx < 0 || bet <= 0 || !betIsFiftyMultiple) {
+                isValidRound = false;
+                handleInvalid(&(Game::in));
+                continue;
             }
             Game::playersInRound[i].setRef(Game::players[idx]);
             Game::playersInRound[i].getRef()->setBet(bet);
             Game::playersInRound[i].getRef()->setHand(&(Game::in));
+        }
+        if (!isValidRound) {
+            throw RoundException();
         }
     }
 }
@@ -135,8 +154,7 @@ void Game::validateRound() {
         int bet = Game::players[i]->getBet();
         int totalToDiscount =
             Game::players[i]->getAmount() - bet - Game::anteValue;
-        bool betIsFiftyMultiple = (bet % 50) == 0;
-        if (totalToDiscount < 0 || !betIsFiftyMultiple || bet == 0) {
+        if (totalToDiscount < 0) {
             throw RoundException();
         }
     }
@@ -160,7 +178,6 @@ void Game::getBetFromPlayersInRound() {
 
 void Game::resetRound() {
     Game::resetPot();
-    delete playersInRound;
     int i = 0;
     for (i = 0; i < Game::totalNumberOfPlayers; i++) {
         Game::players[i]->resetBet();
