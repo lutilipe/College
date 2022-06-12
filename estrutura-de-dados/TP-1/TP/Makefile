@@ -6,7 +6,7 @@ INC = include
 BIN = bin
 OBJS = $(OBJ)/poker.o $(OBJ)/player.o $(OBJ)/card.o $(OBJ)/game.o $(OBJ)/memlog.o $(OBJ)/hand.o
 HDRS = $(INC)/player.h $(INC)/hand.h $(INC)/card.h $(INC)/game.h $(INC)/memlog.h $(INC)/stack.h $(INC)/msgassert.h
-CFLAGS = -pg -Wall -c -I$(INC)
+CFLAGS = -pg -Wall -c -I$(INC) -O3
 ANALISAMEM = ../analisamem/bin/analisamem
 
 EXE = $(BIN)/tp1
@@ -45,7 +45,7 @@ mem: $(EXE)
 	gnuplot /tmp/pokerest/*.gp
 
 perf: $(EXE)
-	$(EXE) -p /tmp/poker1m.out
+	$(EXE) -p /tmp/poker10m.out
 
 gprof: $(EXE)
 	$(EXE) -p /tmp/pokergprof.out 

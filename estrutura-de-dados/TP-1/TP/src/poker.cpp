@@ -47,5 +47,5 @@ int main(int argc, char ** argv) {
 
     delete game;
 
-    return logEnabled ? desativaMemLog() : 0;
+    return logEnabled ? finalizaMemLog() : 0;
 }

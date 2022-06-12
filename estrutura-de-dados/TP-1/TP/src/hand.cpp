@@ -125,7 +125,7 @@ int Hand::getNumberOfDuplicatesAndBuildBundles() {
     // as pilhas com cada repeticao
     for (i = 0; i < maxNumber; i++) {
         int reps = duplicates[i];
-        erroAssert(!(reps > 4), "Error during build repetitions!");
+        erroAssert(!(reps > 4), "Error during build repetitions. 5 cards of same value!");
         if (reps == 0) continue;
         Card::Number c = (Card::Number) (i + FACTOR_TO_PARSE_CARD);
         if (reps == Hand::CardRepetition::Single) {
