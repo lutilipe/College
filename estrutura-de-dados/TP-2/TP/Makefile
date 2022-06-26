@@ -5,7 +5,7 @@ OBJ = obj
 INC = include
 BIN = bin
 OBJS = $(OBJ)/analyzer.o $(OBJ)/word.o
-HDRS = $(INC)/memlog.h $(INC)/utils.h $(INC)/msgassert.h ${INC}/word.h ${INC}/sort.h
+HDRS = $(INC)/memlog.h $(INC)/utils.h $(INC)/msgassert.h $(INC)/word.h $(INC)/wordVector.h
 CFLAGS = -pg -Wall -c -I$(INC) -O3
 ANALISAMEM = ../analisamem/bin/analisamem
 
@@ -14,7 +14,7 @@ EXE = $(BIN)/tp2
 all: run
 
 run: $(EXE) $(OUT)
-	$(EXE) -I entrada.txt -o saida.txt -m 3
+	$(EXE) -I entrada.txt -o saida.txt -m 5 -S 3
 
 $(EXE): $(OBJS)
 	$(CC) -pg -o $(EXE) $(OBJS) $(LIBS)
