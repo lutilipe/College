@@ -16,12 +16,16 @@ class Word {
         Word(string v);
         int getReps() { return reps; };
         Letter* getVal() { return val; };
+        size_t getSize() { return size; };
+
+        string toString();
 
         void resetReps() { reps = 0; };
+        void increaseReps() { Word::reps++; }
 
         bool operator>(Word& w);
-        void operator++() { reps++; }
         bool operator==(Word& w);
+        void operator=(Word& w);
 
         void adaptToNewAlphabeticOrder(AlphabeticOrder& order);
 };

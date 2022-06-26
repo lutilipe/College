@@ -42,8 +42,16 @@ int getInputNumber(char* optarg) {
     }
 }
 
-template<class T>
-void handleInput(ifstream* in, WordVector<T>* v, string* newOrder) {
+void addWordToVector(WordVector* v, Word& word) {
+    int index = v->findIndex(word);
+    if (index >= 0) {
+        (*v)[index].increaseReps();
+        return;
+    }
+    v->push(word);
+}
+
+void handleInput(ifstream* in, WordVector* v, string* newOrder) {
     string currCommand = "";
     string next = "";
 
@@ -60,20 +68,10 @@ void handleInput(ifstream* in, WordVector<T>* v, string* newOrder) {
             (*newOrder) += tmp;
         } else {
             removeUnexpectedChars(&tmp);
-            cout << tmp << endl;
             Word w(tmp);
+            addWordToVector(v, w);
         }
     }
-}
-
-template<class T>
-void addWordToVector(WordVector<T>* v, T word) {
-    int index = v->findIndex(word);
-    if (index >= 0) {
-        v[index] = v[index] + 1;
-        return;
-    }
-    v->push(word);
 }
 
 void parse_args(int argc,char ** argv) {
@@ -121,11 +119,15 @@ int main(int argc, char ** argv) {
     ifstream in = ifstream(inputFile);
     erroAssert(!in.fail(), "File not found");
 
-    WordVector<Word>* v = new WordVector<Word>(medianSize, minPartSize);
+    WordVector* v = new WordVector(medianSize, minPartSize);
     string newOrder = "";
     handleInput(&in, v, &newOrder);
 
     AlphabeticOrder order(newOrder);
+
+    for (int i = 0; i < v->getSize(); i++) {
+        cout << (*v)[i].toString() << " - " << (*v)[i].getReps() << endl;
+    }
 
     delete v;
 

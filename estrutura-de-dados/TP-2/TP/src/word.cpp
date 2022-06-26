@@ -25,25 +25,40 @@ void Word::adaptToNewAlphabeticOrder(AlphabeticOrder& order) {
 }
 
 bool Word::operator==(Word& w) {
-    int i = 0;
-    while (&(Word::val[i]) != nullptr) {
+    size_t i = 0;
+    if (Word::size != w.getSize()) {
+        return false;
+    }
+    for (i = 0; i < Word::size; i++) {
         if (Word::val[i].getVal() != w.getVal()[i].getVal()) {
             return false;
         }
-        i++;
     }
     return true;
 }
 
 bool Word::operator>(Word& w) {
-    int i = 0;
-    while (&(Word::val[i]) != nullptr) {
+    size_t i = 0;
+    for (i = 0; i < Word::size; i++) {
         if (!(Word::val[i].getIndex() == w.getVal()[i].getIndex())) {
             break;
         }
- 
-        i++;
     }
  
     return Word::val[i].getIndex() - w.getVal()[i].getIndex() > 0;
+}
+
+void Word::operator=(Word& w) {
+    Word::reps = w.reps;
+    Word::val = w.val;
+    Word::size = w.size;
+}
+
+string Word::toString() {
+    string tmp = "";
+    size_t i = 0;
+    for (i = 0; i < Word::size; i++) {
+        tmp += Word::val[i].getVal();
+    }
+    return tmp;
 }
