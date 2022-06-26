@@ -16,3 +16,15 @@ string stringToLowerCase(string& in) {
     }
     return in;
 }
+
+void removeUnexpectedChars(string* s) {
+    char last = (*s)[s->size() - 1];
+    if (last == ',' ||
+        last == '.' ||
+        last == '!' ||
+        last == '?' ||
+        last == ':' ||
+        last == ';' ||
+        last == '_'
+    ) s->pop_back();
+}

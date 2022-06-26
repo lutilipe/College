@@ -4,6 +4,7 @@
 #include "wordVector.h"
 #include "alphabeticOrder.h"
 #include "utils.h"
+#include <fstream>
 
 using namespace std;
 
@@ -14,15 +15,18 @@ int regMem = 0,
     minPartSize = 1,
     medianSize = 1;
 
+const string ORDER_COMMAND = "#ORDEM";
+const string TEXT_COMMAND = "#TEXTO";
+
 void uso() {
-    fprintf(stderr,"Analyzer\n");
-    fprintf(stderr,"\t-h \t(comandos disponiveis)\n");
-    fprintf(stderr,"\t-l \t(registrar acessos a memoria)\n");
-    fprintf(stderr,"\t-p <arq>\t(arquivo de entrada da analise de memoria)\n");
-    fprintf(stderr,"\t-i|I <arq>\t(arquivo de entrada)\n");
-    fprintf(stderr,"\t-o|O <arq>\t(arquivo de saida)\n");
-    fprintf(stderr,"\t-m|M \t(numero da mediana)\n");
-    fprintf(stderr,"\t-s|S \t(tamanho minimo da particao para usar o QuickSort)\n");
+    cout << "Analyzer\n" << endl;
+    cout << "\t-h \t(comandos disponiveis)\n" << endl;
+    cout << "\t-l \t(registrar acessos a memoria)\n" << endl;
+    cout << "\t-p <arq>\t(arquivo de entrada da analise de memoria)\n" << endl;
+    cout << "\t-i|I <arq>\t(arquivo de entrada)\n" << endl;
+    cout << "\t-o|O <arq>\t(arquivo de saida)\n" << endl;
+    cout << "\t-m|M \t(numero da mediana)\n" << endl;
+    cout << "\t-s|S \t(tamanho minimo da particao para usar o QuickSort)\n" << endl;
 }
 
 int parseNullish(int in) {
@@ -35,6 +39,39 @@ int getInputNumber(char* optarg) {
     } catch (...) {
         return 1;
     }
+}
+
+template<class T>
+void handleInput(ifstream* in, WordVector<T>* v, string* newOrder) {
+    string currCommand = "";
+    string next = "";
+
+    while ((*in).peek() != EOF) {
+        (*in) >> next;
+        if (next[0] == '#') {
+            currCommand = next;
+            continue;
+        }
+
+        string tmp = stringToLowerCase(next);
+
+        if (currCommand == ORDER_COMMAND) {
+            (*newOrder) += tmp;
+        } else {
+            removeUnexpectedChars(&tmp);
+            cout << tmp << endl;
+        }
+    }
+}
+
+template<class T>
+void addWordToVector(WordVector<T>* v, T word) {
+    int index = v->findIndex(word);
+    if (index >= 0) {
+        v[index] = v[index] + 1;
+        return;
+    }
+    v->push(word);
 }
 
 void parse_args(int argc,char ** argv) {
@@ -79,20 +116,18 @@ void parse_args(int argc,char ** argv) {
 int main(int argc, char ** argv) {
     parse_args(argc, argv);
 
-    string newOrder = "ZYWXVUTSRQPONMLKJIHGFEDCBA";
+    ifstream in = ifstream(inputFile);
+    erroAssert(!in.fail(), "File not found");
+
+    WordVector<int>* v = new WordVector<int>(medianSize, minPartSize);
+    string newOrder = "";
+    handleInput(&in, v, &newOrder);
 
     AlphabeticOrder order(newOrder);
 
-    WordVector<int>* v = new WordVector<int>(medianSize, minPartSize);
-    v->push(2);
-    v->push(4);
-    v->push(1);
-    v->push(5);
-    v->push(3);
-
-    v->sort();
-
     delete v;
+
+    in.close();
 
     return 0;
 }

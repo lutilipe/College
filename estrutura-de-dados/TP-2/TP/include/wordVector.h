@@ -34,12 +34,13 @@ public:
     bool isEmpty();
     void push(T value); 
     T pop();
+    int findIndex(T el);
 
     void print();
 
     void sort();
 
-    T& operator[](int index);  
+    T operator[](int index);  
     void clear();
 private:
     int length; // Numero total de elementos no vetor
@@ -87,6 +88,19 @@ void WordVector<T>::push(T v) {
 }
 
 template<class T>
+int WordVector<T>::findIndex(T el) {
+    int i = 0;
+    int index = -1;
+    for (i = 0; i < WordVector::length; i++) {
+        if (WordVector::buffer[i] == el) {
+            index = i;
+            break;
+        }
+    }
+    return index;
+}
+
+template<class T>
 T WordVector<T>::pop() {
     erroAssert(!isEmpty(), "Trying to pop on empty WordVector!");
     T tmp = WordVector::buffer[WordVector::length];
@@ -100,7 +114,7 @@ int WordVector<T>::getSize() {
 }
 
 template<class T>
-T& WordVector<T>::operator[](int index) {
+T WordVector<T>::operator[](int index) {
     return WordVector::buffer[index];
 }  
 

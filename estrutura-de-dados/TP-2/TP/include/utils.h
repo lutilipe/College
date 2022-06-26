@@ -7,5 +7,6 @@ using namespace std;
 
 char charToLowerCase(char in);
 string stringToLowerCase(string& in);
+void removeUnexpectedChars(string* s);
 
 #endif
