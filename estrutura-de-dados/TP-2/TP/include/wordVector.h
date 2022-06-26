@@ -5,6 +5,7 @@
 #include "word.h"
 #include "alphabeticOrder.h"
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -37,7 +38,7 @@ public:
     Word pop();
     int findIndex(Word el);
 
-    void print();
+    void print(ofstream* out);
 
     void sort();
 
@@ -219,10 +220,11 @@ void WordVector::parseWords(AlphabeticOrder& order) {
     }
 }
 
-void WordVector::print() {
+void WordVector::print(ofstream* out) {
     for (int i = 0; i < length; i++) {
-        //cout << buffer[i] << endl;
+        (*out) << WordVector::buffer[i].toString() << ' ' << WordVector::buffer[i].getReps() << endl;
     }
+    (*out) << "#FIM" << endl;
 }
 
 WordVector::~WordVector() {

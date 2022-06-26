@@ -119,19 +119,20 @@ int main(int argc, char ** argv) {
     ifstream in = ifstream(inputFile);
     erroAssert(!in.fail(), "File not found");
 
+    ofstream out = ofstream(outputFile);
+
     WordVector* v = new WordVector(medianSize, minPartSize);
     string newOrder = "";
     handleInput(&in, v, &newOrder);
 
     AlphabeticOrder order(newOrder);
 
-    for (int i = 0; i < v->getSize(); i++) {
-        cout << (*v)[i].toString() << " - " << (*v)[i].getReps() << endl;
-    }
+    v->print(&out);
 
     delete v;
 
     in.close();
+    out.close();
 
     return 0;
 }
