@@ -1,10 +1,9 @@
 #include <iostream>
-#include <stdlib.h>
 #include <getopt.h>
-#include <string.h>
 #include "msgassert.h"
-#include "utils.h"
 #include "wordVector.h"
+#include "alphabeticOrder.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -79,6 +78,11 @@ void parse_args(int argc,char ** argv) {
 
 int main(int argc, char ** argv) {
     parse_args(argc, argv);
+
+    string newOrder = "ZYWXVUTSRQPONMLKJIHGFEDCBA";
+
+    AlphabeticOrder order(newOrder);
+
     WordVector<int>* v = new WordVector<int>(medianSize, minPartSize);
     v->push(2);
     v->push(4);
@@ -87,8 +91,6 @@ int main(int argc, char ** argv) {
     v->push(3);
 
     v->sort();
-
-    v->print();
 
     delete v;
 

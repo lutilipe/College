@@ -4,8 +4,8 @@ SRC = src
 OBJ = obj
 INC = include
 BIN = bin
-OBJS = $(OBJ)/analyzer.o $(OBJ)/word.o
-HDRS = $(INC)/memlog.h $(INC)/utils.h $(INC)/msgassert.h $(INC)/word.h $(INC)/wordVector.h
+OBJS = $(OBJ)/analyzer.o $(OBJ)/word.o $(OBJ)/alphabeticOrder.o $(OBJ)/utils.o
+HDRS = $(INC)/memlog.h $(INC)/utils.h $(INC)/msgassert.h $(INC)/word.h $(INC)/wordVector.h $(INC)/alphabeticOrder.h
 CFLAGS = -pg -Wall -c -I$(INC) -O3
 ANALISAMEM = ../analisamem/bin/analisamem
 
@@ -22,11 +22,17 @@ $(EXE): $(OBJS)
 $(OBJ)/analyzer.o: $(HDRS) $(SRC)/analyzer.cpp
 	$(CC) $(CFLAGS) -o $(OBJ)/analyzer.o $(SRC)/analyzer.cpp 
 
+$(OBJ)/alphabeticOrder.o: $(HDRS) $(SRC)/alphabeticOrder.cpp
+	$(CC) $(CFLAGS) -o $(OBJ)/alphabeticOrder.o $(SRC)/alphabeticOrder.cpp
+
 $(OBJ)/word.o: $(HDRS) $(SRC)/word.cpp
 	$(CC) $(CFLAGS) -o $(OBJ)/word.o $(SRC)/word.cpp
 
 $(OBJ)/memlog.o: $(HDRS) $(SRC)/memlog.cpp
 	$(CC) $(CFLAGS) -o $(OBJ)/memlog.o $(SRC)/memlog.cpp
+
+$(OBJ)/utils.o: $(HDRS) $(SRC)/utils.cpp
+	$(CC) $(CFLAGS) -o $(OBJ)/utils.o $(SRC)/utils.cpp
 
 mem: $(EXE)
 

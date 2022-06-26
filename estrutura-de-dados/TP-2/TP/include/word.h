@@ -14,8 +14,13 @@ class Word {
         int getReps() { return reps; };
         string getVal() { return val; };
 
-        void increaseRep() { reps++; };
         void resetReps() { reps = 0; };
+
+        bool operator>(Word& w);
+        void operator++() { reps++; }
+        bool operator==(Word& w) {
+            return Word::val == w.val;
+        }
 };
 
 #endif
