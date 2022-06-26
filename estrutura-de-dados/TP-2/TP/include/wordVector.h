@@ -2,6 +2,8 @@
 #define WORD_VECTOR_H
 
 #include "msgassert.h"
+#include "word.h"
+#include "alphabeticOrder.h"
 #include <iostream>
 
 using namespace std;
@@ -39,6 +41,8 @@ public:
     void print();
 
     void sort();
+
+    void parseWords(AlphabeticOrder& order);
 
     T operator[](int index);  
     void clear();
@@ -219,6 +223,14 @@ template<class T>
 void WordVector<T>::sort() {
     int start = 0;
     quicksort(WordVector::buffer, start, WordVector::length-1);
+}
+
+template<class T>
+void WordVector<T>::parseWords(AlphabeticOrder& order) {
+    int i = 0;
+    for (i = 0; i < length; i++) {
+        WordVector::buffer[i].adaptToNewAlphabeticOrder(order);
+    }
 }
 
 template<class T>

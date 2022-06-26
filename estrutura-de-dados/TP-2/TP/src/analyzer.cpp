@@ -3,6 +3,7 @@
 #include "msgassert.h"
 #include "wordVector.h"
 #include "alphabeticOrder.h"
+#include "word.h"
 #include "utils.h"
 #include <fstream>
 
@@ -18,7 +19,7 @@ int regMem = 0,
 const string ORDER_COMMAND = "#ORDEM";
 const string TEXT_COMMAND = "#TEXTO";
 
-void uso() {
+void usage() {
     cout << "Analyzer\n" << endl;
     cout << "\t-h \t(comandos disponiveis)\n" << endl;
     cout << "\t-l \t(registrar acessos a memoria)\n" << endl;
@@ -60,6 +61,7 @@ void handleInput(ifstream* in, WordVector<T>* v, string* newOrder) {
         } else {
             removeUnexpectedChars(&tmp);
             cout << tmp << endl;
+            Word w(tmp);
         }
     }
 }
@@ -99,10 +101,10 @@ void parse_args(int argc,char ** argv) {
                 medianSize = getInputNumber(optarg);
                 break;
             case 'h':
-                uso();
+                usage();
                 exit(1);
             default:
-                uso();
+                usage();
                 exit(1);
         }
     }
@@ -119,7 +121,7 @@ int main(int argc, char ** argv) {
     ifstream in = ifstream(inputFile);
     erroAssert(!in.fail(), "File not found");
 
-    WordVector<int>* v = new WordVector<int>(medianSize, minPartSize);
+    WordVector<Word>* v = new WordVector<Word>(medianSize, minPartSize);
     string newOrder = "";
     handleInput(&in, v, &newOrder);
 

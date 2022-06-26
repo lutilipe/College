@@ -2,25 +2,28 @@
 #define WORD_H
 
 #include <iostream>
+#include "alphabeticOrder.h"
 
 using namespace std;
 
 class Word {
     private:
-        string val;
+        Letter* val;
         int reps;
+        size_t size;
     public:
-        Word(string v): val(v), reps(0) {};
+        Word(): val(0), reps(0), size(0) {};
+        Word(string v);
         int getReps() { return reps; };
-        string getVal() { return val; };
+        Letter* getVal() { return val; };
 
         void resetReps() { reps = 0; };
 
         bool operator>(Word& w);
         void operator++() { reps++; }
-        bool operator==(Word& w) {
-            return Word::val == w.val;
-        }
+        bool operator==(Word& w);
+
+        void adaptToNewAlphabeticOrder(AlphabeticOrder& order);
 };
 
 #endif
