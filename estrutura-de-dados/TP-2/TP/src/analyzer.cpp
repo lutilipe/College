@@ -68,9 +68,12 @@ void handleInput(ifstream* in, WordVector* v, string* newOrder) {
             (*newOrder) += tmp;
         } else {
             removeUnexpectedChars(&tmp);
-            Word w(tmp);
-            addWordToVector(v, w);
+            if (tmp != "") {
+                Word w(tmp);
+                addWordToVector(v, w);
+            }
         }
+        next = "";
     }
 }
 
@@ -127,6 +130,8 @@ int main(int argc, char ** argv) {
 
     AlphabeticOrder order(newOrder);
 
+    v->parseWords(order);
+    v->sort();
     v->print(&out);
 
     delete v;

@@ -19,12 +19,15 @@ string stringToLowerCase(string& in) {
 
 void removeUnexpectedChars(string* s) {
     char last = (*s)[s->size() - 1];
-    if (last == ',' ||
+    while (last == ',' ||
         last == '.' ||
         last == '!' ||
         last == '?' ||
         last == ':' ||
         last == ';' ||
         last == '_'
-    ) s->pop_back();
+    ) {
+        s->pop_back();
+        last = (*s)[s->size() - 1];
+    }
 }

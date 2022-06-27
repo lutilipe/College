@@ -14,7 +14,7 @@ EXE = $(BIN)/tp2
 all: run
 
 run: $(EXE) $(OUT)
-	$(EXE) -I entrada.txt -o saida.txt -m 5 -S 54
+	$(EXE) -I entrada.txt -o saida.txt -m 5 -S 3
 
 $(EXE): $(OBJS)
 	$(CC) -pg -o $(EXE) $(OBJS) $(LIBS)

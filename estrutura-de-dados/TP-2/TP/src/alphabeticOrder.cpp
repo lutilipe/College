@@ -15,6 +15,9 @@ void AlphabeticOrder::populate() {
 }
 
 AlphabeticOrder::AlphabeticOrder(string newOrder) {
+/*     for (int j = 0 ; j < newOrder.size(); j++) {
+        cout << newOrder[j] << endl;
+    } */
     erroAssert(
         newOrder.size() == ALPHABET_SIZE,
         "Invalid order"

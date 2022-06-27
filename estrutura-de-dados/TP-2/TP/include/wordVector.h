@@ -139,7 +139,6 @@ void insertionSort(T* arr, int start, int end) {
             arr[j] = arr[j - 1];
             j--;
         }
- 
         arr[j] = value;
     }
 }
@@ -153,15 +152,16 @@ int WordVector::partition(Word* arr, int start, int end) {
         medianIndex = middle;
     } else {
         TmpWord* tmp = new TmpWord[WordVector::medianSize];
+        int i = 0;
         int p = start;
-        for (p = start; p < WordVector::medianSize; p++) {
+        for (i = 0, p = start; i < WordVector::medianSize; i++, p++) {
             TmpWord w;
             w.index = p;
             w.val = arr[p];
-            tmp[p] = w;
+            tmp[i] = w;
         }
-        insertionSort(tmp, 0, WordVector::medianSize);
-        int t = WordVector::medianSize - start + 1;
+        insertionSort(tmp, 0, WordVector::medianSize-1);
+        int t = WordVector::medianSize;
         if(t % 2){
             medianIndex = tmp[t/2].index;
         } else {
@@ -180,11 +180,11 @@ int WordVector::partition(Word* arr, int start, int end) {
 
     // Coloca o pivot no final da lista
     swap(arr, medianIndex, end);
-        
+
     Word pivot = arr[end];
     int i = start - 1;
     int j = start;
-    for (j = start; j <= end - 1; j++) {
+    for (j = start; j < end; j++) {
         if (!(arr[j] > pivot)) {
             i++;
             swap(arr, i, j);
