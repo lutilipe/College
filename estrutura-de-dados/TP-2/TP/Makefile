@@ -4,7 +4,7 @@ SRC = src
 OBJ = obj
 INC = include
 BIN = bin
-OBJS = $(OBJ)/analyzer.o $(OBJ)/word.o $(OBJ)/alphabeticOrder.o $(OBJ)/utils.o
+OBJS = $(OBJ)/analyzer.o $(OBJ)/word.o $(OBJ)/alphabeticOrder.o $(OBJ)/utils.o $(OBJ)/memlog.o
 HDRS = $(INC)/memlog.h $(INC)/utils.h $(INC)/msgassert.h $(INC)/word.h $(INC)/wordVector.h $(INC)/alphabeticOrder.h
 CFLAGS = -pg -Wall -c -I$(INC) -O3
 ANALISAMEM = ../analisamem/bin/analisamem
@@ -14,7 +14,7 @@ EXE = $(BIN)/tp2
 all: run
 
 run: $(EXE) $(OUT)
-	$(EXE) -I entrada.txt -o saida.txt -m 5 -S 3
+	$(EXE) -I entrada.txt -o saida.txt -m 5 -S 3 -l -p output.txt
 
 $(EXE): $(OBJS)
 	$(CC) -pg -o $(EXE) $(OBJS) $(LIBS)
@@ -35,6 +35,11 @@ $(OBJ)/utils.o: $(HDRS) $(SRC)/utils.cpp
 	$(CC) $(CFLAGS) -o $(OBJ)/utils.o $(SRC)/utils.cpp
 
 mem: $(EXE)
+	$(EXE) -l -p output.txt -I entrada.txt -o saida.txt -m 5 -S 3
+	rm -rf /tmp/analyzerest
+	mkdir /tmp/analyzerest
+	$(ANALISAMEM) -i output.txt -p /tmp/analyzerest/analyzerest
+	gnuplot /tmp/analyzerest/*.gp
 
 perf: $(EXE)
 

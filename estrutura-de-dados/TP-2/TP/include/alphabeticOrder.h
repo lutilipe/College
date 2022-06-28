@@ -11,17 +11,20 @@ using namespace std;
 #define ALPHABET_SIZE 26
 #define FIRST_LOWERCASE_CHAR 97
 
+#define ALPHABET_ID 0
+
 class Letter {
     private:
         char val;
         int index;
+        int id;
     public:
-        Letter(): val(0), index(-1) {};
-        Letter(char c, int idx): val(c), index(idx) {};
+        Letter(): val(0), index(-1), id(ALPHABET_ID) {};
+        Letter(char c, int idx, int i = ALPHABET_ID): val(c), index(idx), id(i) {};
 
-        int getIndex() { return index; };
-        char getVal() { return val; };
-        void setIndex(int newIdx) { index = newIdx; };
+        int getIndex();
+        char getVal();
+        void setIndex(int newIdx);
 };
 
 class AlphabeticOrder {
@@ -30,7 +33,7 @@ class AlphabeticOrder {
         void populate();
     public:
         AlphabeticOrder(string newOrder);
-        Letter* getOrder() { return order; };
+        Letter* getOrder();
 };
 
 #endif

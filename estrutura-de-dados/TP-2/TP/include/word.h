@@ -11,17 +11,19 @@ class Word {
         Letter* val;
         int reps;
         size_t size;
+        int id;
     public:
-        Word(): val(0), reps(0), size(0) {};
-        Word(string v);
-        int getReps() { return reps; };
-        Letter* getVal() { return val; };
-        size_t getSize() { return size; };
+        Word(): val(0), reps(0), size(0), id(-1) {};
+        Word(string v, int i);
+        int getReps();
+        Letter* getVal();
+        size_t getSize();
+        int getId();
 
         string toString();
 
-        void resetReps() { reps = 0; };
-        void increaseReps() { Word::reps++; }
+        void resetReps();
+        void increaseReps();
 
         bool operator>(Word& w);
         bool operator==(Word& w);

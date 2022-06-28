@@ -3,6 +3,7 @@
 
 #include "msgassert.h"
 #include "word.h"
+#include "memlog.h"
 #include "alphabeticOrder.h"
 #include <iostream>
 #include <fstream>
@@ -13,16 +14,34 @@ using namespace std;
 #define INITIAL_CAPACITY 10
 
 class TmpWord {
-    public:
+    private:
         Word val;
         int index;
+        int id;
+    public:
+        TmpWord(): val(Word()), index(-1), id(-1) {};
+        TmpWord(Word w, int idx, int i): val(w), index(idx), id(i) {};
+
+        Word getVal() { 
+            //LEMEMLOG((long int)(&(TmpWord::val)),sizeof(TmpWord::val),TmpWord::id);
+            return TmpWord::val;
+        };
+
+        int getIndex() { 
+            //LEMEMLOG((long int)(&(TmpWord::index)),sizeof(TmpWord::index),TmpWord::id);
+            return TmpWord::index; 
+        };
+        
         bool operator>(TmpWord& w) {
             return TmpWord::val > w.val;
         }
 
         void operator=(TmpWord& w) {
+            TmpWord::id = w.id;
             TmpWord::val = w.val;
+            //ESCREVEMEMLOG((long int)(&(TmpWord::val)),sizeof(TmpWord::val),TmpWord::id);
             TmpWord::index = w.index;
+            //ESCREVEMEMLOG((long int)(&(TmpWord::index)),sizeof(TmpWord::index),TmpWord::id);
         }
 };
 
@@ -104,6 +123,13 @@ int WordVector::findIndex(Word el) {
 Word WordVector::pop() {
     erroAssert(!isEmpty(), "Trying to pop on empty WordVector!");
     Word tmp = WordVector::buffer[WordVector::length];
+
+/*     LEMEMLOG((long int)(
+        &(WordVector::buffer[WordVector::length])),
+        sizeof(WordVector::buffer[WordVector::length]),
+        WordVector::buffer[WordVector::length].getId()
+    ); */
+
     WordVector::length--;
     return tmp;
 }
@@ -113,6 +139,11 @@ int WordVector::getSize() {
 }
 
 Word& WordVector::operator[](int index) {
+ /*    LEMEMLOG((long int)(
+        &(WordVector::buffer[index])),
+        sizeof(WordVector::buffer[index]),
+        WordVector::buffer[index].getId()
+    ); */
     return WordVector::buffer[index];
 }  
 
@@ -155,22 +186,20 @@ int WordVector::partition(Word* arr, int start, int end) {
         int i = 0;
         int p = start;
         for (i = 0, p = start; i < WordVector::medianSize; i++, p++) {
-            TmpWord w;
-            w.index = p;
-            w.val = arr[p];
+            TmpWord w(arr[p], p, arr[p].getId());
             tmp[i] = w;
         }
         insertionSort(tmp, 0, WordVector::medianSize-1);
         int t = WordVector::medianSize;
         if(t % 2){
-            medianIndex = tmp[t/2].index;
+            medianIndex = tmp[t/2].getIndex();
         } else {
             TmpWord f = tmp[t/2-1];
             TmpWord s = tmp[t/2];
             if (f > s) {
-                medianIndex = f.index;
+                medianIndex = f.getIndex();
             } else {
-                medianIndex = s.index;
+                medianIndex = s.getIndex();
             }
         }
         delete tmp;

@@ -1,17 +1,19 @@
 #include <iostream>
 #include <getopt.h>
+#include <fstream>
+#include <string.h>
+
 #include "msgassert.h"
 #include "wordVector.h"
 #include "alphabeticOrder.h"
 #include "word.h"
 #include "utils.h"
-#include <fstream>
+#include "memlog.h"
 
 using namespace std;
 
-string logFilename,
-    inputFile,
-    outputFile;
+char logFilename[100];
+string inputFile, outputFile;
 int regMem = 0,
     minPartSize = 1,
     medianSize = 1;
@@ -54,6 +56,7 @@ void addWordToVector(WordVector* v, Word& word) {
 void handleInput(ifstream* in, WordVector* v, string* newOrder) {
     string currCommand = "";
     string next = "";
+    int currId = 1;
 
     while ((*in).peek() != EOF) {
         (*in) >> next;
@@ -69,7 +72,8 @@ void handleInput(ifstream* in, WordVector* v, string* newOrder) {
         } else {
             removeUnexpectedChars(&tmp);
             if (tmp != "") {
-                Word w(tmp);
+                Word w(tmp, currId);
+                currId++;
                 addWordToVector(v, w);
             }
         }
@@ -93,7 +97,7 @@ void parse_args(int argc,char ** argv) {
                 minPartSize = getInputNumber(optarg);
                 break;
             case 'p':
-                logFilename = optarg;
+                strcpy(logFilename, optarg);
                 break;
             case 'l':
                 regMem = 1;
@@ -119,6 +123,18 @@ void parse_args(int argc,char ** argv) {
 int main(int argc, char ** argv) {
     parse_args(argc, argv);
 
+    bool logEnabled = strlen(logFilename) > 0;
+
+    if (logEnabled) {
+        iniciaMemLog(logFilename);
+    }
+
+    if (regMem) {
+        ativaMemLog();
+    } else {
+        desativaMemLog();
+    }
+
     ifstream in = ifstream(inputFile);
     erroAssert(!in.fail(), "File not found");
 
@@ -139,5 +155,5 @@ int main(int argc, char ** argv) {
     in.close();
     out.close();
 
-    return 0;
+    return logEnabled ? finalizaMemLog() : 0;
 }
