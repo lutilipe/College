@@ -23,12 +23,12 @@ class TmpWord {
         TmpWord(Word w, int idx, int i): val(w), index(idx), id(i) {};
 
         Word getVal() { 
-            //LEMEMLOG((long int)(&(TmpWord::val)),sizeof(TmpWord::val),TmpWord::id);
+            LEMEMLOG((long int)(&(TmpWord::val)),sizeof(TmpWord::val),TmpWord::id);
             return TmpWord::val;
         };
 
         int getIndex() { 
-            //LEMEMLOG((long int)(&(TmpWord::index)),sizeof(TmpWord::index),TmpWord::id);
+            LEMEMLOG((long int)(&(TmpWord::index)),sizeof(TmpWord::index),TmpWord::id);
             return TmpWord::index; 
         };
         
@@ -39,9 +39,9 @@ class TmpWord {
         void operator=(TmpWord& w) {
             TmpWord::id = w.id;
             TmpWord::val = w.val;
-            //ESCREVEMEMLOG((long int)(&(TmpWord::val)),sizeof(TmpWord::val),TmpWord::id);
+            ESCREVEMEMLOG((long int)(&(TmpWord::val)),sizeof(TmpWord::val),TmpWord::id);
             TmpWord::index = w.index;
-            //ESCREVEMEMLOG((long int)(&(TmpWord::index)),sizeof(TmpWord::index),TmpWord::id);
+            ESCREVEMEMLOG((long int)(&(TmpWord::index)),sizeof(TmpWord::index),TmpWord::id);
         }
 };
 
@@ -124,11 +124,11 @@ Word WordVector::pop() {
     erroAssert(!isEmpty(), "Trying to pop on empty WordVector!");
     Word tmp = WordVector::buffer[WordVector::length];
 
-/*     LEMEMLOG((long int)(
+    LEMEMLOG((long int)(
         &(WordVector::buffer[WordVector::length])),
         sizeof(WordVector::buffer[WordVector::length]),
         WordVector::buffer[WordVector::length].getId()
-    ); */
+    );
 
     WordVector::length--;
     return tmp;
@@ -139,11 +139,11 @@ int WordVector::getSize() {
 }
 
 Word& WordVector::operator[](int index) {
- /*    LEMEMLOG((long int)(
+    LEMEMLOG((long int)(
         &(WordVector::buffer[index])),
         sizeof(WordVector::buffer[index]),
         WordVector::buffer[index].getId()
-    ); */
+    );
     return WordVector::buffer[index];
 }  
 

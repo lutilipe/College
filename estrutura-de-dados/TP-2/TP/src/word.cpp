@@ -57,8 +57,8 @@ void Word::operator=(Word& w) {
     Word::id = w.id;
 
     ESCREVEMEMLOG((long int)(&(Word::reps)),sizeof(Word::reps),Word::id);
-    //ESCREVEMEMLOG((long int)(&(Word::val)),sizeof(Word::val),Word::id);
-    //ESCREVEMEMLOG((long int)(&(Word::size)),sizeof(Word::size),Word::id);
+    ESCREVEMEMLOG((long int)(&(Word::val)),sizeof(Word::val),Word::id);
+    ESCREVEMEMLOG((long int)(&(Word::size)),sizeof(Word::size),Word::id);
 }
 
 string Word::toString() {
@@ -71,30 +71,30 @@ string Word::toString() {
 }
 
 int Word::getReps() {
-    //LEMEMLOG((long int)(&(Word::reps)),sizeof(Word::reps),Word::id);
+    LEMEMLOG((long int)(&(Word::reps)),sizeof(Word::reps),Word::id);
     return Word::reps;
 };
 
 Letter* Word::getVal() {
-    //LEMEMLOG((long int)(&(Word::val)),sizeof(Word::val),Word::id);
+    LEMEMLOG((long int)(&(Word::val)),sizeof(Word::val),Word::id);
     return Word::val;
 
 };
 size_t Word::getSize() {
-    //LEMEMLOG((long int)(&(Word::size)),sizeof(Word::size),Word::id);
+    LEMEMLOG((long int)(&(Word::size)),sizeof(Word::size),Word::id);
     return Word::size;
 };
 int Word::getId() {
-    //LEMEMLOG((long int)(&(Word::id)),sizeof(Word::id),Word::id);
+    LEMEMLOG((long int)(&(Word::id)),sizeof(Word::id),Word::id);
     return Word::id;
 };
 
 void Word::resetReps() {
     Word::reps = 0;
-    //ESCREVEMEMLOG((long int)(&(Word::reps)),sizeof(Word::reps),Word::id);
+    ESCREVEMEMLOG((long int)(&(Word::reps)),sizeof(Word::reps),Word::id);
 };
 
 void Word::increaseReps() {
     Word::reps++;
-    //ESCREVEMEMLOG((long int)(&(Word::reps)),sizeof(Word::reps),Word::id);
+    ESCREVEMEMLOG((long int)(&(Word::reps)),sizeof(Word::reps),Word::id);
 };
