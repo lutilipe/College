@@ -54,7 +54,6 @@ public:
     int getSize();
     bool isEmpty();
     void push(Word value); 
-    Word pop();
     int findIndex(Word el);
 
     void print(ofstream* out);
@@ -118,20 +117,6 @@ int WordVector::findIndex(Word el) {
         }
     }
     return index;
-}
-
-Word WordVector::pop() {
-    erroAssert(!isEmpty(), "Trying to pop on empty WordVector!");
-    Word tmp = WordVector::buffer[WordVector::length];
-
-    LEMEMLOG((long int)(
-        &(WordVector::buffer[WordVector::length])),
-        sizeof(WordVector::buffer[WordVector::length]),
-        WordVector::buffer[WordVector::length].getId()
-    );
-
-    WordVector::length--;
-    return tmp;
 }
 
 int WordVector::getSize() {
