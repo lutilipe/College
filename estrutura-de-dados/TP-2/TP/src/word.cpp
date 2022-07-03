@@ -1,6 +1,7 @@
-#include <word.h>
-#include <memlog.h>
-#include <alphabeticOrder.h>
+#include "word.h"
+#include "memlog.h"
+#include "alphabeticOrder.h"
+#include "letter.h"
 
 using namespace std;
 

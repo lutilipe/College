@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "alphabeticOrder.h"
+#include "letter.h"
 
 using namespace std;
 
