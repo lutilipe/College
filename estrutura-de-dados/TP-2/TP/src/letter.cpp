@@ -10,11 +10,11 @@ int Letter::getIndex() {
 };
 
 char Letter::getVal() {
-    LEMEMLOG((long int)(&(Letter::val)),sizeof(char),Letter::id);
+    //LEMEMLOG((long int)(&(Letter::val)),sizeof(char),Letter::id);
     return Letter::val; 
 };
 
 void Letter::setIndex(int newIdx) {
-    ESCREVEMEMLOG((long int)(&(Letter::index)),sizeof(Letter::index),Letter::id);
+    //ESCREVEMEMLOG((long int)(&(Letter::index)),sizeof(Letter::index),Letter::id);
     Letter::index = newIdx; 
 };

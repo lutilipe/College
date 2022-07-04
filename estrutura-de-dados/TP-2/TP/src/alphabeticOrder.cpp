@@ -13,7 +13,7 @@ void AlphabeticOrder::populate() {
         char c = (char) i;
         Letter l(c, i);
         AlphabeticOrder::order[i] = l;
-        ESCREVEMEMLOG((long int)(&(AlphabeticOrder::order[i])),sizeof(AlphabeticOrder::order[i]),ALPHABET_ID);
+        //ESCREVEMEMLOG((long int)(&(AlphabeticOrder::order[i])),sizeof(AlphabeticOrder::order[i]),ALPHABET_ID);
     }
 }
 
@@ -31,6 +31,6 @@ AlphabeticOrder::AlphabeticOrder(string newOrder) {
 }
 
 Letter* AlphabeticOrder::getOrder() {
-    LEMEMLOG((long int)(&(AlphabeticOrder::order)),sizeof(AlphabeticOrder::order),ALPHABET_ID);
+    //LEMEMLOG((long int)(&(AlphabeticOrder::order)),sizeof(AlphabeticOrder::order),ALPHABET_ID);
     return AlphabeticOrder::order; 
 };

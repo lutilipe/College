@@ -11,10 +11,7 @@ ANALISAMEM = ../analisamem/bin/analisamem
 
 EXE = $(BIN)/tp2
 
-all: run
-
-run: $(EXE) $(OUT)
-	$(EXE) -I entrada.txt -o saida.txt -m 5555 -S 3
+all: $(EXE)
 
 $(EXE): $(OBJS)
 	$(CC) -pg -o $(EXE) $(OBJS) $(LIBS)
@@ -38,15 +35,18 @@ $(OBJ)/utils.o: $(HDRS) $(SRC)/utils.cpp
 	$(CC) $(CFLAGS) -o $(OBJ)/utils.o $(SRC)/utils.cpp
 
 mem: $(EXE)
-	$(EXE) -l -p output.txt -I entrada.txt -o saida.txt -m 5 -S 3
+	$(EXE) -l -p /tmp/output.txt -I entrada.txt -o saida.txt -m 5 -S 3
 	rm -rf /tmp/analyzerest
 	mkdir /tmp/analyzerest
-	$(ANALISAMEM) -i output.txt -p /tmp/analyzerest/analyzerest
+	$(ANALISAMEM) -i /tmp/output.txt -p /tmp/analyzerest/analyzerest
 	gnuplot /tmp/analyzerest/*.gp
 
 perf: $(EXE)
+	$(EXE) -I entrada.txt -o saida.txt -m 3 -S 40000 -p output.txt
 
 gprof: $(EXE)
+	$(EXE) -I entrada.txt -o saida.txt -m 100 -S 3
+	gprof $(EXE) gmon.out > /tmp/analyzerest.txt
 
 clean:
 	rm -f $(EXE) $(OBJS) gmon.out

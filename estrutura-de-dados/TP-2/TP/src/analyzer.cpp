@@ -140,6 +140,7 @@ int main(int argc, char ** argv) {
 
     ofstream out = ofstream(outputFile);
 
+    defineFaseMemLog(0);
     WordVector* v = new WordVector(medianSize, minPartSize);
     string newOrder = "";
     handleInput(&in, v, &newOrder);
