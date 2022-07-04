@@ -10,10 +10,10 @@ Word::Word(string s, int idd) {
     Word::reps = 1;
     Word::id = idd;
 
-    Word::val = new Letter[Word::getSize()];
+    Word::val = new Letter[Word::size];
 
     size_t i = 0;
-    for (i = 0; i < Word::getSize(); i++) {
+    for (i = 0; i < Word::size; i++) {
         Letter l(s[i], (int) s[i], Word::id);
         Word::val[i] = l;
     }
@@ -22,8 +22,8 @@ Word::Word(string s, int idd) {
 void Word::adaptToNewAlphabeticOrder(AlphabeticOrder& order) {
     size_t i = 0;
     for (i = 0; i < Word::getSize(); i++) {
-        int originalIndex = Word::getVal()[i].getIndex();
-        Word::getVal()[i].setIndex(order.getOrder()[originalIndex].getIndex());
+        int originalIndex = val[i].getIndex();
+        val[i].setIndex(order.getOrder()[originalIndex].getIndex());
     }
 }
 
@@ -33,7 +33,7 @@ bool Word::operator==(Word& w) {
         return false;
     }
     for (i = 0; i < Word::getSize(); i++) {
-        if (Word::getVal()[i].getVal() != w.getVal()[i].getVal()) {
+        if (val[i].getVal() != w.getVal()[i].getVal()) {
             return false;
         }
     }
@@ -43,12 +43,12 @@ bool Word::operator==(Word& w) {
 bool Word::operator>(Word& w) {
     size_t i = 0;
     for (i = 0; i < Word::getSize(); i++) {
-        if (!(Word::getVal()[i].getIndex() == w.getVal()[i].getIndex())) {
+        if (!(val[i].getIndex() == w.getVal()[i].getIndex())) {
             break;
         }
     }
  
-    return Word::getVal()[i].getIndex() - w.getVal()[i].getIndex() > 0;
+    return val[i].getIndex() - w.getVal()[i].getIndex() > 0;
 }
 
 void Word::operator=(Word& w) {
@@ -57,45 +57,43 @@ void Word::operator=(Word& w) {
     Word::size = w.size;
     Word::id = w.id;
 
-    //ESCREVEMEMLOG((long int)(&(Word::reps)),sizeof(Word::reps),Word::id);
-    //ESCREVEMEMLOG((long int)(&(Word::val)),sizeof(Word::val),Word::id);
-    //ESCREVEMEMLOG((long int)(&(Word::size)),sizeof(Word::size),Word::id);
+    ESCREVEMEMLOG((long int)(&(Word::reps)),sizeof(Word::reps),Word::id);
+    ESCREVEMEMLOG((long int)(&(Word::val)),sizeof(Word::val),Word::id);
+    ESCREVEMEMLOG((long int)(&(Word::size)),sizeof(Word::size),Word::id);
 }
 
 string Word::toString() {
     string tmp = "";
     size_t i = 0;
     for (i = 0; i < Word::getSize(); i++) {
-        tmp += Word::getVal()[i].getVal();
+        tmp += val[i].getVal();
     }
     return tmp;
 }
 
 int Word::getReps() {
-    //LEMEMLOG((long int)(&(Word::reps)),sizeof(Word::reps),Word::id);
+    LEMEMLOG((long int)(&(Word::reps)),sizeof(Word::reps),Word::id);
     return Word::reps;
 };
 
 Letter* Word::getVal() {
-    //LEMEMLOG((long int)(&(Word::val)),sizeof(Word::val),Word::id);
     return Word::val;
 
 };
 size_t Word::getSize() {
-    //LEMEMLOG((long int)(&(Word::size)),sizeof(Word::size),Word::id);
     return Word::size;
 };
 int Word::getId() {
-    //LEMEMLOG((long int)(&(Word::id)),sizeof(Word::id),Word::id);
+    LEMEMLOG((long int)(&(Word::id)),sizeof(Word::id),Word::id);
     return Word::id;
 };
 
 void Word::resetReps() {
     Word::reps = 0;
-    //ESCREVEMEMLOG((long int)(&(Word::reps)),sizeof(Word::reps),Word::id);
+    ESCREVEMEMLOG((long int)(&(Word::reps)),sizeof(Word::reps),Word::id);
 };
 
 void Word::increaseReps() {
     Word::reps++;
-    //ESCREVEMEMLOG((long int)(&(Word::reps)),sizeof(Word::reps),Word::id);
+    ESCREVEMEMLOG((long int)(&(Word::reps)),sizeof(Word::reps),Word::id);
 };

@@ -23,12 +23,12 @@ class TmpWord {
         TmpWord(Word w, int idx, int i): val(w), index(idx), id(i) {};
 
         Word getVal() { 
-            //LEMEMLOG((long int)(&(TmpWord::val)),sizeof(TmpWord::val),TmpWord::id);
+            LEMEMLOG((long int)(&(TmpWord::val)),sizeof(TmpWord::val),TmpWord::id);
             return TmpWord::val;
         };
 
         int getIndex() { 
-            //LEMEMLOG((long int)(&(TmpWord::index)),sizeof(TmpWord::index),TmpWord::id);
+            LEMEMLOG((long int)(&(TmpWord::index)),sizeof(TmpWord::index),TmpWord::id);
             return TmpWord::index; 
         };
         
@@ -39,9 +39,9 @@ class TmpWord {
         void operator=(TmpWord& w) {
             TmpWord::id = w.id;
             TmpWord::val = w.val;
-            //ESCREVEMEMLOG((long int)(&(TmpWord::val)),sizeof(TmpWord::val),TmpWord::id);
+            ESCREVEMEMLOG((long int)(&(TmpWord::val)),sizeof(TmpWord::val),TmpWord::id);
             TmpWord::index = w.index;
-            //ESCREVEMEMLOG((long int)(&(TmpWord::index)),sizeof(TmpWord::index),TmpWord::id);
+            ESCREVEMEMLOG((long int)(&(TmpWord::index)),sizeof(TmpWord::index),TmpWord::id);
         }
 };
 
@@ -124,11 +124,11 @@ int WordVector::getSize() {
 }
 
 Word& WordVector::operator[](int index) {
-    /* LEMEMLOG((long int)(
+    LEMEMLOG((long int)(
         &(WordVector::buffer[index])),
         sizeof(WordVector::buffer[index]),
         WordVector::buffer[index].getId()
-    ); */
+    );
     return WordVector::buffer[index];
 }  
 
@@ -142,8 +142,12 @@ bool WordVector::isEmpty() {
 
 void swap(Word* arr, int i, int j) {
     Word temp = arr[i];
+    LEMEMLOG((long int)(&(arr[i])),sizeof(arr[i]),arr[i].getId());
     arr[i] = arr[j];
+    LEMEMLOG((long int)(&(arr[j])),sizeof(arr[j]),arr[j].getId());
+    ESCREVEMEMLOG((long int)(&(arr[i])),sizeof(arr[i]),arr[i].getId());
     arr[j] = temp;
+    LEMEMLOG((long int)(&(arr[j])),sizeof(arr[j]),arr[j].getId());
 }
 
 template<class T>

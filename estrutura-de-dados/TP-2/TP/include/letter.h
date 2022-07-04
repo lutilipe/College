@@ -5,7 +5,7 @@
 
 using namespace std;
 
-#define ALPHABET_ID 0
+#define ALPHABET_ID -1
 
 class Letter {
     private:

@@ -35,10 +35,10 @@ $(OBJ)/utils.o: $(HDRS) $(SRC)/utils.cpp
 	$(CC) $(CFLAGS) -o $(OBJ)/utils.o $(SRC)/utils.cpp
 
 mem: $(EXE)
-	$(EXE) -l -p /tmp/output.txt -I entrada.txt -o saida.txt -m 5 -S 3
+	$(EXE) -l -p output.txt -I entrada.txt -o saida.txt -m 5 -S 3
 	rm -rf /tmp/analyzerest
 	mkdir /tmp/analyzerest
-	$(ANALISAMEM) -i /tmp/output.txt -p /tmp/analyzerest/analyzerest
+	$(ANALISAMEM) -i output.txt -p /tmp/analyzerest/analyzerest
 	gnuplot /tmp/analyzerest/*.gp
 
 perf: $(EXE)

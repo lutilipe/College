@@ -56,7 +56,7 @@ void addWordToVector(WordVector* v, Word& word) {
 void handleInput(ifstream* in, WordVector* v, string* newOrder) {
     string currCommand = "";
     string next = "";
-    int currId = 1;
+    int currId = 0;
 
     while ((*in).peek() != EOF) {
         (*in) >> next;
