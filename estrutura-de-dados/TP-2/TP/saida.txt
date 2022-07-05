@@ -1,9 +1,0 @@
-como 1
-vai 1
-voce 1
-testando 1
-teste 1
-oi 1
-ola 1
-palavras 1
-#FIM
