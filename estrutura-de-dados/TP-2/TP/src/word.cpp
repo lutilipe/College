@@ -19,6 +19,7 @@ Word::Word(string s, int idd) {
     }
 }
 
+// Adapta cada letra para a nova ordem
 void Word::adaptToNewAlphabeticOrder(AlphabeticOrder& order) {
     size_t i = 0;
     for (i = 0; i < Word::getSize(); i++) {

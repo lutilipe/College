@@ -32,6 +32,8 @@ void usage() {
     cout << "\t-s|S \t(tamanho minimo da particao para usar o QuickSort)\n" << endl;
 }
 
+// Seta o valor do parametro M e N como
+// min(in, 1)
 int parseNullish(int in) {
     return in ? in : 1;
 }
@@ -53,6 +55,8 @@ void addWordToVector(WordVector* v, Word& word) {
     v->push(word);
 }
 
+// Verifica se o input e' #ORDEM ou #TEXTO (ordem nao importa)
+// e cria uma nova ordem ou adiciona as palavras no vetor
 void handleInput(ifstream* in, WordVector* v, string* newOrder) {
     string currCommand = "";
     string next = "";

@@ -86,6 +86,10 @@ WordVector::WordVector(int median, int partSize) {
     WordVector::minPartSize = partSize;
 }
 
+// Adiciona um elemento ao vetor. 
+// Se o vetor atingiu sua capacidade maxima, aloca um vetor
+// de capacidade 2 vezes maior e copia os valores antigos
+// para o novo vetor
 void WordVector::push(Word v) {
     if (length >= WordVector::capacity) {
         if(WordVector::buffer == 0) {
@@ -171,6 +175,8 @@ int WordVector::partition(Word* arr, int start, int end) {
         int middle = (start + end) / 2;
         medianIndex = middle;
     } else {
+        // Cria uma classe para armazenar o valor e o index
+        // de cada palavra, de forma temporaria
         TmpWord* tmp = new TmpWord[WordVector::medianSize];
         int i = 0;
         int p = start;
@@ -231,6 +237,8 @@ void WordVector::sort() {
     quicksort(WordVector::buffer, start, WordVector::length-1);
 }
 
+// Modifica o valor do index da letra no vetor contendo
+// todas as letras da tabela ASCII
 void WordVector::parseWords(AlphabeticOrder& order) {
     int i = 0;
     for (i = 0; i < length; i++) {
