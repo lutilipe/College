@@ -1,5 +1,7 @@
 #include "msgassert.h"
 #include "memlog.h"
+#include "email.h"
+#include "email-box.h"
 
 #include <iostream>
 #include <fstream>
