@@ -19,7 +19,7 @@ class EmailServer {
     public:
         EmailServer(int length);
         ~EmailServer();
-        int add(Email e, int userId);
+        int add(Email e);
         bool remove(int userId, int key);
         Email* get(int userId, int key);
 

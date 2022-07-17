@@ -17,21 +17,20 @@ int EmailServer::hash(int id) {
     return id % EmailServer::size;
 }
 
-int EmailServer::add(Email e, int userId) {
-    int id = hash(userId);
+int EmailServer::add(Email e) {
+    int id = hash(e.getUserId());
     EmailServer::table[id].add(e);
     return id;
 }
 
 Email* EmailServer::get(int userId, int key) {
     int id = hash(userId);
-    cout << id << endl;
-    return EmailServer::table[id].get(key);
+    return EmailServer::table[id].get(userId, key);
 }
 
 bool EmailServer::remove(int userId, int key) {
     int id = hash(userId);
-    return EmailServer::table[id].remove(key);
+    return EmailServer::table[id].remove(userId, key);
 }
 
 void EmailServer::handleDeliveryMessage(ifstream* in, ofstream* out) {
@@ -51,9 +50,9 @@ void EmailServer::handleDeliveryMessage(ifstream* in, ofstream* out) {
     *in >> tmp;
     message += tmp;
 
-    Email e(key, message);
+    Email e(key, userId, message);
 
-    int id = EmailServer::add(e, userId);
+    int id = EmailServer::add(e);
 
     *out << "OK: MENSAGEM " << key;
     *out << " PARA " << userId;

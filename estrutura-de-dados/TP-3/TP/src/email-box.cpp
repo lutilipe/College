@@ -34,22 +34,26 @@ void EmailBox::add(Email& val) {
     EmailBox::addHelper(root, val);
 }
 
-Email* EmailBox::dfs(TreeNode* p, int key) {
+Email* EmailBox::dfs(TreeNode* p, int userId, int key) {
     if (p == NULL) {
         return NULL;
     }
 
     if (key > p->val.getKey()) {
-        return EmailBox::dfs(p->right, key);
+        return EmailBox::dfs(p->right, userId, key);
     } else if (key < p->val.getKey()) {
-        return EmailBox::dfs(p->left, key);
+        return EmailBox::dfs(p->left, userId, key);
     }
 
-    return &(p->val);
+    if (userId == p->val.getUserId()) {
+        return &(p->val);
+    }
+
+    return NULL;
 }
 
-Email* EmailBox::get(int key) {
-    return EmailBox::dfs(root, key);
+Email* EmailBox::get(int userId, int key) {
+    return EmailBox::dfs(root, userId, key);
 }
 
 void EmailBox::antecessor(TreeNode* p, TreeNode* &r) {
@@ -64,15 +68,19 @@ void EmailBox::antecessor(TreeNode* p, TreeNode* &r) {
     delete p;
 }
 
-bool EmailBox::removeHelper(TreeNode* &p, int key) {
+bool EmailBox::removeHelper(TreeNode* &p, int userId, int key) {
     if (p == NULL) {
         return false;
     }
 
     if (key > p->val.getKey()) {
-        return EmailBox::removeHelper(p->right, key);
+        return EmailBox::removeHelper(p->right, userId, key);
     } else if (key < p->val.getKey()) {
-        return EmailBox::removeHelper(p->left, key); 
+        return EmailBox::removeHelper(p->left, userId, key); 
+    }
+
+    if (userId != p->val.getUserId()) {
+        return false;
     }
 
     TreeNode* aux;
@@ -92,6 +100,6 @@ bool EmailBox::removeHelper(TreeNode* &p, int key) {
     return true;
 }
 
-bool EmailBox::remove(int key) {
-    return EmailBox::removeHelper(root, key);
+bool EmailBox::remove(int userId, int key) {
+    return EmailBox::removeHelper(root, userId, key);
 }

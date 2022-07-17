@@ -30,7 +30,7 @@ void handleMemLog() {
 }
 
 void usage() {
-    cout << "Analyzer\n" << endl;
+    cout << "Email\n" << endl;
     cout << "\t-h \t(comandos disponiveis)\n" << endl;
     cout << "\t-l \t(registrar acessos a memoria)\n" << endl;
     cout << "\t-p <arq>\t(arquivo de entrada da analise de memoria)\n" << endl;
