@@ -13,21 +13,27 @@ EmailServer::~EmailServer() {
     delete[] EmailServer::table;
 }
 
+// Funcao de hash. O(1)
 int EmailServer::hash(int id) {
     return id % EmailServer::size;
 }
 
+// Insere o elemento na arvore correta
+// e retorna a posicao da arvore na tabela
 int EmailServer::add(Email e) {
     int id = hash(e.getUserId());
     EmailServer::table[id].add(e);
     return id;
 }
 
+// Retorna o elemento na arvore ou NULL
 Email* EmailServer::get(int userId, int key) {
     int id = hash(userId);
     return EmailServer::table[id].get(userId, key);
 }
 
+// Remove o elemento da arvore correspondente e
+// retorna se a remocao foi feita com sucesso ou nao
 bool EmailServer::remove(int userId, int key) {
     int id = hash(userId);
     return EmailServer::table[id].remove(userId, key);
@@ -93,6 +99,7 @@ void EmailServer::handleDeleteMessage(ifstream* in, ofstream* out) {
     *out << "ERRO: MENSAGEM INEXISTENTE" << endl;
 }
 
+// Lida com os comandos do servidor de emails
 void EmailServer::handleCommands(string command, ifstream* in, ofstream* out) {
     erroAssert(command != "", "Invalid command");
 

@@ -7,6 +7,9 @@ using namespace std;
 
 class Email {
     private:
+        // Memlog id
+        int _id;
+
         int key;
         int userId;
         string message;

@@ -7,17 +7,20 @@
 using namespace std;
 
 class TreeNode {
-    public:
-        TreeNode() { right = NULL; left = NULL; };
     private:
         Email val;
         TreeNode *right;
         TreeNode *left;
         friend class EmailBox;
+    public:
+        TreeNode() { right = NULL; left = NULL; };
 };
 
 class EmailBox {
     private:
+        // Memlog id
+        int _id;
+    
         TreeNode* root;
         void addHelper(TreeNode* &p, Email& val);
         bool removeHelper(TreeNode* &p, int userId, int key);

@@ -9,6 +9,9 @@
 using namespace std;
 class EmailServer {
     private:
+        // Memlog id
+        int _id;
+
         int size;
         EmailBox* table;
         int hash(int id);
