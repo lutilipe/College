@@ -2,6 +2,7 @@
 #define EMAIL_SERVER_H
 
 #include <iostream>
+#include <fstream>
 #include "email-box.h"
 #include "email.h"
 
@@ -11,12 +12,18 @@ class EmailServer {
         int size;
         EmailBox* table;
         int hash(int id);
+
+        void handleDeliveryMessage(ifstream* in, ofstream* out);
+        void handleSearchMessage(ifstream* in, ofstream* out);
+        void handleDeleteMessage(ifstream* in, ofstream* out);
     public:
         EmailServer(int length);
         ~EmailServer();
-        void add(Email e);
-        bool remove(int id);
-        Email* get(int id);
+        int add(Email e, int userId);
+        bool remove(int userId, int key);
+        Email* get(int userId, int key);
+
+        void handleCommands(string command, ifstream* in, ofstream* out);
 };
 
 #endif

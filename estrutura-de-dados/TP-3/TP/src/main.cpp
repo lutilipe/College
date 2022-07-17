@@ -11,9 +11,23 @@
 
 using namespace std;
 
-bool regMem = false;
+bool regMem = false, logEnabled = false;
 char logFilename[100];
 string inputFile, outputFile;
+
+void handleMemLog() {
+    logEnabled = strlen(logFilename) > 0;
+
+    if (logEnabled) {
+        iniciaMemLog(logFilename);
+    }
+
+    if (regMem) {
+        ativaMemLog();
+    } else {
+        desativaMemLog();
+    }
+}
 
 void usage() {
     cout << "Analyzer\n" << endl;
@@ -58,18 +72,28 @@ void parseArgs(int argc,char ** argv) {
 
 int main(int argc, char ** argv) {
     parseArgs(argc, argv);
+    handleMemLog();
 
-    bool logEnabled = strlen(logFilename) > 0;
+    ifstream in = ifstream(inputFile);
+    erroAssert(!in.fail(), "File not found");
 
-    if (logEnabled) {
-        iniciaMemLog(logFilename);
+    ofstream out = ofstream(outputFile);
+
+    int size = 0;
+    in >> size;
+    erroAssert(size > 0, "Invalid table size");
+
+    EmailServer* server = new EmailServer(size);
+    
+    string command = "";
+    while (in >> command) {
+        server->handleCommands(command, &in, &out);
     }
 
-    if (regMem) {
-        ativaMemLog();
-    } else {
-        desativaMemLog();
-    }
+    in.close();
+    out.close();
+
+    delete server;
 
     return logEnabled ? finalizaMemLog() : 0;
 }
