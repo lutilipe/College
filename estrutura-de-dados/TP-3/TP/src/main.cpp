@@ -2,6 +2,7 @@
 #include "memlog.h"
 #include "email.h"
 #include "email-box.h"
+#include "email-server.h"
 
 #include <iostream>
 #include <fstream>

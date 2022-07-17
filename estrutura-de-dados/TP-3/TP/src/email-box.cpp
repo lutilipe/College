@@ -1,5 +1,8 @@
 #include "email.h"
 #include "email-box.h"
+#include <iostream>
+
+using namespace std;
 
 void EmailBox::delHelper(TreeNode *p){
     if(p != NULL){
