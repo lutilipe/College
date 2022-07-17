@@ -14,7 +14,7 @@ EmailBox::~EmailBox() {
     EmailBox::root = NULL;
 }
 
-void EmailBox::addHelper(TreeNode* &p, Email val) {
+void EmailBox::addHelper(TreeNode* &p, Email& val) {
     if (p == NULL) {
         p = new TreeNode();
         p->val = val;
@@ -27,26 +27,26 @@ void EmailBox::addHelper(TreeNode* &p, Email val) {
     }
 }
 
-void EmailBox::add(Email val) {
+void EmailBox::add(Email& val) {
     EmailBox::addHelper(root, val);
 }
 
-bool EmailBox::dfs(TreeNode* p, Email val) {
+Email* EmailBox::dfs(TreeNode* p, int key) {
     if (p == NULL) {
-        return false;
+        return NULL;
     }
 
-    if (val > p->val) {
-        return EmailBox::dfs(p->right, val);
-    } else if (val < p->val) {
-        return EmailBox::dfs(p->left, val);
+    if (key > p->val.getKey()) {
+        return EmailBox::dfs(p->right, key);
+    } else if (key < p->val.getKey()) {
+        return EmailBox::dfs(p->left, key);
     }
 
-    return true;
+    return &(p->val);
 }
 
-bool EmailBox::has(Email val) {
-    return EmailBox::dfs(root, val);
+Email* EmailBox::get(int key) {
+    return EmailBox::dfs(root, key);
 }
 
 void EmailBox::antecessor(TreeNode* p, TreeNode* &r) {
@@ -61,15 +61,15 @@ void EmailBox::antecessor(TreeNode* p, TreeNode* &r) {
     delete p;
 }
 
-bool EmailBox::removeHelper(TreeNode* &p, Email val) {
+bool EmailBox::removeHelper(TreeNode* &p, int key) {
     if (p == NULL) {
         return false;
     }
 
-    if (val > p->val) {
-        return EmailBox::removeHelper(p->right, val);
-    } else if (val < p->val) {
-        return EmailBox::removeHelper(p->left, val); 
+    if (key > p->val.getKey()) {
+        return EmailBox::removeHelper(p->right, key);
+    } else if (key < p->val.getKey()) {
+        return EmailBox::removeHelper(p->left, key); 
     }
 
     TreeNode* aux;
@@ -89,6 +89,6 @@ bool EmailBox::removeHelper(TreeNode* &p, Email val) {
     return true;
 }
 
-bool EmailBox::remove(Email val) {
-    return EmailBox::removeHelper(root, val);
+bool EmailBox::remove(int key) {
+    return EmailBox::removeHelper(root, key);
 }

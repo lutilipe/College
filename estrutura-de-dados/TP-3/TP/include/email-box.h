@@ -19,18 +19,18 @@ class TreeNode {
 class EmailBox {
     private:
         TreeNode* root;
-        void addHelper(TreeNode* &p, Email val);
-        bool removeHelper(TreeNode* &p, Email val);
+        void addHelper(TreeNode* &p, Email& val);
+        bool removeHelper(TreeNode* &p, int key);
         void antecessor(TreeNode* p, TreeNode* &r);
-        bool dfs(TreeNode* p, Email val);
+        Email* dfs(TreeNode* p, int key);
         void delHelper(TreeNode* p);
 
     public:
         EmailBox() { root = NULL; };
         ~EmailBox();
-        void add(Email val);
-        bool has(Email val);
-        bool remove(Email val);
+        void add(Email& val);
+        Email* get(int key);
+        bool remove(int key);
         TreeNode* getRoot() { return root; };
 };
 
