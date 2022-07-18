@@ -6,11 +6,15 @@
 #include "email-box.h"
 #include "email.h"
 
+#ifndef EMAIL_SERVER_ID
+#define EMAIL_SERVER_ID 0
+#endif
+
 using namespace std;
 class EmailServer {
     private:
         // Memlog id
-        int _id;
+        int _id = EMAIL_SERVER_ID;
 
         int size;
         EmailBox* table;

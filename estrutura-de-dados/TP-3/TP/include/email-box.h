@@ -18,9 +18,6 @@ class TreeNode {
 
 class EmailBox {
     private:
-        // Memlog id
-        int _id;
-    
         TreeNode* root;
         void addHelper(TreeNode* &p, Email& val);
         bool removeHelper(TreeNode* &p, int userId, int key);

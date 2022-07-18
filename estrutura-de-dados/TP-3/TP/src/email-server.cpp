@@ -2,6 +2,7 @@
 #include "email-box.h"
 #include "email.h"
 #include "msgassert.h"
+#include "memlog.h"
 #include <iostream>
 
 EmailServer::EmailServer(int length) {
@@ -15,6 +16,7 @@ EmailServer::~EmailServer() {
 
 // Funcao de hash. O(1)
 int EmailServer::hash(int id) {
+    LEMEMLOG((long int)(&(EmailServer::size)),sizeof(EmailServer::size),EmailServer::_id);
     return id % EmailServer::size;
 }
 
@@ -22,6 +24,7 @@ int EmailServer::hash(int id) {
 // e retorna a posicao da arvore na tabela
 int EmailServer::add(Email e) {
     int id = hash(e.getUserId());
+    ESCREVEMEMLOG((long int)(&(EmailServer::table[id])),sizeof(EmailServer::table[id]),EmailServer::_id);
     EmailServer::table[id].add(e);
     return id;
 }
@@ -29,6 +32,7 @@ int EmailServer::add(Email e) {
 // Retorna o elemento na arvore ou NULL
 Email* EmailServer::get(int userId, int key) {
     int id = hash(userId);
+    LEMEMLOG((long int)(&(EmailServer::table[id])),sizeof(EmailServer::table[id]),EmailServer::_id);
     return EmailServer::table[id].get(userId, key);
 }
 

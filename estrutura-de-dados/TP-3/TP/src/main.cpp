@@ -41,7 +41,7 @@ void usage() {
 void parseArgs(int argc,char ** argv) {
     int c;
 
-    while ((c = getopt(argc, argv, "hli:o:")) != EOF) {
+    while ((c = getopt(argc, argv, "hlp:i:o:")) != EOF) {
         switch(c) {
             case 'i':
                 inputFile = optarg;

@@ -14,11 +14,12 @@ class Email {
         int userId;
         string message;
     public:
-        Email(): key(-1), userId(-1), message("") {};
-        Email(int k, int uuid, string msg): key(k), userId(uuid), message(msg) {};
+        Email(): _id(-1), key(-1), userId(-1), message("") {};
+        Email(int k, int uuid, string msg);
 
         int getKey();
         int getUserId();
+        int getLogId();
         string getMessage();
         bool operator> (Email& e);
         bool operator< (Email& e);
