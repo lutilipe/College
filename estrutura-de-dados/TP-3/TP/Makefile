@@ -32,18 +32,18 @@ $(OBJ)/memlog.o: $(HDRS) $(SRC)/memlog.cpp
 	$(CC) $(CFLAGS) -o $(OBJ)/memlog.o $(SRC)/memlog.cpp
 
 mem: $(EXE)
-	$(EXE) -l -p /tmp/email_mem.out -i entrada.txt -o saida.txt
-	rm -rf /tmp/emailest
-	mkdir /tmp/emailest
-	$(ANALISAMEM) -i /tmp/email_mem.out -p /tmp/emailest/emailest
-	gnuplot /tmp/emailest/*.gp
+	$(EXE) -l -p ./email_mem.out -i entrada.txt -o saida.txt
+	rm -rf ./emailest
+	mkdir ./emailest
+	$(ANALISAMEM) -i ./email_mem.out -p ./emailest/emailest
+	gnuplot ./emailest/*.gp
 
 perf: $(EXE)
-	$(EXE) -p /tmp/emailX.out
+	$(EXE) -p ./email2000.out -i entrada.txt -o saida.txt
 
 gprof: $(EXE)
-	$(EXE) -p /tmp/emailgprof.out 
-	gprof $(EXE) gmon.out > /tmp/emailgprof.txt
+	$(EXE) -i entrada.txt -o saida.txt
+	gprof $(EXE) gmon.out > ./emailgprof.txt
 	
 clean:
 	rm -f $(EXE) $(OBJS) gmon.out

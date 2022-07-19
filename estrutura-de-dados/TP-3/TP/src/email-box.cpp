@@ -22,10 +22,9 @@ EmailBox::~EmailBox() {
 // sera inserido o novo valor
 void EmailBox::addHelper(TreeNode* &p, Email& val) {
     if (p == NULL) {
-        p = new TreeNode();
-        p->val = val;
+        p = new TreeNode(val);
     } else {
-        if (val > p->val) {
+        if (val.getKey() > p->val.getKey()) {
             EmailBox::addHelper(p->right, val);
         } else {
             EmailBox::addHelper(p->left, val);

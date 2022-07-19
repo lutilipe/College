@@ -41,6 +41,8 @@ bool Email::operator>(Email& e) {
 }
 
 void Email::operator=(Email& e) {
+    Email::_id = e.getLogId();
+
     Email::key = e.getKey();
     ESCREVEMEMLOG((long int)(&(Email::key)),sizeof(Email::key),Email::_id);
     Email::userId = e.getUserId();

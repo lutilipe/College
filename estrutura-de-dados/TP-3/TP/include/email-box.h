@@ -13,7 +13,7 @@ class TreeNode {
         TreeNode *left;
         friend class EmailBox;
     public:
-        TreeNode() { right = NULL; left = NULL; };
+        TreeNode(Email e) { val = e; right = NULL; left = NULL; };
 };
 
 class EmailBox {
