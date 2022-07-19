@@ -7,7 +7,7 @@
 #include "email.h"
 
 #ifndef EMAIL_SERVER_ID
-#define EMAIL_SERVER_ID 0
+#define EMAIL_SERVER_ID 1
 #endif
 
 using namespace std;

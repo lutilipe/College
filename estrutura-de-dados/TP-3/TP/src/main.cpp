@@ -23,6 +23,7 @@ void handleMemLog() {
     }
 
     if (regMem) {
+        defineFaseMemLog(0);
         ativaMemLog();
     } else {
         desativaMemLog();

@@ -6,6 +6,10 @@
 
 using namespace std;
 
+#ifndef EMAIL_BOX_ID
+#define EMAIL_BOX_ID 0
+#endif
+
 class TreeNode {
     private:
         Email val;
@@ -18,6 +22,9 @@ class TreeNode {
 
 class EmailBox {
     private:
+        // Memlog id
+        int _id = EMAIL_BOX_ID;
+
         TreeNode* root;
         void addHelper(TreeNode* &p, Email& val);
         bool removeHelper(TreeNode* &p, int userId, int key);

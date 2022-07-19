@@ -40,6 +40,7 @@ Email* EmailServer::get(int userId, int key) {
 // retorna se a remocao foi feita com sucesso ou nao
 bool EmailServer::remove(int userId, int key) {
     int id = hash(userId);
+    LEMEMLOG((long int)(&(EmailServer::table[id])),sizeof(EmailServer::table[id]),EmailServer::_id);
     return EmailServer::table[id].remove(userId, key);
 }
 

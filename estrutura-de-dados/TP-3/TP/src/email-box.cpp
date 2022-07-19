@@ -1,6 +1,7 @@
 #include "email.h"
 #include "email-box.h"
 #include <iostream>
+#include "memlog.h"
 
 using namespace std;
 
@@ -23,7 +24,9 @@ EmailBox::~EmailBox() {
 void EmailBox::addHelper(TreeNode* &p, Email& val) {
     if (p == NULL) {
         p = new TreeNode(val);
+        ESCREVEMEMLOG((long int)(&(p)),sizeof(p),EmailBox::_id);
     } else {
+        LEMEMLOG((long int)(&(p)),sizeof(p),EmailBox::_id);
         if (val.getKey() > p->val.getKey()) {
             EmailBox::addHelper(p->right, val);
         } else {
@@ -42,6 +45,8 @@ Email* EmailBox::dfs(TreeNode* p, int userId, int key) {
     if (p == NULL) {
         return NULL;
     }
+    
+    LEMEMLOG((long int)(p),sizeof(p),EmailBox::_id);
 
     if (key > p->val.getKey()) {
         return EmailBox::dfs(p->right, userId, key);
@@ -64,12 +69,16 @@ Email* EmailBox::get(int userId, int key) {
 // a ser deletado e substitui esse no por X.
 void EmailBox::antecessor(TreeNode* p, TreeNode* &r) {
     if (r->right != NULL) {
+        LEMEMLOG((long int)(&(r->right)),sizeof(r->right),EmailBox::_id);
         return antecessor(p, r->right);
     }
 
     p->val = r->val;
+    LEMEMLOG((long int)(&(r)),sizeof(r),EmailBox::_id);
     p = r;
+    ESCREVEMEMLOG((long int)(&(p)),sizeof(p),EmailBox::_id);
     r = r->left;
+    ESCREVEMEMLOG((long int)(&(r)),sizeof(r),EmailBox::_id);
 
     delete p;
 }
@@ -80,6 +89,8 @@ bool EmailBox::removeHelper(TreeNode* &p, int userId, int key) {
     if (p == NULL) {
         return false;
     }
+
+    LEMEMLOG((long int)(&(p)),sizeof(p),EmailBox::_id);
 
     if (key > p->val.getKey()) {
         return EmailBox::removeHelper(p->right, userId, key);
@@ -94,11 +105,17 @@ bool EmailBox::removeHelper(TreeNode* &p, int userId, int key) {
     TreeNode* aux;
 
     if (p->right == NULL) {
+        LEMEMLOG((long int)(&(p)),sizeof(p),EmailBox::_id);
         aux = p;
+        ESCREVEMEMLOG((long int)(&(p)),sizeof(p),EmailBox::_id);
+        LEMEMLOG((long int)(&(p->left)),sizeof(p->left),EmailBox::_id);
         p = p->left;
         delete aux;
     } else if (p->left == NULL) {
+        LEMEMLOG((long int)(&(p)),sizeof(p),EmailBox::_id);
         aux = p;
+        ESCREVEMEMLOG((long int)(&(p)),sizeof(p),EmailBox::_id);
+        LEMEMLOG((long int)(&(p->right)),sizeof(p->right),EmailBox::_id);
         p = p->right;
         delete aux;
     } else {
