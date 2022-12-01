@@ -2,13 +2,14 @@ rm(list = ls())
 source("treinaMLP.R")
 source("YMLP.R")
 library(r2r)
+library(ggplot2)
 
 trainDataSource <- read.csv("./dados/treino.csv", header = T)
 testDataSource <- read.csv("./dados/validacao.csv", header = T)
 
-tol<-0.1
-eta<-0.01
-maxepocas<-50
+tol<-0.01
+eta<-0.1
+maxepocas<-10
 
 n_folds = 10
 
@@ -30,8 +31,6 @@ n_folds = 10
   numberMap[["4"]] = "fourties"
   numberMap[["5"]] = "fifties"
 }
-
-numberMap[["2"]]
 
 ## Aux functions
 decodeClassLabels2 <- function(labels, bitSize = 3) {
@@ -132,6 +131,8 @@ getAccuracy <- function(y, yhat) {
 
 maxAcc <- -1
 
+acc<-matrix(0,nrow=n_folds)
+
 ##########################################
 
 nHidden <- 5
@@ -140,7 +141,6 @@ nExits<- 3
 folds <- cut(seq(1,nrow(trainDataSource)),breaks=n_folds,labels=FALSE)
 
 for(i in 1:n_folds){
-  
   testIndexes <- which(folds==i,arr.ind=TRUE)
   testData <- trainDataSource[testIndexes, ]
   trainData <- trainDataSource[-testIndexes, ]
@@ -163,9 +163,35 @@ for(i in 1:n_folds){
   yhat <- retlistans[[1]]
   parsedOut <- parseOutput(yhat)
   accuracy <- getAccuracy(yInTest,parsedOut)
+  acc[i] <- accuracy
   print(accuracy)
   if (accuracy > maxAcc) {
     maxAcc <- accuracy
     bests <- retlist
   }
 }
+
+## Plots
+
+barplot(t(acc), col="steelblue", main="Acuracia por fold", xlab="Fold", ylab="Acuracia")
+
+## Validate
+
+xValidation <- cbind(as.matrix(testDataSource[,2:40]), 1)
+validateRetlist <- YMLP(Z, W, xValidation, 1)
+parsedOut <- parseOutput(validateRetlist[[1]])
+
+labels <- matrix(nrow=nrow(parsedOut), ncol=1)
+
+for (i in 1:nrow(parsedOut)) {
+  label <- classifyLabelNumber(bitToInt(t(as.matrix(parsedOut[i,]))))
+  labels[i] <- label
+}
+
+output <- as.data.frame(cbind(testDataSource[,1], labels))
+
+colnames(output)[1]  <- "id"
+colnames(output)[2]  <- "y"
+
+write.csv(output,file='./dados/sample.csv', row.names=FALSE)
+

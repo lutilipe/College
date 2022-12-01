@@ -1,3 +1,6 @@
+source("functions.R")
+library(e1071)
+
 sech_squared <- function(x){
   return (((2/(exp(x)+exp(-x)))*(2/(exp(x)+exp(-x)))))
 }
@@ -28,8 +31,8 @@ treinaMLP <- function(Xin, Yin, eta, tol, maxepocas, nHidden, nExits) {
       Hs <- retlist[[2]]
       E_saidas <- Yin[irand,] - Yhat_i
       
-      dE_saidas <- E_saidas * (sech_squared(Hs%*%W))
-      dE_intern <- (dE_saidas%*%t(head(W,-1)))*(sech_squared(t(Xin[irand,])%*%Z))
+      dE_saidas <- E_saidas * (dsigmoid(Hs%*%W))
+      dE_intern <- (dE_saidas%*%t(head(W,-1)))*(dsigmoid(t(Xin[irand,])%*%Z))
       
       W <- W + eta * t(Hs)%*%dE_saidas
       
