@@ -8,7 +8,7 @@ testDataSource <- read.csv("./dados/validacao.csv", header = T)
 
 tol<-0.1
 eta<-0.01
-maxepocas<-1
+maxepocas<-50
 
 n_folds = 10
 
@@ -134,7 +134,7 @@ maxAcc <- -1
 
 ##########################################
 
-nHidden <- 3
+nHidden <- 5
 nExits<- 3
 
 folds <- cut(seq(1,nrow(trainDataSource)),breaks=n_folds,labels=FALSE)

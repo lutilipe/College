@@ -26,7 +26,7 @@ treinaMLP <- function(Xin, Yin, eta, tol, maxepocas, nHidden, nExits) {
       
       Yhat_i <- retlist[[1]]
       Hs <- retlist[[2]]
-      E_saidas <- Yin[irand] - Yhat_i
+      E_saidas <- Yin[irand,] - Yhat_i
       
       dE_saidas <- E_saidas * (sech_squared(Hs%*%W))
       dE_intern <- (dE_saidas%*%t(head(W,-1)))*(sech_squared(t(Xin[irand,])%*%Z))
