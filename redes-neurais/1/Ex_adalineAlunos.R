@@ -60,7 +60,7 @@ plot(Cn[,1],Cn[,2],col='blue',pch='+', xlim = c(0,max(Cp[,1],Cn[,1])),ylim = c(0
 
 eta<-0.01
 tol<-0.01
-mxepoc<-1000
+mxepoc<-200
 
 
 

@@ -5,17 +5,10 @@ library("mlbench")
 library('ggplot2')
 library('RSNNS')
 
-#Data loading
-{
-  NORMALS <- (mlbench.2dnormals(200))
-  XOR     <- (mlbench.xor(400))
-  CIRCLE  <- (mlbench.circle(100))
-  SPIRAL  <- (mlbench.spirals(100,sd = 0.05))
-}
+
+XOR     <- (mlbench.xor(400))
 
 
-
-#Parametros e plot
 {
   table <- as.data.frame(XOR)
   
@@ -31,7 +24,7 @@ library('RSNNS')
 
   neuronNumber <- 60
   plotrange <- 1
-  plotname <- "XOR - 60 NEURONS"
+  plotname <- "60 NEURONS"
 }
 
 XY_split <- splitForTrainingAndTest(XY_all[,c(1:2)], XY_all[,3], ratio = 0.3)
@@ -59,7 +52,7 @@ acuracia <- 1-(t(Y_D - Yhat_t) %*% (Y_D - Yhat_t))/200
 print(acuracia)
 
 ########################################
-#plots
+
 seqx1x2 <- seq(-plotrange, plotrange, 0.01)
 lseq <- length(seqx1x2)
 MZ <- matrix(nrow=lseq, ncol=lseq)
@@ -77,20 +70,20 @@ for(i in 1:lseq){
 plotData1 <- XY_all[XY_all[,3]==1,]
 plotData2 <- XY_all[XY_all[,3]==-1,]
 library(RColorBrewer)
-coul <- brewer.pal(9, "Pastel1")
+coul <- brewer.pal(9, "Pastel2")
 
-image(MZ, useRaster = TRUE, axes = FALSE, col = coul[1:2], )
+image(MZ, useRaster = TRUE, axes = FALSE, col = coul[3:2], )
 par(new=T)
 
-plot(plotData1[,1],plotData1[,2],col='blue',pch=16,xlab = '' ,ylab= '', cex = 1.3, main = plotname,
+plot(plotData1[,1],plotData1[,2],col='darkorange',pch=15,xlab = '' ,ylab= '', cex = 1.3, main = plotname,
      xlim = c(-plotrange,plotrange),
      ylim = c(-plotrange,plotrange))
 par(new=T)
-plot(plotData2[,1],plotData2[,2],col='red',pch=16,xlab = '' ,ylab= '', cex = 1.3,
+plot(plotData2[,1],plotData2[,2],col='blue',pch=15,xlab = '' ,ylab= '', cex = 1.3,
      xlim = c(-plotrange,plotrange),
      ylim = c(-plotrange,plotrange))
 
-#contour2D(MZ,seqx1x2,seqx1x2,xlim = c(-plotrange,plotrange),ylim = c(-plotrange,plotrange),xlab = '' ,ylab= '',levels=0 )
+
 
 
 
