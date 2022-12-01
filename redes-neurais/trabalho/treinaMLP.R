@@ -32,7 +32,7 @@ treinaMLP <- function(Xin, Yin, eta, tol, maxepocas, nHidden, nExits) {
       E_saidas <- Yin[irand,] - Yhat_i
       
       dE_saidas <- E_saidas * (dsigmoid(Hs%*%W))
-      dE_intern <- (dE_saidas%*%t(head(W,-1)))*(dsigmoid(t(Xin[irand,])%*%Z))
+      dE_intern <- (dE_saidas%*%t(head(W,-1)))*(sech_squared(t(Xin[irand,])%*%Z))
       
       W <- W + eta * t(Hs)%*%dE_saidas
       

@@ -9,9 +9,9 @@ testDataSource <- read.csv("./dados/validacao.csv", header = T)
 
 tol<-0.01
 eta<-0.1
-maxepocas<-10
+maxepocas<-100
 
-n_folds = 10
+n_folds = 5
 
 {
   ## Mapping labels
@@ -80,29 +80,12 @@ parseOutput <- function(yOut) {
   rows <- dim(yOut)[1]
   cols <- dim(yOut)[2]
   
-  maxNum <- -2147483647
-  minNum <- 2147483647
-
   for (i in 1:rows) {
     for (j in 1:cols) {
-      if ((yOut[i,][j]) < minNum) {
-        minNum <- yOut[i,][j]
-      }
-      
-      if ((yOut[i,][j]) > maxNum) {
-        maxNum <- yOut[i,][j]
-      }
-    }
-  }
-  
-  meanNum <- (maxNum + minNum) / 2
-  
-  for (i in 1:rows) {
-    for (j in 1:cols) {
-      if ((yOut[i,][j]) < meanNum) {
-        yOut[i,][j] <- 0
-      } else {
+      if ((yOut[i,][j]) >= 0.5) {
         yOut[i,][j] <- 1
+      } else {
+        yOut[i,][j] <- 0
       }
     }
   }
