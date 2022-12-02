@@ -4,6 +4,10 @@ source("YMLP.R")
 library(r2r)
 library(ggplot2)
 
+normalize <- function(x){
+  (x - min(x)) / (max(x)-min(x))
+}
+
 trainDataSource <- read.csv("./dados/treino.csv", header = T)
 testDataSource <- read.csv("./dados/validacao.csv", header = T)
 
@@ -68,7 +72,7 @@ classifyLabelNumber <- function(num) {
 
 # Preparing data
 prepareData <- function(data) {
-  Xin <- trainDataSource[,2:40]
+  Xin <- (sapply(trainDataSource[,c(2:40)], normalize))*2-1
   Yin <- decodeClassLabels2(trainDataSource[,41])
   return(list(Xin, Yin))
 }
@@ -160,7 +164,7 @@ barplot(t(acc), col="steelblue", main="Acuracia por fold", xlab="Fold", ylab="Ac
 
 ## Validate
 
-xValidation <- cbind(as.matrix(testDataSource[,2:40]), 1)
+xValidation <- cbind(as.matrix((sapply(testDataSource[,c(2:40)], normalize))*2-1), 1)
 validateRetlist <- YMLP(Z, W, xValidation, 1)
 parsedOut <- parseOutput(validateRetlist[[1]])
 
