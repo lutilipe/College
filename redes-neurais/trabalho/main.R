@@ -15,7 +15,7 @@ tol<-0.01
 eta<-0.1
 maxepocas<-150
 
-n_folds = 5
+n_folds = 10
 
 {
   ## Mapping labels
