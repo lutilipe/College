@@ -9,7 +9,7 @@ testDataSource <- read.csv("./dados/validacao.csv", header = T)
 
 tol<-0.01
 eta<-0.1
-maxepocas<-100
+maxepocas<-150
 
 n_folds = 5
 
@@ -17,19 +17,19 @@ n_folds = 5
   ## Mapping labels
   labelMap <- hashmap()
   
-  labelMap[["teens"]] = 1
-  labelMap[["twenties"]] = 2
-  labelMap[["thirties"]] = 3
-  labelMap[["fourties"]] = 4
-  labelMap[["fifties"]] = 5
+  labelMap[["teens"]] = 0
+  labelMap[["twenties"]] = 1
+  labelMap[["thirties"]] = 2
+  labelMap[["fourties"]] = 3
+  labelMap[["fifties"]] = 4
   
   numberMap <- hashmap()
   
-  numberMap[["1"]] = "teens"
-  numberMap[["2"]] = "twenties"
-  numberMap[["3"]] = "thirties"
-  numberMap[["4"]] = "fourties"
-  numberMap[["5"]] = "fifties"
+  numberMap[["0"]] = "teens"
+  numberMap[["1"]] = "twenties"
+  numberMap[["2"]] = "thirties"
+  numberMap[["3"]] = "fourties"
+  numberMap[["4"]] = "fifties"
 }
 
 ## Aux functions
@@ -156,7 +156,7 @@ for(i in 1:n_folds){
 
 ## Plots
 
-barplot(t(acc), col="steelblue", main="Acuracia por fold", xlab="Fold", ylab="Acuracia")
+barplot(t(acc), col="steelblue", main="Acuracia por fold", xlab="Fold", ylab="Acuracia", ylim = c(0,1))
 
 ## Validate
 
