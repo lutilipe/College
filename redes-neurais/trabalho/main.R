@@ -158,6 +158,10 @@ for(i in 1:n_folds){
   }
 }
 
+desvio <- sd(acc)
+print(mean(acc))
+print(desvio)
+
 ## Plots
 
 barplot(t(acc), col="steelblue", main="Acuracia por fold", xlab="Fold", ylab="Acuracia", ylim = c(0,1))
