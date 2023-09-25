@@ -97,10 +97,10 @@ void t9(){
 
 void t10(){
     RingArray<Item> ringArray(3);
+    ringArray.push(Item(4,1000));
     ringArray.push(Item(1,3));
     ringArray.push(Item(2,100));
     ringArray.push(Item(3,-100));
-    ringArray.push(Item(4,1000));
 
     cout << "Get: " << ringArray.get(0) << endl;
     cout << "Get: " << ringArray.get(1) << endl;
@@ -112,6 +112,7 @@ void t10(){
     cout << "Get: " << ringArray.get(1) << endl;
     cout << "Get: " << ringArray.get(2) << endl;
     cout << "Get: " << ringArray.get(3) << endl;
+    cout << "Maior: " << ringArray.get_maior() << endl;
 }
 
 
