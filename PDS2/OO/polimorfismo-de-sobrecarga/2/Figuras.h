@@ -25,6 +25,8 @@ class Figure {
      * implementada por outras classes, via heranca.
      */
     virtual ~Figure() {}
+    friend Figure* operator+(const Figure& lhs, const Figure& rhs);
+    friend Figure* operator-(const Figure& lhs, const Figure& rhs);
 };
 
 /**
