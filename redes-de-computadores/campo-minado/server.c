@@ -4,6 +4,8 @@
 #include <time.h>
 #include <getopt.h>
 
+#include "action_type.h"
+
 #define ROWS 4
 #define COLS 4
 #define NUM_BOMBS 3
@@ -15,6 +17,9 @@
 #define BOMB_SYMBOL '*'
 #define HIDDEN_SYMBOL '-'
 #define FLAG_SYMBOL '>'
+
+int game_started = 0;
+int game_over = 0;
 
 typedef struct Action {
     int type;
@@ -70,59 +75,89 @@ void init_board(int board[ROWS][COLS], char* filename) {
 void print_board(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLS; j++) {
-            if (revealed[i][j]) {
+            int revealed_cell = revealed[i][j];
+            if (revealed_cell == 1) {
                 if (board[i][j] == BOMB) {
                     printf("%c\t\t", BOMB_SYMBOL);
                 } else {
                     printf("%i\t\t", board[i][j]);
                 }
+            } else if (revealed_cell == FLAG) {
+                printf("%c\t\t", FLAG_SYMBOL);
             } else {
-                if (board[i][j] == FLAG) {
-                    printf("%c\t\t", FLAG_SYMBOL);
-                } else {
-                    printf("%c\t\t", HIDDEN_SYMBOL);
-                }
+                printf("%c\t\t", HIDDEN_SYMBOL);
             }
         }
         printf("\n");
     }
 }
 
-int main(int argc, char ** argv) {
+void reveal_cell(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
+    int row, col;
+    scanf("%d %d", &row, &col);
+
+    if (row < 0 || row >= ROWS || col < 0 || col >= COLS) {
+        printf("error: invalid cell\n");
+        return;
+    }
+
+    if (revealed[row][col]) {
+        printf("error: cell already revealed\n");
+        return;
+    }
+
+    if (board[row][col] == BOMB) {
+        game_over = 1;
+    } else {
+        revealed[row][col] = 1;
+    }
+}
+
+void handle_action(
+    enum ActionType action_type,
+    int board[ROWS][COLS],
+    int revealed[ROWS][COLS]
+) {
+    if (!game_started) {
+        return;
+    } 
+    switch (action_type) {
+        case REVEAL:
+            reveal_cell(board, revealed);
+            break;
+        case FLAG_ACTION:
+            break;
+        case REMOVE_FLAG:
+            break;
+        case RESET:
+            break;
+        case EXIT:
+            break;
+        default:
+            printf("error: command not found\n");
+            break;
+    }
+}
+
+int get_action() {
+    int action;
+    scanf("%i", &action);
+    return action;
+}
+
+void start_game(Options* opt) {
     int board[ROWS][COLS];
     int revealed[ROWS][COLS] = {0};
 
     Action msg;
-    Options opt;
-    int game_over = 0;
 
-    parse_args(argc, argv, &opt);
-    init_board(board, opt.filename);
+    init_board(board, opt->filename);
 
     while (!game_over) {
-        int row, col;
+        int action = get_action();
 
-        printf("Digite a linha e a coluna (0 a 3) que deseja revelar: ");
-        scanf("%d %d", &row, &col);
+        handle_action(action, board, revealed);
 
-        if (row < 0 || row >= ROWS || col < 0 || col >= COLS || revealed[row][col]) {
-            printf("Coordenadas inválidas. Tente novamente.\n");
-            continue;
-        }
-
-        msg.type = 1;  // Tipo de ação: revelar
-        msg.coordinates[0] = row;
-        msg.coordinates[1] = col;
-
-        if (board[row][col] == BOMB) {
-            // O cliente revelou uma célula com bomba, jogo encerrado
-            msg.type = 8;  // Tipo de ação: game_over
-            game_over = 1;
-        } else {
-            revealed[row][col] = 1;
-        }
-
-        // Verifique se o cliente ganhou
         int win = 1;
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
@@ -134,11 +169,10 @@ int main(int argc, char ** argv) {
         }
 
         if (win) {
-            msg.type = 6;  // Tipo de ação: win
+            msg.type = 6;
             game_over = 1;
         }
 
-        // Atualize o estado do tabuleiro na mensagem
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
                 msg.board[i][j] = revealed[i][j] ? board[i][j] : HIDDEN;
@@ -149,6 +183,22 @@ int main(int argc, char ** argv) {
 
         if (!game_over) {
             printf("\n");
+        }
+    }
+    printf("GAME OVER\n");
+    game_started = 0;
+    return;
+}
+
+int main(int argc, char ** argv) {
+    Options opt;
+    parse_args(argc, argv, &opt);
+
+    while (1) {
+        int action = get_action();
+        if (action == START && !game_started) {
+            game_started = 1;
+            start_game(&opt);
         }
     }
 
