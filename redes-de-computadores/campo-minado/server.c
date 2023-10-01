@@ -6,13 +6,16 @@
 
 #include "action_type.h"
 
+// Game definitions
 #define ROWS 4
 #define COLS 4
 #define NUM_BOMBS 3
 
+// Game constants
 #define BOMB -1
 #define HIDDEN -2
 #define FLAG -3
+#define REVEALD_CELL 1
 
 #define BOMB_SYMBOL '*'
 #define HIDDEN_SYMBOL '-'
@@ -75,14 +78,14 @@ void init_board(int board[ROWS][COLS], char* filename) {
 void print_board(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLS; j++) {
-            int revealed_cell = revealed[i][j];
-            if (revealed_cell == 1) {
+            int cell = revealed[i][j];
+            if (cell == REVEALD_CELL) {
                 if (board[i][j] == BOMB) {
                     printf("%c\t\t", BOMB_SYMBOL);
                 } else {
                     printf("%i\t\t", board[i][j]);
                 }
-            } else if (revealed_cell == FLAG) {
+            } else if (cell == FLAG) {
                 printf("%c\t\t", FLAG_SYMBOL);
             } else {
                 printf("%c\t\t", HIDDEN_SYMBOL);
@@ -92,7 +95,39 @@ void print_board(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
     }
 }
 
-void reveal_cell(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
+void handle_remove_flag(int revealed[ROWS][COLS]) {
+    int row, col;
+    scanf("%d %d", &row, &col);
+
+    if (row < 0 || row >= ROWS || col < 0 || col >= COLS || revealed[row][col] != FLAG) {
+        return;
+    }
+
+    revealed[row][col] = 0;
+}
+
+void handle_add_flag(int revealed[ROWS][COLS]) {
+    int row, col;
+    scanf("%d %d", &row, &col);
+
+    if (row < 0 || row >= ROWS || col < 0 || col >= COLS) {
+        return;
+    }
+
+    if (revealed[row][col] == FLAG) {
+        printf("error: cell already has a flag\n");
+        return;
+    }
+
+    if (revealed[row][col] == REVEALD_CELL) {
+        printf("error: cannot insert flag in revealed cell\n");
+        return;
+    }
+
+    revealed[row][col] = FLAG;
+}
+
+void handle_reveal(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
     int row, col;
     scanf("%d %d", &row, &col);
 
@@ -101,7 +136,7 @@ void reveal_cell(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
         return;
     }
 
-    if (revealed[row][col]) {
+    if (revealed[row][col] == REVEALD_CELL) {
         printf("error: cell already revealed\n");
         return;
     }
@@ -123,11 +158,13 @@ void handle_action(
     } 
     switch (action_type) {
         case REVEAL:
-            reveal_cell(board, revealed);
+            handle_reveal(board, revealed);
             break;
         case FLAG_ACTION:
+            handle_add_flag(revealed);
             break;
         case REMOVE_FLAG:
+            handle_remove_flag(revealed);
             break;
         case RESET:
             break;
@@ -175,7 +212,7 @@ void start_game(Options* opt) {
 
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
-                msg.board[i][j] = revealed[i][j] ? board[i][j] : HIDDEN;
+                msg.board[i][j] = revealed[i][j] == REVEALD_CELL ? board[i][j] : HIDDEN;
             }
         }
 
