@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
+#include <getopt.h>
 
 #define ROWS 4
 #define COLS 4
@@ -14,33 +16,55 @@
 #define HIDDEN_SYMBOL '-'
 #define FLAG_SYMBOL '>'
 
-struct Action {
+typedef struct Action {
     int type;
     int coordinates[2];
     int board[ROWS][COLS];
-};
+} Action;
 
-void create_bombs(int board[ROWS][COLS]) {
-    srand(time(NULL));
+typedef struct Options {
+    char filename[100];
+} Options;
 
-    for (int k = 0; k < NUM_BOMBS; k++) {
-        int row, col;
-        do {
-            row = rand() % ROWS;
-            col = rand() % COLS;
-        } while (board[row][col] == BOMB);
-        board[row][col] = BOMB;
+void parse_args(int argc, char **argv, Options* opt) {
+    int c;
+    extern char * optarg;    
+
+    opt->filename[0] = 0;
+
+    while ((c = getopt(argc, argv, "i:")) != EOF)
+    switch(c) {
+        case 'i': 
+            strcpy(opt->filename, optarg);
+        break;
+        default:
+            break;
     }
 }
 
-void init_board(int board[ROWS][COLS]) {
-    int i, j;
-    for(i = 0; i < ROWS; i++) {
-        for(j = 0; j < COLS; j++) {
-            board[i][j] = HIDDEN;
-        }
+void init_board(int board[ROWS][COLS], char* filename) {
+    FILE *file = fopen(filename, "r");
+
+    if (file == NULL) {
+        fprintf(stderr, "Error ao abrir: %s\n", filename);
+        exit(1);
     }
-    create_bombs(board);
+
+    char line[1024];
+    int rows = 0;
+    int cols = 0;
+    while (fgets(line, sizeof(line), file) != NULL) {
+        char *token = strtok(line, ",");
+        while (token != NULL) {
+            board[rows][cols] = atof(token);
+            token = strtok(NULL, ",");
+            cols++;
+        }
+        rows++;
+        cols = 0;
+    }
+
+    fclose (file); 
 }
 
 void print_board(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
@@ -64,35 +88,16 @@ void print_board(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
     }
 }
 
-void reveal_cell(int board[ROWS][COLS], int revealed[ROWS][COLS], int row, int col) {
-    int count = 0;
-    
-    int dr[] = {-1, -1, -1, 0, 0, 1, 1, 1};
-    int dc[] = {-1, 0, 1, -1, 1, -1, 0, 1};
-    
-    for (int i = 0; i < 8; i++) {
-        int newRow = row + dr[i];
-        int newCol = col + dc[i];
-        
-        if (newRow >= 0 && newRow < ROWS && newCol >= 0 && newCol < COLS) {
-            if (board[newRow][newCol] == BOMB) {
-                count++;
-            }
-        }
-    }
-
-    revealed[row][col] = 1;
-    board[row][col] = count;
-}
-
-int main() {
+int main(int argc, char ** argv) {
     int board[ROWS][COLS];
     int revealed[ROWS][COLS] = {0};
 
-    struct Action msg;
+    Action msg;
+    Options opt;
     int game_over = 0;
 
-    init_board(board);
+    parse_args(argc, argv, &opt);
+    init_board(board, opt.filename);
 
     while (!game_over) {
         int row, col;
@@ -114,7 +119,7 @@ int main() {
             msg.type = 8;  // Tipo de ação: game_over
             game_over = 1;
         } else {
-            reveal_cell(board, revealed, row, col);
+            revealed[row][col] = 1;
         }
 
         // Verifique se o cliente ganhou
@@ -140,11 +145,6 @@ int main() {
             }
         }
 
-        // Envie a mensagem para o cliente
-        // (Neste ponto, você implementaria a lógica de comunicação por sockets)
-
-        // Imprima o tabuleiro atualizado para o cliente
-        printf("\nTabuleiro atual:\n");
         print_board(board, revealed);
 
         if (!game_over) {
