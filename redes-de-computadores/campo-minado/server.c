@@ -95,8 +95,9 @@ void handle_send_curr_state(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
     return;
 }
 
-void handle_exit() {
-    printf("client disconnected");
+void handle_exit(int* csock) {
+    printf("client disconnected\n");
+    close(csock);
 }
 
 void handle_game_win(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
@@ -184,7 +185,8 @@ void handle_reveal(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
 int handle_action(
     enum ActionType action_type,
     int board[ROWS][COLS],
-    int revealed[ROWS][COLS]
+    int revealed[ROWS][COLS],
+    int* csock
 ) {
     switch (action_type) {
         case REVEAL:
@@ -200,7 +202,7 @@ int handle_action(
             handle_reset(revealed);
             break;
         case EXIT:
-            handle_exit();
+            handle_exit(csock);
             return 0;
         default:
             printf("error: command not found\n");
@@ -216,7 +218,7 @@ int get_action() {
     return action;
 }
 
-void start_game(Options* opt) {
+void start_game(Options* opt, int* csock) {
     int board[ROWS][COLS];
     int revealed[ROWS][COLS] = {0};
 
@@ -228,7 +230,7 @@ void start_game(Options* opt) {
         int handle_result = -1;
         do {
             int action = get_action();
-            handle_result = handle_action(action, board, revealed);
+            handle_result = handle_action(action, board, revealed, csock);
         } while (handle_result == 2);
 
         if (!handle_result || game_over) {
@@ -300,7 +302,7 @@ int main(int argc, char ** argv) {
 
         char caddrstr[BUFSZ];
         addrtostr(caddr, caddrstr, BUFSZ);
-        printf("[log] connection from %s\n", caddrstr);
+        printf("client connected");
 
         char buf[BUFSZ];
         memset(buf, 0, BUFSZ);
@@ -317,7 +319,7 @@ int main(int argc, char ** argv) {
         /* int action = get_action();
         if (action == START && !game_started) {
             game_started = 1;
-            start_game(&opt);
+            start_game(&opt, &csock);
         } */
     }
 
