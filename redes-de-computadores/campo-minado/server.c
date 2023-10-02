@@ -75,11 +75,11 @@ void init_board(int board[ROWS][COLS], char* filename) {
     fclose (file); 
 }
 
-void print_board(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
+void print_board(int board[ROWS][COLS], int revealed[ROWS][COLS], int show_all) {
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLS; j++) {
             int cell = revealed[i][j];
-            if (cell == REVEALD_CELL) {
+            if (cell == REVEALD_CELL || show_all) {
                 if (board[i][j] == BOMB) {
                     printf("%c\t\t", BOMB_SYMBOL);
                 } else {
@@ -92,6 +92,31 @@ void print_board(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
             }
         }
         printf("\n");
+    }
+}
+
+void handle_send_curr_state(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
+    return;
+}
+
+void handle_exit() {
+    printf("client disconnected");
+}
+
+void handle_game_win(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
+    int win = 1;
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                if (board[i][j] != BOMB && !revealed[i][j]) {
+                    win = 0;
+                    break;
+                }
+            }
+        }
+
+    if (win) {
+        game_over = 1;
+        printf("YOU WIN\n");
     }
 }
 
@@ -113,6 +138,7 @@ void handle_reset(int revealed[ROWS][COLS]) {
             revealed[i][j] = 0;
         }
     }
+    printf("starting new game\n");
 }
 
 void handle_add_flag(int revealed[ROWS][COLS]) {
@@ -152,6 +178,8 @@ void handle_reveal(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
 
     if (board[row][col] == BOMB) {
         game_over = 1;
+        printf("GAME OVER\n");
+        print_board(board, revealed, 1);
     } else {
         revealed[row][col] = 1;
     }
@@ -176,6 +204,7 @@ int handle_action(
             handle_reset(revealed);
             break;
         case EXIT:
+            handle_exit();
             return 0;
         default:
             printf("error: command not found\n");
@@ -206,23 +235,8 @@ void start_game(Options* opt) {
             handle_result = handle_action(action, board, revealed);
         } while (handle_result == 2);
 
-        if (!handle_result) {
+        if (!handle_result || game_over) {
             break;
-        }
-
-        int win = 1;
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLS; j++) {
-                if (board[i][j] != BOMB && !revealed[i][j]) {
-                    win = 0;
-                    break;
-                }
-            }
-        }
-
-        if (win) {
-            msg.type = 6;
-            game_over = 1;
         }
 
         for (int i = 0; i < ROWS; i++) {
@@ -231,14 +245,12 @@ void start_game(Options* opt) {
             }
         }
 
-        print_board(board, revealed);
+        print_board(board, revealed, 0);
 
-        if (!game_over) {
-            printf("\n");
-        }
+        printf("\n");
     }
-    printf("GAME OVER\n");
     game_started = 0;
+    game_over = 0;
     return;
 }
 
