@@ -106,6 +106,15 @@ void handle_remove_flag(int revealed[ROWS][COLS]) {
     revealed[row][col] = 0;
 }
 
+void handle_reset(int revealed[ROWS][COLS]) {
+    int i, j = 0;
+    for (i = 0; i < ROWS; i++) {
+        for (j = 0; j < COLS; j++) {
+            revealed[i][j] = 0;
+        }
+    }
+}
+
 void handle_add_flag(int revealed[ROWS][COLS]) {
     int row, col;
     scanf("%d %d", &row, &col);
@@ -148,14 +157,11 @@ void handle_reveal(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
     }
 }
 
-void handle_action(
+int handle_action(
     enum ActionType action_type,
     int board[ROWS][COLS],
     int revealed[ROWS][COLS]
 ) {
-    if (!game_started) {
-        return;
-    } 
     switch (action_type) {
         case REVEAL:
             handle_reveal(board, revealed);
@@ -167,13 +173,16 @@ void handle_action(
             handle_remove_flag(revealed);
             break;
         case RESET:
+            handle_reset(revealed);
             break;
         case EXIT:
-            break;
+            return 0;
         default:
             printf("error: command not found\n");
-            break;
+            return 2;
     }
+
+    return 1;
 }
 
 int get_action() {
@@ -191,9 +200,15 @@ void start_game(Options* opt) {
     init_board(board, opt->filename);
 
     while (!game_over) {
-        int action = get_action();
+        int handle_result = -1;
+        do {
+            int action = get_action();
+            handle_result = handle_action(action, board, revealed);
+        } while (handle_result == 2);
 
-        handle_action(action, board, revealed);
+        if (!handle_result) {
+            break;
+        }
 
         int win = 1;
         for (int i = 0; i < ROWS; i++) {
