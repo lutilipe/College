@@ -5,6 +5,8 @@
 
 #include <arpa/inet.h>
 
+#include "common.h"
+
 void logexit(const char *msg) {
 	perror(msg);
 	exit(EXIT_FAILURE);
@@ -98,4 +100,22 @@ int server_sockaddr_init(const char *proto, const char *portstr,
     } else {
         return -1;
     }
+}
+
+void get_message(int socket, Message* msg) {
+    char buffer[sizeof(Message)];
+    size_t count = recv(socket, buffer, sizeof(Message), 0);
+    if (count == 0) {
+        exit(EXIT_FAILURE);
+    }
+    memcpy(msg, buffer, sizeof(Message));
+}
+
+void send_message(int socket, Message* msg) {
+    char buffer[sizeof(Message)];
+    memcpy(buffer, msg, sizeof(Message));
+    size_t count = send(socket, buffer, sizeof(Message), 0);
+	if (count != sizeof(Message)) {
+		logexit("send");
+	}
 }

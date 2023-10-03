@@ -35,3 +35,7 @@ void addrtostr(const struct sockaddr *addr, char *str, size_t strsize);
 
 int server_sockaddr_init(const char *proto, const char *portstr,
                          struct sockaddr_storage *storage);
+
+void get_message(int socket, Message* msg);
+void send_message(int socket, Message* msg);
+

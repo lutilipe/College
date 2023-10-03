@@ -95,7 +95,7 @@ void handle_send_curr_state(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
     return;
 }
 
-void handle_exit(int* csock) {
+void handle_exit(int csock) {
     printf("client disconnected\n");
     close(csock);
 }
@@ -186,7 +186,7 @@ int handle_action(
     enum ActionType action_type,
     int board[ROWS][COLS],
     int revealed[ROWS][COLS],
-    int* csock
+    int csock
 ) {
     switch (action_type) {
         case REVEAL:
@@ -212,13 +212,7 @@ int handle_action(
     return 1;
 }
 
-int get_action() {
-    int action;
-    scanf("%i", &action);
-    return action;
-}
-
-void start_game(Options* opt, int* csock) {
+void start_game(Options* opt, int csock) {
     int board[ROWS][COLS];
     int revealed[ROWS][COLS] = {0};
 
@@ -229,8 +223,8 @@ void start_game(Options* opt, int* csock) {
     while (!game_over) {
         int handle_result = -1;
         do {
-            int action = get_action();
-            handle_result = handle_action(action, board, revealed, csock);
+            get_message(csock, &msg);
+            handle_result = handle_action(msg.type, board, revealed, csock);
         } while (handle_result == 2);
 
         if (!handle_result || game_over) {
@@ -302,25 +296,26 @@ int main(int argc, char ** argv) {
 
         char caddrstr[BUFSZ];
         addrtostr(caddr, caddrstr, BUFSZ);
-        printf("client connected");
+        printf("client connected\n");
 
-        char buf[BUFSZ];
-        memset(buf, 0, BUFSZ);
-        size_t count = recv(csock, buf, BUFSZ - 1, 0);
-        printf("[msg] %s, %d bytes: %s\n", caddrstr, (int)count, buf);
+        Message msg;
+        get_message(csock, &msg);
 
-        sprintf(buf, "remote endpoint: %.1000s\n", caddrstr);
-        count = send(csock, buf, strlen(buf) + 1, 0);
-        if (count != strlen(buf) + 1) {
-            logexit("send");
+        printf("[msg] %s, Type: %i\n", caddrstr, msg.type);
+        printf("%i\n", msg.coordinates[0]);
+        printf("%i\n", msg.coordinates[1]);
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                printf("%i\n", msg.board[i][j]);
+            }
         }
-        close(csock);
 
-        /* int action = get_action();
-        if (action == START && !game_started) {
+        if (msg.type == START && !game_started) {
             game_started = 1;
-            start_game(&opt, &csock);
-        } */
+            start_game(&opt, csock);
+        }
+
+        close(csock);
     }
 
     exit(EXIT_SUCCESS);

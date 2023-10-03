@@ -30,18 +30,24 @@ int main(int argc, char **argv) {
 	char addrstr[BUFSZ];
 	addrtostr(addr, addrstr, BUFSZ);
 
-	char buf[BUFSZ];
-	memset(buf, 0, BUFSZ);
-	fgets(buf, BUFSZ-1, stdin);
-	size_t count = send(s, buf, strlen(buf)+1, 0);
-	if (count != strlen(buf)+1) {
-		logexit("send");
-	}
+	Message originalData;
+    originalData.type = 2;
+    originalData.coordinates[0] = 2;
+    originalData.coordinates[1] = 3;
 
-	memset(buf, 0, BUFSZ);
+    // Fill in the board with some data
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            originalData.board[i][j] = i * COLS + j;
+        }
+    }
+
+	send_message(s, &originalData);
+
+	char buffer[sizeof(Message)];
 	unsigned total = 0;
 	while(1) {
-		count = recv(s, buf + total, BUFSZ - total, 0);
+		int count = recv(s, buffer + total, BUFSZ - total, 0);
 		if (count == 0) {
 			break;
 		}
@@ -49,7 +55,7 @@ int main(int argc, char **argv) {
 	}
 	close(s);
 
-	puts(buf);
+	puts(buffer);
 
 	exit(EXIT_SUCCESS);
 }
