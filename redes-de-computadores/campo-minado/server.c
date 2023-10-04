@@ -13,16 +13,6 @@
 // Game definitions
 #define NUM_BOMBS 3
 
-// Game constants
-#define BOMB -1
-#define HIDDEN -2
-#define FLAG -3
-#define REVEALD_CELL 1
-
-#define BOMB_SYMBOL '*'
-#define HIDDEN_SYMBOL '-'
-#define FLAG_SYMBOL '>'
-
 int game_started = 0;
 int game_over = 0;
 
@@ -43,6 +33,22 @@ void parse_args(int argc, char **argv, Options* opt) {
         break;
         default:
             break;
+    }
+}
+
+void copy_board_to_msg(Message* msg, int board[ROWS][COLS], int revealed[ROWS][COLS], int show_all) {
+    int i = 0, j = 0;
+    for (i = 0; i < ROWS; i++) {
+       for (j = 0; j < COLS; j++) {
+            int cell = revealed[i][j];
+            if (cell == REVEALD_CELL || show_all) {
+                msg->board[i][j] = board[i][j];
+            } else if (cell == FLAG) {
+                msg->board[i][j] = FLAG;
+            } else {
+                msg->board[i][j] = HIDDEN;
+            }
+        } 
     }
 }
 
@@ -71,30 +77,6 @@ void init_board(int board[ROWS][COLS], char* filename) {
     fclose (file); 
 }
 
-void print_board(int board[ROWS][COLS], int revealed[ROWS][COLS], int show_all) {
-    for (int i = 0; i < ROWS; i++) {
-        for (int j = 0; j < COLS; j++) {
-            int cell = revealed[i][j];
-            if (cell == REVEALD_CELL || show_all) {
-                if (board[i][j] == BOMB) {
-                    printf("%c\t\t", BOMB_SYMBOL);
-                } else {
-                    printf("%i\t\t", board[i][j]);
-                }
-            } else if (cell == FLAG) {
-                printf("%c\t\t", FLAG_SYMBOL);
-            } else {
-                printf("%c\t\t", HIDDEN_SYMBOL);
-            }
-        }
-        printf("\n");
-    }
-}
-
-void handle_send_curr_state(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
-    return;
-}
-
 void handle_exit(int csock) {
     printf("client disconnected\n");
     close(csock);
@@ -117,8 +99,9 @@ void handle_game_win(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
     }
 }
 
-void handle_remove_flag(int revealed[ROWS][COLS]) {
-    int row, col;
+void handle_remove_flag(int revealed[ROWS][COLS], Message* msg) {
+    int row = msg->coordinates[0];
+    int col = msg->coordinates[1];
     scanf("%d %d", &row, &col);
 
     if (row < 0 || row >= ROWS || col < 0 || col >= COLS || revealed[row][col] != FLAG) {
@@ -138,9 +121,9 @@ void handle_reset(int revealed[ROWS][COLS]) {
     printf("starting new game\n");
 }
 
-void handle_add_flag(int revealed[ROWS][COLS]) {
-    int row, col;
-    scanf("%d %d", &row, &col);
+void handle_add_flag(int revealed[ROWS][COLS], Message* msg) {
+    int row = msg->coordinates[0];
+    int col = msg->coordinates[1];
 
     if (row < 0 || row >= ROWS || col < 0 || col >= COLS) {
         return;
@@ -159,9 +142,9 @@ void handle_add_flag(int revealed[ROWS][COLS]) {
     revealed[row][col] = FLAG;
 }
 
-void handle_reveal(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
-    int row, col;
-    scanf("%d %d", &row, &col);
+void handle_reveal(int board[ROWS][COLS], int revealed[ROWS][COLS], Message* msg) {
+    int row = msg->coordinates[0];
+    int col = msg->coordinates[1];
 
     if (row < 0 || row >= ROWS || col < 0 || col >= COLS) {
         printf("error: invalid cell\n");
@@ -175,28 +158,26 @@ void handle_reveal(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
 
     if (board[row][col] == BOMB) {
         game_over = 1;
-        printf("GAME OVER\n");
-        print_board(board, revealed, 1);
     } else {
         revealed[row][col] = 1;
     }
 }
 
 int handle_action(
-    enum ActionType action_type,
+    Message* msg,
     int board[ROWS][COLS],
     int revealed[ROWS][COLS],
     int csock
 ) {
-    switch (action_type) {
+    switch (msg->type) {
         case REVEAL:
-            handle_reveal(board, revealed);
+            handle_reveal(board, revealed, msg);
             break;
         case FLAG_ACTION:
-            handle_add_flag(revealed);
+            handle_add_flag(revealed, msg);
             break;
         case REMOVE_FLAG:
-            handle_remove_flag(revealed);
+            handle_remove_flag(revealed, msg);
             break;
         case RESET:
             handle_reset(revealed);
@@ -206,40 +187,49 @@ int handle_action(
             return 0;
         default:
             printf("error: command not found\n");
-            return 2;
+            return 1;
     }
 
-    return 1;
+    return -1;
+}
+
+void parse_msg_to_sent(
+    int type,
+    int board[ROWS][COLS],
+    int revealed[ROWS][COLS],
+    int csock
+) {
+    Message msg;
+    msg.type = type;
+    copy_board_to_msg(&msg, board, revealed, type == WIN || type == GAME_OVER);
+    send_message(csock, &msg);
 }
 
 void start_game(Options* opt, int csock) {
+    if (game_started) {
+        return;
+    }
+    game_started = 1;
+    game_over = 0;
+
     int board[ROWS][COLS];
     int revealed[ROWS][COLS] = {0};
 
-    Message msg;
-
     init_board(board, opt->filename);
+    parse_msg_to_sent(STATE, board, revealed, csock);
 
     while (!game_over) {
         int handle_result = -1;
         do {
-            get_message(csock, &msg);
-            handle_result = handle_action(msg.type, board, revealed, csock);
-        } while (handle_result == 2);
+            Message msg_received;
+            get_message(csock, &msg_received);
+            handle_result = handle_action(&msg_received, board, revealed, csock);
+        } while (handle_result == 1);
 
         if (!handle_result || game_over) {
+            parse_msg_to_sent(GAME_OVER, board, revealed, csock);
             break;
         }
-
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLS; j++) {
-                msg.board[i][j] = revealed[i][j] == REVEALD_CELL ? board[i][j] : HIDDEN;
-            }
-        }
-
-        print_board(board, revealed, 0);
-
-        printf("\n");
     }
     game_started = 0;
     game_over = 0;
@@ -301,21 +291,9 @@ int main(int argc, char ** argv) {
         Message msg;
         get_message(csock, &msg);
 
-        printf("[msg] %s, Type: %i\n", caddrstr, msg.type);
-        printf("%i\n", msg.coordinates[0]);
-        printf("%i\n", msg.coordinates[1]);
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLS; j++) {
-                printf("%i\n", msg.board[i][j]);
-            }
-        }
-
         if (msg.type == START && !game_started) {
-            game_started = 1;
             start_game(&opt, csock);
         }
-
-        close(csock);
     }
 
     exit(EXIT_SUCCESS);

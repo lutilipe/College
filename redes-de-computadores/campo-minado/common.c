@@ -102,13 +102,14 @@ int server_sockaddr_init(const char *proto, const char *portstr,
     }
 }
 
-void get_message(int socket, Message* msg) {
+int get_message(int socket, Message* msg) {
     char buffer[sizeof(Message)];
     size_t count = recv(socket, buffer, sizeof(Message), 0);
     if (count == 0) {
-        exit(EXIT_FAILURE);
+        return 0;
     }
     memcpy(msg, buffer, sizeof(Message));
+    return 1;
 }
 
 void send_message(int socket, Message* msg) {
@@ -116,6 +117,6 @@ void send_message(int socket, Message* msg) {
     memcpy(buffer, msg, sizeof(Message));
     size_t count = send(socket, buffer, sizeof(Message), 0);
 	if (count != sizeof(Message)) {
-		logexit("send");
+		exit(EXIT_FAILURE);
 	}
 }

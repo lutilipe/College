@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "action_type.h": "c"
+        "action_type.h": "c",
+        "common.h": "c"
     }
 }
