@@ -52,6 +52,18 @@ void copy_board_to_msg(Message* msg, int board[ROWS][COLS], int revealed[ROWS][C
     }
 }
 
+void parse_msg_to_sent(
+    int type,
+    int board[ROWS][COLS],
+    int revealed[ROWS][COLS],
+    int csock
+) {
+    Message msg;
+    msg.type = type;
+    copy_board_to_msg(&msg, board, revealed, type == WIN || type == GAME_OVER);
+    send_message(csock, &msg);
+}
+
 void init_board(int board[ROWS][COLS], char* filename) {
     FILE *file = fopen(filename, "r");
 
@@ -99,7 +111,7 @@ void handle_game_win(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
     }
 }
 
-void handle_remove_flag(int revealed[ROWS][COLS], Message* msg) {
+void handle_remove_flag(int csock, int board[ROWS][COLS], int revealed[ROWS][COLS], Message* msg) {
     int row = msg->coordinates[0];
     int col = msg->coordinates[1];
     scanf("%d %d", &row, &col);
@@ -109,19 +121,21 @@ void handle_remove_flag(int revealed[ROWS][COLS], Message* msg) {
     }
 
     revealed[row][col] = 0;
+    parse_msg_to_sent(STATE, board, revealed, csock);
 }
 
-void handle_reset(int revealed[ROWS][COLS]) {
+void handle_reset(int csock, int board[ROWS][COLS], int revealed[ROWS][COLS], Message* msg) {
     int i, j = 0;
     for (i = 0; i < ROWS; i++) {
         for (j = 0; j < COLS; j++) {
             revealed[i][j] = 0;
         }
     }
+    parse_msg_to_sent(STATE, board, revealed, csock);
     printf("starting new game\n");
 }
 
-void handle_add_flag(int revealed[ROWS][COLS], Message* msg) {
+void handle_add_flag(int csock, int board[ROWS][COLS], int revealed[ROWS][COLS], Message* msg) {
     int row = msg->coordinates[0];
     int col = msg->coordinates[1];
 
@@ -140,9 +154,10 @@ void handle_add_flag(int revealed[ROWS][COLS], Message* msg) {
     }
 
     revealed[row][col] = FLAG;
+    parse_msg_to_sent(STATE, board, revealed, csock);
 }
 
-void handle_reveal(int board[ROWS][COLS], int revealed[ROWS][COLS], Message* msg) {
+void handle_reveal(int csock, int board[ROWS][COLS], int revealed[ROWS][COLS], Message* msg) {
     int row = msg->coordinates[0];
     int col = msg->coordinates[1];
 
@@ -160,6 +175,7 @@ void handle_reveal(int board[ROWS][COLS], int revealed[ROWS][COLS], Message* msg
         game_over = 1;
     } else {
         revealed[row][col] = 1;
+        parse_msg_to_sent(STATE, board, revealed, csock);
     }
 }
 
@@ -171,16 +187,16 @@ int handle_action(
 ) {
     switch (msg->type) {
         case REVEAL:
-            handle_reveal(board, revealed, msg);
+            handle_reveal(csock, board, revealed, msg);
             break;
         case FLAG_ACTION:
-            handle_add_flag(revealed, msg);
+            handle_add_flag(csock, board, revealed, msg);
             break;
         case REMOVE_FLAG:
-            handle_remove_flag(revealed, msg);
+            handle_remove_flag(csock, board, revealed, msg);
             break;
         case RESET:
-            handle_reset(revealed);
+            handle_reset(csock, board, revealed, msg);
             break;
         case EXIT:
             handle_exit(csock);
@@ -191,18 +207,6 @@ int handle_action(
     }
 
     return -1;
-}
-
-void parse_msg_to_sent(
-    int type,
-    int board[ROWS][COLS],
-    int revealed[ROWS][COLS],
-    int csock
-) {
-    Message msg;
-    msg.type = type;
-    copy_board_to_msg(&msg, board, revealed, type == WIN || type == GAME_OVER);
-    send_message(csock, &msg);
 }
 
 void start_game(Options* opt, int csock) {

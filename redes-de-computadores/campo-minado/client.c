@@ -91,17 +91,17 @@ void get_message_input(Message* msg) {
 int main(int argc, char **argv) {
     struct sockaddr_storage storage;
 	if (0 != addrparse(argv[1], argv[2], &storage)) {
-		exit(EXIT_FAILURE);
+		logexit("addparse");
 	}
 
 	int s;
 	s = socket(storage.ss_family, SOCK_STREAM, 0);
 	if (s == -1) {
-		exit(EXIT_FAILURE);
+		logexit("socket");
 	}
 	struct sockaddr *addr = (struct sockaddr *)(&storage);
 	if (0 != connect(s, addr, sizeof(storage))) {
-		exit(EXIT_FAILURE);
+		logexit("connect");
 	}
 
 	char addrstr[BUFSZ];

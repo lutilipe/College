@@ -40,6 +40,7 @@ int addrparse(const char *addrstr, const char *portstr,
         addr6->sin6_family = AF_INET6;
         addr6->sin6_port = port;
         // addr6->sin6_addr = inaddr6
+        printf("%s\n", addrstr);
         memcpy(&(addr6->sin6_addr), &inaddr6, sizeof(inaddr6));
         return 0;
     }
