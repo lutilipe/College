@@ -68,7 +68,6 @@ void init_board(int board[ROWS][COLS], char* filename) {
     FILE *file = fopen(filename, "r");
 
     if (file == NULL) {
-        fprintf(stderr, "Error ao abrir: %s\n", filename);
         exit(1);
     }
 
@@ -111,11 +110,9 @@ int handle_game_win(int csock, int board[ROWS][COLS], int revealed[ROWS][COLS]) 
 void handle_remove_flag(int csock, int board[ROWS][COLS], int revealed[ROWS][COLS], Message* msg) {
     int row = msg->coordinates[0];
     int col = msg->coordinates[1];
-    if (row < 0 || row >= ROWS || col < 0 || col >= COLS || revealed[row][col] != FLAG) {
-        return;
+    if (row >= 0 && row < ROWS && col >= 0 && col < COLS && revealed[row][col] == FLAG) {
+        revealed[row][col] = 0;
     }
-
-    revealed[row][col] = 0;
     parse_msg_to_sent(STATE, board, revealed, csock);
 }
 
@@ -134,37 +131,16 @@ void handle_add_flag(int csock, int board[ROWS][COLS], int revealed[ROWS][COLS],
     int row = msg->coordinates[0];
     int col = msg->coordinates[1];
 
-    if (row < 0 || row >= ROWS || col < 0 || col >= COLS) {
-        return;
+    if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
+        revealed[row][col] = FLAG;
     }
 
-    if (revealed[row][col] == FLAG) {
-        printf("error: cell already has a flag\n");
-        return;
-    }
-
-    if (revealed[row][col] == REVEALD_CELL) {
-        printf("error: cannot insert flag in revealed cell\n");
-        return;
-    }
-
-    revealed[row][col] = FLAG;
     parse_msg_to_sent(STATE, board, revealed, csock);
 }
 
 void handle_reveal(int csock, int board[ROWS][COLS], int revealed[ROWS][COLS], Message* msg) {
     int row = msg->coordinates[0];
     int col = msg->coordinates[1];
-
-    if (row < 0 || row >= ROWS || col < 0 || col >= COLS) {
-        printf("error: invalid cell\n");
-        return;
-    }
-
-    if (revealed[row][col] == REVEALD_CELL) {
-        printf("error: cell already revealed\n");
-        return;
-    }
 
     if (board[row][col] == BOMB) {
         game_over = 1;
@@ -202,7 +178,6 @@ int handle_action(
             handle_exit(csock);
             return 0;
         default:
-            printf("error: command not found\n");
             return 1;
     }
 
@@ -271,7 +246,6 @@ int main(int argc, char ** argv) {
 
     char addrstr[BUFSZ];
     addrtostr(addr, addrstr, BUFSZ);
-    printf("bound to %s, waiting connections\n", addrstr);
 
     Options opt;
     parse_args(argc, argv, &opt);

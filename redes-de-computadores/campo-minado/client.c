@@ -11,19 +11,26 @@
 
 #define BUFSZ 1024
 
-void get_message_coords(Message* msg) {
-    char input[3];
-    do {
-        scanf("%s", input);
-    } while (sizeof(input) != sizeof(char)*3);
+int get_message_coords(Message* msg) {
+    char input[100];
+    int x = -1;
+    int y = -1;
+    scanf("%s", input);
     char *token = strtok(input, ",");
     if (token != NULL) {
-        msg->coordinates[0] = atoi(token);
+        x = atoi(token);
     }
     token = strtok(NULL, ",");
     if (token != NULL) {
-        msg->coordinates[1] = atoi(token);
+        y = atoi(token);
     }
+    if (x < 0 || x >= ROWS || y < 0 || y >= COLS) {
+        return 1;
+    }
+
+    msg->coordinates[0] = x;
+    msg->coordinates[1] = y;
+    return 0;
 }
 
 int get_message_type() {
@@ -44,6 +51,8 @@ int get_message_type() {
             type = RESET;
         } else if (!strcmp(in, "exit")) {
             type = EXIT;
+        } else {
+            printf("error: command not found\n");
         }
     } while (type == -1);
     return type;
@@ -63,15 +72,42 @@ int handle_server_msg(Message* msg) {
     return 1;
 }
 
-void get_message_input(Message* msg) {
+int get_message_input(Message* msg, int revealed[ROWS][COLS]) {
     msg->type = get_message_type();
+    int x = 0;
+    int y = 0;
     if (
         msg->type == REVEAL ||
         msg->type == REMOVE_FLAG ||
         msg->type == FLAG_ACTION    
     ) {
-        get_message_coords(msg);
+        int invalid_cell = get_message_coords(msg);
+        if (invalid_cell) {
+            printf("error: invalid cell\n");
+            return 1;
+        }
+        x = msg->coordinates[0];
+        y = msg->coordinates[1];
     }
+
+    if (msg->type == REVEAL) {
+        if (revealed[x][y] == REVEALD_CELL) {
+            printf("error: cell already revealed\n");
+            return 1;
+        }
+        revealed[x][y] = REVEALD_CELL;
+    } else if (msg->type == FLAG_ACTION) {
+        if (revealed[x][y] == FLAG) {
+            printf("error: cell already has a flag\n");
+            return 1;
+        } else if (revealed[x][y] == REVEALD_CELL) {
+            printf("error: cannot insert flag in revealed cell\n");
+            return 1;
+        }
+        revealed[x][y] = FLAG;
+    }
+
+    return 0;
 }
 
 int main(int argc, char **argv) {
@@ -97,7 +133,8 @@ int main(int argc, char **argv) {
 
 	while(1) {
         Message msg_sent;
-        get_message_input(&msg_sent);
+        int error = get_message_input(&msg_sent, revealed);
+        if (error) continue;
         send_message(s, &msg_sent);
 
         Message msg_received;
