@@ -70,6 +70,11 @@ void print_board(int board[ROWS][COLS]) {
 
 int handle_server_msg(Message* msg) {
     int type = msg->type;
+    if (type == GAME_OVER) {
+        printf("GAME OVER!\n");
+    } else if (type == WIN) {
+        printf("YOU WIN!\n");
+    }
     print_board(msg->board);
     if (type == GAME_OVER || type == WIN) {
         return 0;

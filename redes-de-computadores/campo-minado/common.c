@@ -39,8 +39,7 @@ int addrparse(const char *addrstr, const char *portstr,
         struct sockaddr_in6 *addr6 = (struct sockaddr_in6 *)storage;
         addr6->sin6_family = AF_INET6;
         addr6->sin6_port = port;
-        // addr6->sin6_addr = inaddr6
-        printf("%s\n", addrstr);
+        addr6->sin6_addr = inaddr6;
         memcpy(&(addr6->sin6_addr), &inaddr6, sizeof(inaddr6));
         return 0;
     }

@@ -94,7 +94,7 @@ void handle_exit(int csock) {
     close(csock);
 }
 
-void handle_game_win(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
+int handle_game_win(int csock, int board[ROWS][COLS], int revealed[ROWS][COLS]) {
     int win = 1;
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
@@ -105,10 +105,7 @@ void handle_game_win(int board[ROWS][COLS], int revealed[ROWS][COLS]) {
             }
         }
 
-    if (win) {
-        game_over = 1;
-        printf("YOU WIN\n");
-    }
+    return win;
 }
 
 void handle_remove_flag(int csock, int board[ROWS][COLS], int revealed[ROWS][COLS], Message* msg) {
@@ -175,6 +172,11 @@ void handle_reveal(int csock, int board[ROWS][COLS], int revealed[ROWS][COLS], M
         game_over = 1;
     } else {
         revealed[row][col] = 1;
+        int win = handle_game_win(csock, board, revealed);
+        if (win) {
+            game_over = 1;
+            return parse_msg_to_sent(WIN, board, revealed, csock);
+        }
         parse_msg_to_sent(STATE, board, revealed, csock);
     }
 }
