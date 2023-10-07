@@ -209,17 +209,15 @@ int handle_action(
     return -1;
 }
 
-void start_game(Options* opt, int csock) {
+void start_game(int board[ROWS][COLS], int csock) {
     if (game_started) {
         return;
     }
     game_started = 1;
     game_over = 0;
 
-    int board[ROWS][COLS];
     int revealed[ROWS][COLS] = {0};
 
-    init_board(board, opt->filename);
     parse_msg_to_sent(STATE, board, revealed, csock);
 
     while (!game_over) {
@@ -278,6 +276,10 @@ int main(int argc, char ** argv) {
     Options opt;
     parse_args(argc, argv, &opt);
 
+    int board[ROWS][COLS];
+    init_board(board, opt.filename);
+    print_board(board);
+
     while (1) {
         struct sockaddr_storage cstorage;
         struct sockaddr *caddr = (struct sockaddr *)(&cstorage);
@@ -296,7 +298,7 @@ int main(int argc, char ** argv) {
         get_message(csock, &msg);
 
         if (msg.type == START && !game_started) {
-            start_game(&opt, csock);
+            start_game(board, csock);
         }
     }
 

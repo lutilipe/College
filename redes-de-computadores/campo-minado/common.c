@@ -120,3 +120,25 @@ void send_message(int socket, Message* msg) {
 		exit(EXIT_FAILURE);
 	}
 }
+
+void print_board(int board[ROWS][COLS]) {
+    int i = 0, j = 0;
+    for (i = 0; i < ROWS; i++) {
+        for (j = 0; j < COLS; j++) {
+            int cell = board[i][j];
+            if (cell == BOMB) {
+                printf("%c", BOMB_SYMBOL);
+            } else if (cell == HIDDEN) {
+                printf("%c", HIDDEN_SYMBOL);
+            } else if (cell == FLAG) {
+                printf("%c", FLAG_SYMBOL);
+            } else {
+                printf("%i", cell);
+            }
+            if (j != COLS - 1) {
+                printf("\t\t");
+            }
+        }
+        printf("\n");
+    }
+}

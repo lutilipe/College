@@ -47,4 +47,4 @@ int server_sockaddr_init(const char *proto, const char *portstr,
 
 int get_message(int socket, Message* msg);
 void send_message(int socket, Message* msg);
-
+void print_board(int board[ROWS][COLS]);

@@ -49,25 +49,6 @@ int get_message_type() {
     return type;
 }
 
-void print_board(int board[ROWS][COLS]) {
-    int i = 0, j = 0;
-    for (i = 0; i < ROWS; i++) {
-        for (j = 0; j < COLS; j++) {
-            int cell = board[i][j];
-            if (cell == BOMB) {
-                printf("%c\t", BOMB_SYMBOL);
-            } else if (cell == HIDDEN) {
-                printf("%c\t", HIDDEN_SYMBOL);
-            } else if (cell == FLAG) {
-                printf("%c\t", FLAG_SYMBOL);
-            } else {
-                printf("%i\t", cell);
-            }
-        }
-        printf("\n");
-    }
-}
-
 int handle_server_msg(Message* msg) {
     int type = msg->type;
     if (type == GAME_OVER) {
@@ -111,6 +92,8 @@ int main(int argc, char **argv) {
 
 	char addrstr[BUFSZ];
 	addrtostr(addr, addrstr, BUFSZ);
+
+    int revealed[ROWS][COLS] = {0};
 
 	while(1) {
         Message msg_sent;
