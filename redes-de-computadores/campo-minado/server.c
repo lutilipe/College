@@ -111,8 +111,6 @@ int handle_game_win(int csock, int board[ROWS][COLS], int revealed[ROWS][COLS]) 
 void handle_remove_flag(int csock, int board[ROWS][COLS], int revealed[ROWS][COLS], Message* msg) {
     int row = msg->coordinates[0];
     int col = msg->coordinates[1];
-    scanf("%d %d", &row, &col);
-
     if (row < 0 || row >= ROWS || col < 0 || col >= COLS || revealed[row][col] != FLAG) {
         return;
     }
