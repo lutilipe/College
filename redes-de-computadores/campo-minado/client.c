@@ -73,7 +73,7 @@ void handle_server_msg(Message* msg) {
     print_board(msg->board);
 }
 
-int handle_reveal(Message* msg, int revealed[ROWS][COLS]) {
+int handle_reveal(Message* msg, int actions[ROWS][COLS]) {
     int x = -1;
     int y = -1;
     
@@ -87,15 +87,15 @@ int handle_reveal(Message* msg, int revealed[ROWS][COLS]) {
     x = msg->coordinates[0];
     y = msg->coordinates[1];
 
-    if (revealed[x][y] == REVEALD_CELL) {
-        printf("error: cell already revealed\n");
+    if (actions[x][y] == REVEALD_CELL) {
+        printf("error: cell already actions\n");
         return 1;
     }
-    revealed[x][y] = REVEALD_CELL;
+    actions[x][y] = REVEALD_CELL;
     return 0;
 }
 
-int handle_flag(Message* msg, int revealed[ROWS][COLS]) {
+int handle_flag(Message* msg, int actions[ROWS][COLS]) {
     int x = -1;
     int y = -1;
     
@@ -109,19 +109,19 @@ int handle_flag(Message* msg, int revealed[ROWS][COLS]) {
     y = msg->coordinates[1];
 
 
-    if (revealed[x][y] == FLAG) {
+    if (actions[x][y] == FLAG) {
         printf("error: cell already has a flag\n");
         return 1;
-    } else if (revealed[x][y] == REVEALD_CELL) {
-        printf("error: cannot insert flag in revealed cell\n");
+    } else if (actions[x][y] == REVEALD_CELL) {
+        printf("error: cannot insert flag in actions cell\n");
         return 1;
     }
-    revealed[x][y] = FLAG;
+    actions[x][y] = FLAG;
 
     return 0;
 }
 
-int handle_remove_flag(Message* msg, int revealed[ROWS][COLS]) {
+int handle_remove_flag(Message* msg, int actions[ROWS][COLS]) {
     int x = -1;
     int y = -1;
     
@@ -134,25 +134,25 @@ int handle_remove_flag(Message* msg, int revealed[ROWS][COLS]) {
     x = msg->coordinates[0];
     y = msg->coordinates[1];
 
-    if (revealed[x][y] != FLAG) {
+    if (actions[x][y] != FLAG) {
         return 1;
     }
 
-    revealed[x][y] = 0;
+    actions[x][y] = 0;
 
     return 0;
 }
 
-void handle_reset(int revealed[ROWS][COLS]) {
+void handle_reset(int actions[ROWS][COLS]) {
     int i, j = 0;
     for (i = 0; i < ROWS; i++) {
         for (j = 0; j < COLS; j++) {
-            revealed[i][j] = 0;
+            actions[i][j] = 0;
         }
     }
 }
 
-int handle_input_message(Message* msg, int revealed[ROWS][COLS]) {
+int handle_input_message(Message* msg, int actions[ROWS][COLS]) {
     msg->type = get_message_type();
 
     if (msg->type == EXIT) {
@@ -172,14 +172,14 @@ int handle_input_message(Message* msg, int revealed[ROWS][COLS]) {
             game_started = 1;
             return 0;
         case REVEAL:
-            return handle_reveal(msg, revealed);
+            return handle_reveal(msg, actions);
         case FLAG_ACTION:
-            return handle_flag(msg, revealed);
+            return handle_flag(msg, actions);
         case REMOVE_FLAG:
-            return handle_remove_flag(msg, revealed);
+            return handle_remove_flag(msg, actions);
         case RESET:
             game_ended = 0;
-            handle_reset(revealed);
+            handle_reset(actions);
             return 0;
         default:
             return 1;
@@ -205,11 +205,11 @@ int main(int argc, char **argv) {
 	char addrstr[BUFSZ];
 	addrtostr(addr, addrstr, BUFSZ);
 
-    int revealed[ROWS][COLS] = {0};
+    int actions[ROWS][COLS] = {0};
 
 	while(1) {
         Message msg_sent;
-        int error = handle_input_message(&msg_sent, revealed);
+        int error = handle_input_message(&msg_sent, actions);
         if (error) continue;
         send_message(s, &msg_sent);
 

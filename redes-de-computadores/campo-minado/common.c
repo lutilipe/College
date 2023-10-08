@@ -96,6 +96,7 @@ int server_sockaddr_init(const char *proto, const char *portstr,
     }
 }
 
+// Recebe uma mensagem e desserializa ela
 int get_message(int socket, Message* msg) {
     char buffer[sizeof(Message)];
     size_t count = recv(socket, buffer, sizeof(Message), 0);
@@ -106,6 +107,7 @@ int get_message(int socket, Message* msg) {
     return 1;
 }
 
+// Envia uma mensagem e serializa ela
 void send_message(int socket, Message* msg) {
     char buffer[sizeof(Message)];
     memcpy(buffer, msg, sizeof(Message));
