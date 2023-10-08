@@ -11,6 +11,9 @@
 
 #define BUFSZ 1024
 
+int game_started = 0;
+int game_ended = 0;
+
 int get_message_coords(Message* msg) {
     char input[100];
     int x = -1;
@@ -58,56 +61,129 @@ int get_message_type() {
     return type;
 }
 
-int handle_server_msg(Message* msg) {
+void handle_server_msg(Message* msg) {
     int type = msg->type;
     if (type == GAME_OVER) {
         printf("GAME OVER!\n");
+        game_ended = 1;
     } else if (type == WIN) {
         printf("YOU WIN!\n");
+        game_ended = 1;
     }
     print_board(msg->board);
-    if (type == GAME_OVER || type == WIN) {
-        return 0;
-    }
-    return 1;
 }
 
-int get_message_input(Message* msg, int revealed[ROWS][COLS]) {
-    msg->type = get_message_type();
-    int x = 0;
-    int y = 0;
-    if (
-        msg->type == REVEAL ||
-        msg->type == REMOVE_FLAG ||
-        msg->type == FLAG_ACTION    
-    ) {
-        int invalid_cell = get_message_coords(msg);
-        if (invalid_cell) {
-            printf("error: invalid cell\n");
-            return 1;
-        }
-        x = msg->coordinates[0];
-        y = msg->coordinates[1];
+int handle_reveal(Message* msg, int revealed[ROWS][COLS]) {
+    int x = -1;
+    int y = -1;
+    
+    int invalid_cell = get_message_coords(msg);
+
+    if (invalid_cell) {
+        printf("error: invalid cell\n");
+        return 1;
     }
 
-    if (msg->type == REVEAL) {
-        if (revealed[x][y] == REVEALD_CELL) {
-            printf("error: cell already revealed\n");
-            return 1;
-        }
-        revealed[x][y] = REVEALD_CELL;
-    } else if (msg->type == FLAG_ACTION) {
-        if (revealed[x][y] == FLAG) {
-            printf("error: cell already has a flag\n");
-            return 1;
-        } else if (revealed[x][y] == REVEALD_CELL) {
-            printf("error: cannot insert flag in revealed cell\n");
-            return 1;
-        }
-        revealed[x][y] = FLAG;
+    x = msg->coordinates[0];
+    y = msg->coordinates[1];
+
+    if (revealed[x][y] == REVEALD_CELL) {
+        printf("error: cell already revealed\n");
+        return 1;
     }
+    revealed[x][y] = REVEALD_CELL;
+    return 0;
+}
+
+int handle_flag(Message* msg, int revealed[ROWS][COLS]) {
+    int x = -1;
+    int y = -1;
+    
+    int invalid_cell = get_message_coords(msg);
+
+    if (invalid_cell) {
+        printf("error: invalid cell\n");
+        return 1;
+    }
+    x = msg->coordinates[0];
+    y = msg->coordinates[1];
+
+
+    if (revealed[x][y] == FLAG) {
+        printf("error: cell already has a flag\n");
+        return 1;
+    } else if (revealed[x][y] == REVEALD_CELL) {
+        printf("error: cannot insert flag in revealed cell\n");
+        return 1;
+    }
+    revealed[x][y] = FLAG;
 
     return 0;
+}
+
+int handle_remove_flag(Message* msg, int revealed[ROWS][COLS]) {
+    int x = -1;
+    int y = -1;
+    
+    int invalid_cell = get_message_coords(msg);
+
+    if (invalid_cell) {
+        printf("error: invalid cell\n");
+        return 1;
+    }
+    x = msg->coordinates[0];
+    y = msg->coordinates[1];
+
+    if (revealed[x][y] != FLAG) {
+        return 1;
+    }
+
+    revealed[x][y] = 0;
+
+    return 0;
+}
+
+void handle_reset(int revealed[ROWS][COLS]) {
+    int i, j = 0;
+    for (i = 0; i < ROWS; i++) {
+        for (j = 0; j < COLS; j++) {
+            revealed[i][j] = 0;
+        }
+    }
+}
+
+int handle_input_message(Message* msg, int revealed[ROWS][COLS]) {
+    msg->type = get_message_type();
+
+    if (msg->type == EXIT) {
+        return 0;
+    }
+
+    if ((!game_started && msg->type != START) || (game_ended && msg->type != RESET)) {
+        return 1;
+    }
+
+    switch (msg->type) {
+        case START:
+            if (game_started) {
+                return 1;
+            }
+            game_ended = 0;
+            game_started = 1;
+            return 0;
+        case REVEAL:
+            return handle_reveal(msg, revealed);
+        case FLAG_ACTION:
+            return handle_flag(msg, revealed);
+        case REMOVE_FLAG:
+            return handle_remove_flag(msg, revealed);
+        case RESET:
+            game_ended = 0;
+            handle_reset(revealed);
+            return 0;
+        default:
+            return 1;
+    }
 }
 
 int main(int argc, char **argv) {
@@ -133,18 +209,16 @@ int main(int argc, char **argv) {
 
 	while(1) {
         Message msg_sent;
-        int error = get_message_input(&msg_sent, revealed);
+        int error = handle_input_message(&msg_sent, revealed);
         if (error) continue;
         send_message(s, &msg_sent);
 
         Message msg_received;
         int count = get_message(s, &msg_received);
-        if (count == 0) {
+        if (!count) {
             break;
         }
-        if (!handle_server_msg(&msg_received)) {
-            break;
-        }
+        handle_server_msg(&msg_received);
 	}
 
     close(s);

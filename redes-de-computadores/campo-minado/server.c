@@ -13,7 +13,6 @@
 // Game definitions
 #define NUM_BOMBS 3
 
-int game_started = 0;
 int game_over = 0;
 
 typedef struct Options {
@@ -185,32 +184,30 @@ int handle_action(
 }
 
 void start_game(int board[ROWS][COLS], int csock) {
-    if (game_started) {
-        return;
-    }
-    game_started = 1;
     game_over = 0;
 
     int revealed[ROWS][COLS] = {0};
 
     parse_msg_to_sent(STATE, board, revealed, csock);
 
-    while (!game_over) {
-        int handle_result = -1;
+    while (1) {
+        int handle_result = 1;
         do {
             Message msg_received;
             get_message(csock, &msg_received);
             handle_result = handle_action(&msg_received, board, revealed, csock);
         } while (handle_result == 1);
 
-        if (!handle_result || game_over) {
-            parse_msg_to_sent(GAME_OVER, board, revealed, csock);
+        if (!handle_result) {
+            close(csock);
             break;
         }
+
+        if (game_over) {
+            parse_msg_to_sent(GAME_OVER, board, revealed, csock);
+            game_over = 0;
+        }
     }
-    game_started = 0;
-    game_over = 0;
-    return;
 }
 
 int main(int argc, char ** argv) {
@@ -219,7 +216,6 @@ int main(int argc, char ** argv) {
     }
 
     struct sockaddr_storage storage;
-    printf("%s %s\n", argv[0], argv[3]);
     if (0 != server_sockaddr_init(argv[1], argv[2], &storage)) {
         logexit("storage");
     }
@@ -271,10 +267,12 @@ int main(int argc, char ** argv) {
         Message msg;
         get_message(csock, &msg);
 
-        if (msg.type == START && !game_started) {
+        if (msg.type == START) {
             start_game(board, csock);
+        } else if (msg.type == EXIT) {
+            handle_exit(csock);
         }
     }
-
+    close(s);
     exit(EXIT_SUCCESS);
 }
