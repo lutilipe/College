@@ -35,6 +35,7 @@ void parse_args(int argc, char **argv, Options* opt) {
     }
 }
 
+// Copia o tabuleiro com as codificacoes de cada simbolo
 void copy_board_to_msg(Message* msg, int board[ROWS][COLS], int revealed[ROWS][COLS], int show_all) {
     int i = 0, j = 0;
     for (i = 0; i < ROWS; i++) {
@@ -212,32 +213,32 @@ void start_game(int board[ROWS][COLS], int csock) {
 
 int main(int argc, char ** argv) {
     if (argc < 3) {
-        logexit("argc");
+        exit(EXIT_FAILURE);
     }
 
     struct sockaddr_storage storage;
     if (0 != server_sockaddr_init(argv[1], argv[2], &storage)) {
-        logexit("storage");
+        exit(EXIT_FAILURE);
     }
 
     int s;
     s = socket(storage.ss_family, SOCK_STREAM, 0);
     if (s == -1) {
-        logexit("socket");
+        exit(EXIT_FAILURE);
     }
 
     int enable = 1;
     if (0 != setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int))) {
-        logexit("setsockopt");
+        exit(EXIT_FAILURE);
     }
 
     struct sockaddr *addr = (struct sockaddr *)(&storage);
     if (0 != bind(s, addr, sizeof(storage))) {
-        logexit("bind");
+        exit(EXIT_FAILURE);
     }
 
     if (0 != listen(s, 1)) {
-        logexit("listen");
+        exit(EXIT_FAILURE);
     }
 
     char addrstr[BUFSZ];
@@ -257,7 +258,7 @@ int main(int argc, char ** argv) {
 
         int csock = accept(s, caddr, &caddrlen);
         if (csock == -1) {
-            logexit("accept");
+            exit(EXIT_FAILURE);
         }
 
         char caddrstr[BUFSZ];

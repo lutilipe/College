@@ -189,17 +189,17 @@ int handle_input_message(Message* msg, int revealed[ROWS][COLS]) {
 int main(int argc, char **argv) {
     struct sockaddr_storage storage;
 	if (0 != addrparse(argv[1], argv[2], &storage)) {
-		logexit("addparse");
+		exit(EXIT_FAILURE);
 	}
 
 	int s;
 	s = socket(storage.ss_family, SOCK_STREAM, 0);
 	if (s == -1) {
-		logexit("socket");
+		exit(EXIT_FAILURE);
 	}
 	struct sockaddr *addr = (struct sockaddr *)(&storage);
 	if (0 != connect(s, addr, sizeof(storage))) {
-		logexit("connect");
+		exit(EXIT_FAILURE);
 	}
 
 	char addrstr[BUFSZ];
