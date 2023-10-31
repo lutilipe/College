@@ -14,7 +14,7 @@ public:
         contas.push_back(conta);
     }
 
-    void exibirTodasContas() {
+    void exibir_todas_contas() {
         for (ContaBancaria* conta : contas) {
             std::cout << "Saldo da conta de " << conta->titular << ": R$" << conta->saldo << "\n";
         }
