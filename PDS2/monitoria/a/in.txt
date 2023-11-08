@@ -1,0 +1,10 @@
+list
+add_nf A_Origem_das_Especies Charles_Darwin 1859 Biologia
+add_i Peter_Pan J.M._Barrie 1904 4
+add_i O_Pequeno_Principe Antonie 1943 6
+list
+rm 1
+rm 4
+find 1
+find 2
+list

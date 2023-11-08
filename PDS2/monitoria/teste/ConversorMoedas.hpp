@@ -17,10 +17,10 @@ class ConversorMoedas {
         void definirTaxaCambio(std::string de, std::string para, double taxa);
         double converter(std::string de, std::string para, double valor);
         bool possuiTaxaCambio(std::string de, std::string para);
+        bool checarMoedaValida(std::string moeda);
 
     private:
-        std::map<std::pair<std::string, std::string>, double> taxasCambio;
-        bool checarMoedaValida(std::string);
+        std::map<std::string, double> taxasCambio;
         std::vector<std::string> MOEDAS_VALIDAS = {
             "USD", // Dólar dos Estados Unidos
             "EUR", // Euro
