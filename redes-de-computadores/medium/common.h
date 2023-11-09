@@ -32,4 +32,12 @@ int server_sockaddr_init(const char *proto, const char *portstr,
                          struct sockaddr_storage *storage);
 int get_message(int socket, BlogOperation* msg);
 void send_message(int socket, BlogOperation* msg);
-void parseToTwoDigits(int number, char *result);
+void parse_to_two_digits(int number, char *result);
+void parse_operation_msg(
+    BlogOperation* op,
+    int client_id,
+    int operation_type,
+    int server_response,
+    char* topic,
+    char* content
+);

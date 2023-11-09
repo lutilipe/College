@@ -10,27 +10,47 @@
 #include <sys/types.h>
 
 #define BUFSZ 1024
+#define MAX_CLIENTS 15
 
 struct client_data {
     int csock;
     struct sockaddr_storage storage;
 };
 
+int clients[MAX_CLIENTS] = { 0 };
+
 void handle_exit(int csock, int id) {
     char parsed_id[3];
-    parseToTwoDigits(id, parsed_id);
+    parse_to_two_digits(id, parsed_id);
     printf("client %s disconnected\n", parsed_id);
     close(csock);
     pthread_exit(EXIT_SUCCESS);
+}
+
+void handle_new_connection(BlogOperation* operation, int csock) {
+    int client_id = 0;
+    for (int i = 0; i < MAX_CLIENTS; i++) {
+        if (clients[i] == 0) {
+            clients[i] = i + 1;
+            client_id = clients[i];
+            break;
+        }
+    }
+    char parsed_id[3];
+    parse_to_two_digits(client_id, parsed_id);
+    printf("client %s connected\n", parsed_id);
+    parse_operation_msg(operation, client_id, NEW_CONNECTION, 1, "", "");
+    send_message(csock, operation);
 }
 
 int handle_action(
     BlogOperation* operation,
     int csock
 ) {
-        printf("Op: %i\n", operation->operation_type);
-
     switch (operation->operation_type) {
+        case NEW_CONNECTION:
+            handle_new_connection(operation, csock);
+            break;
         case NEW_POST:
             printf("%s\n", operation->topic);
             printf("%s\n", operation->content);
@@ -59,11 +79,6 @@ void * handle_client_thread(void *data) {
         if (!handle_result) {
             break;
         }
-
-        BlogOperation operation;
-        operation.server_response = 1;
-        strcpy(operation.content, "OKAYYYYYY RATINHO");
-        send_message(cdata->csock, &operation);
     }
 }
 

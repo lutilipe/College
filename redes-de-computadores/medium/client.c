@@ -41,9 +41,9 @@ int handle_new_post(BlogOperation* operation) {
 }
 
 int get_operation_type() {
-/*     if (client_id == 0) {
+    if (client_id == 0) {
         return NEW_CONNECTION;
-    } */
+    }
 
     int type = -1;
 
@@ -75,6 +75,9 @@ int handle_input_operation(BlogOperation* operation) {
     }
 
     switch (operation->operation_type) {
+        case NEW_CONNECTION:
+            parse_operation_msg(operation, client_id, NEW_CONNECTION, 0, "", "");
+            return 0;
         case NEW_POST:
             return handle_new_post(operation);
         case LIST_TOPICS:
@@ -88,8 +91,14 @@ int handle_input_operation(BlogOperation* operation) {
     }
 }
 
-void handle_server_msg(BlogOperation* msg) {
-    // TODO
+void handle_server_msg(BlogOperation* operation) {
+    switch (operation->operation_type) {
+        case NEW_CONNECTION:
+            client_id = operation->client_id;
+            break;
+        default:
+            break;
+    }
 }
 
 int main(int argc, char **argv) {

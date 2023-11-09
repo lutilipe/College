@@ -121,6 +121,21 @@ void send_message(int socket, BlogOperation* msg) {
 	}
 }
 
-void parseToTwoDigits(int number, char *result) {
+void parse_to_two_digits(int number, char *result) {
     sprintf(result, "%02d", number);
+}
+
+void parse_operation_msg(
+    BlogOperation* op,
+    int client_id,
+    int operation_type,
+    int server_response,
+    char* topic,
+    char* content
+) {
+    op->client_id = client_id;
+    op->operation_type = operation_type;
+    op->server_response = server_response;
+    strcpy(op->topic, topic);
+    strcpy(op->content, content);
 }
