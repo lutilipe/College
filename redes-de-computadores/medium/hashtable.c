@@ -49,13 +49,39 @@ void freeMap(struct Map* map) {
     map->size = 0;
 }
 
-void listKeys(const struct Map* map) {
+char* listKeys(const struct Map* map) {
+    size_t totalLength = 0;
     for (size_t i = 0; i < map->size; i++) {
-        printf("%s", map->pairs[i].key);
+        totalLength += strlen(map->pairs[i].key);
         if (i != map->size - 1) {
-            printf("; ");
-        } else {
-            printf("\n");
+            totalLength += 2;
         }
     }
+
+    char* keysString = (char*)malloc(totalLength + 1);
+
+    keysString[0] = '\0';
+    for (size_t i = 0; i < map->size; i++) {
+        strcat(keysString, map->pairs[i].key);
+        if (i != map->size - 1) {
+            strcat(keysString, ";");
+        }
+    }
+
+    return keysString;
 }
+
+/* int main() {
+    struct Map map;
+    initMap(&map);
+
+    insertPair(&map, "key1", "value1");
+    insertPair(&map, "key2", "value2");
+    insertPair(&map, "key1", "value3");
+
+    printf("%s\n", listKeys(&map));
+
+    freeMap(&map);
+
+    return 0;
+} */

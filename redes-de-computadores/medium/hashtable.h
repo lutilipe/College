@@ -26,6 +26,6 @@ char** getValuesForKey(struct Map* map, const char* key, size_t* num_values);
 
 void freeMap(struct Map* map);
 
-void listKeys(const struct Map* map);
+char* listKeys(const struct Map* map);
 
 #endif

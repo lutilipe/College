@@ -26,7 +26,21 @@ void parse_topic(char* topic) {
     }
 }
 
-int handle_new_post(BlogOperation* operation) {
+void handle_subscribe_post(BlogOperation* operation) {
+    char topic[sizeof(operation->topic)];
+    scanf("%s", topic);
+    parse_string(topic);
+    strcpy(operation->topic, topic);
+}
+
+void handle_unsubscribe_post(BlogOperation* operation) {
+    char topic[sizeof(operation->topic)];
+    scanf("%s", topic);
+    parse_string(topic);
+    strcpy(operation->topic, topic);
+}
+
+void handle_new_post(BlogOperation* operation) {
     char topic[sizeof(operation->topic)];
     fgets(topic, sizeof(topic) + 4, stdin);
     parse_string(topic);
@@ -37,7 +51,6 @@ int handle_new_post(BlogOperation* operation) {
     fgets(content, sizeof(operation->content), stdin);
     parse_string(content);
     strcpy(operation->content, content);
-    return 0;
 }
 
 int get_operation_type() {
@@ -52,7 +65,8 @@ int get_operation_type() {
         scanf("%s", in);
         if (!strcmp(in, "publish")) {
             type = NEW_POST;
-        } else if (!strcmp(in, "list topics")) {
+        } else if (!strcmp(in, "list")) {
+            scanf("%s", in);
             type = LIST_TOPICS;
         } else if (!strcmp(in, "subscribe")) {
             type = SUB_TOPIC;
@@ -71,6 +85,7 @@ int handle_input_operation(BlogOperation* operation) {
     operation->operation_type = get_operation_type();
 
     if (operation->operation_type == EXIT) {
+        parse_operation_msg(operation, client_id, EXIT, 0, "", "");
         return 0;
     }
 
@@ -79,12 +94,19 @@ int handle_input_operation(BlogOperation* operation) {
             parse_operation_msg(operation, client_id, NEW_CONNECTION, 0, "", "");
             return 0;
         case NEW_POST:
-            return handle_new_post(operation);
+            handle_new_post(operation);
+            parse_operation_msg(operation, client_id, NEW_POST, 0, operation->topic, operation->content);
+            return 0;
         case LIST_TOPICS:
+            parse_operation_msg(operation, client_id, LIST_TOPICS, 0, "", "");   
             return 0;
         case SUB_TOPIC:
+            handle_subscribe_post(operation);
+            parse_operation_msg(operation, client_id, SUB_TOPIC, 0, operation->topic, ""); 
             return 0;
         case UNSUB_TOPIC:
+            handle_subscribe_post(operation);
+            parse_operation_msg(operation, client_id, UNSUB_TOPIC, 0, operation->topic, ""); 
             return 0;
         default:
             return 1;
@@ -92,9 +114,15 @@ int handle_input_operation(BlogOperation* operation) {
 }
 
 void handle_server_msg(BlogOperation* operation) {
+    if (!operation->server_response) {
+        return;
+    }
     switch (operation->operation_type) {
         case NEW_CONNECTION:
             client_id = operation->client_id;
+            break;
+        case LIST_TOPICS:
+            printf("%s\n", operation->content);
             break;
         default:
             break;

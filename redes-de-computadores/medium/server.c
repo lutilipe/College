@@ -23,6 +23,7 @@ void handle_exit(int csock, int id) {
     char parsed_id[3];
     parse_to_two_digits(id, parsed_id);
     printf("client %s disconnected\n", parsed_id);
+    clients[id - 1] = 0;
     close(csock);
     pthread_exit(EXIT_SUCCESS);
 }
