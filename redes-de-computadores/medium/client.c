@@ -155,8 +155,8 @@ int main(int argc, char **argv) {
         send_message(s, &msg_sent);
 
         BlogOperation msg_received;
-        int count = get_message(s, &msg_received);
-        if (!count) {
+        get_message(s, &msg_received);
+        if (msg_received.operation_type == EXIT) {
             break;
         }
         handle_server_msg(&msg_received);

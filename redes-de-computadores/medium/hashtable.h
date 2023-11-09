@@ -1,8 +1,6 @@
 #ifndef HASHTABLE_H
 #define HASHTABLE_H
 
-#include <stdbool.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,14 +16,16 @@ struct Map {
     size_t size;
 };
 
-void initMap(struct Map* map);
+void init_map(struct Map* map);
 
-void insertPair(struct Map* map, const char* key, const char* value);
+void insert_pair(struct Map* map, const char* key, const char* value);
 
-char** getValuesForKey(struct Map* map, const char* key, size_t* num_values);
+char** get_values(const struct Map* map, const char* key);
 
-void freeMap(struct Map* map);
+void free_map(struct Map* map);
 
-char* listKeys(const struct Map* map);
+char** list_keys(const struct Map* map);
+
+int has_key(const struct Map* map, const char* key);
 
 #endif

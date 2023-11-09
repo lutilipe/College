@@ -1,4 +1,5 @@
 #include "common.h"
+#include "hashtable.h"
 
 #include <pthread.h>
 #include <stdio.h>
@@ -18,12 +19,16 @@ struct client_data {
 };
 
 int clients[MAX_CLIENTS] = { 0 };
+struct Map topics;
+struct Map subscriptions;
 
-void handle_exit(int csock, int id) {
+void handle_exit(BlogOperation* operation, int csock) {
     char parsed_id[3];
-    parse_to_two_digits(id, parsed_id);
+    parse_to_two_digits(operation->client_id, parsed_id);
     printf("client %s disconnected\n", parsed_id);
-    clients[id - 1] = 0;
+    clients[operation->client_id - 1] = 0;
+    parse_operation_msg(operation, operation->client_id, EXIT, 1, "", "");
+    send_message(csock, operation);
     close(csock);
     pthread_exit(EXIT_SUCCESS);
 }
@@ -44,6 +49,33 @@ void handle_new_connection(BlogOperation* operation, int csock) {
     send_message(csock, operation);
 }
 
+void handle_new_post(BlogOperation* operation, int csock) {
+    insert_pair(&topics, operation->topic, operation->content);
+
+    char csock_string[50];
+    sprintf(csock_string, "%d", csock);
+
+    char parsed_id[3];
+    parse_to_two_digits(operation->client_id, parsed_id);
+    printf("new post added in %s by %s\n", operation->topic, parsed_id);
+
+    char** clients_subscribed_in_topic = get_values(&subscriptions, operation->topic);
+    int count = 0;
+    int should_answer_back_to_creator = 1;
+    if (clients_subscribed_in_topic != NULL) {
+        while (clients_subscribed_in_topic[count] != NULL) {
+            if (strcmp(csock_string, clients_subscribed_in_topic[count]) == 0) {
+                should_answer_back_to_creator = 0;
+            }
+            parse_operation_msg(operation, operation->client_id, NEW_POST, 1, operation->topic, operation->content);
+            send_message(atoi(clients_subscribed_in_topic[count]), operation);
+        }
+    }
+    if (should_answer_back_to_creator) {
+        send_message(csock, operation);
+    }
+}
+
 int handle_action(
     BlogOperation* operation,
     int csock
@@ -53,11 +85,19 @@ int handle_action(
             handle_new_connection(operation, csock);
             break;
         case NEW_POST:
-            printf("%s\n", operation->topic);
-            printf("%s\n", operation->content);
+            handle_new_post(operation, csock);
+            break;
+        case SUB_TOPIC:
+            /* char csock_string[50];
+            sprintf(csock_string, "%d", csock);
+            insert_pair(&subscriptions, operation->topic, csock_string); */
+            break;
+        case UNSUB_TOPIC:
+            break;
+        case LIST_TOPICS:
             break;
         case EXIT:
-            handle_exit(csock, operation->client_id);
+            handle_exit(operation, csock);
             return 0;
         default:
             return 1;
@@ -116,6 +156,9 @@ int main(int argc, char **argv) {
     char addrstr[BUFSZ];
     addrtostr(addr, addrstr, BUFSZ);
 
+    init_map(&topics);
+    init_map(&subscriptions);
+
     while (1) {
         struct sockaddr_storage cstorage;
         struct sockaddr *caddr = (struct sockaddr *)(&cstorage);
@@ -137,5 +180,7 @@ int main(int argc, char **argv) {
         pthread_create(&tid, NULL, handle_client_thread, cdata);
     }
 
+    free_map(&topics);
+    free_map(&subscriptions);
     exit(EXIT_SUCCESS);
 }
