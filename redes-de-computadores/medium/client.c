@@ -125,7 +125,7 @@ void handle_server_msg(BlogOperation* operation) {
     }
 }
 
-void stabilish_connection(int soc) {
+void create_client_id(int soc) {
     BlogOperation msg;
     parse_operation_msg(&msg, client_id, NEW_CONNECTION, 0, "", "");
     send_message(soc, &msg);
@@ -155,11 +155,9 @@ int main(int argc, char **argv) {
 	fd_set read_fds;
     fd_set write_fds;
 
+    create_client_id(s);
+
     while (1) {
-        if (client_id == 0) {
-            stabilish_connection(s);
-            continue;
-        }
         FD_ZERO(&read_fds);
         FD_SET(STDIN_FILENO, &read_fds);
         FD_SET(s, &read_fds);
