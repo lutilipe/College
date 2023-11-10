@@ -120,6 +120,12 @@ void handle_server_msg(BlogOperation* operation) {
             printf("%s\n", operation->content);
             break;
         }
+        case SUB_TOPIC: {
+            if (strlen(operation->content) != 0) {
+                printf("%s\n", operation->content);
+            }
+            break;
+        }
         default:
             break;
     }

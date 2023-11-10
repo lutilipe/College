@@ -74,7 +74,8 @@ void handle_subscription(BlogOperation* operation, int csock) {
     char csock_string[50];
     sprintf(csock_string, "%d", csock);
     if (has_key(&subscriptions, operation->topic) && has_value(&subscriptions, operation->topic, csock_string)) {
-        // TODO: handle error
+        parse_operation_msg(operation, operation->client_id, SUB_TOPIC, 1, "", "error: already subscribed");
+        send_message(csock, operation);
         return;
     }
 
@@ -87,8 +88,6 @@ void handle_subscription(BlogOperation* operation, int csock) {
     char parsed_id[3];
     parse_to_two_digits(operation->client_id, parsed_id);
     printf("client %s subscribed to %s\n", parsed_id, operation->topic);
-
-    send_message(csock, operation);
 }
 
 void handle_unsubscription(BlogOperation* operation, int csock) {
@@ -99,8 +98,6 @@ void handle_unsubscription(BlogOperation* operation, int csock) {
     char parsed_id[3];
     parse_to_two_digits(operation->client_id, parsed_id);
     printf("client %s unsubscribed to %s\n", parsed_id, operation->topic);
-
-    send_message(csock, operation);
 }
 
 void handle_list_topics(BlogOperation* operation, int csock) {
