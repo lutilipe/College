@@ -50,7 +50,6 @@ void handle_new_connection(BlogOperation* operation, int csock) {
 }
 
 void handle_new_post(BlogOperation* operation, int csock) {
-    printf("csock: %i\n", csock);
     insert_pair(&topics, operation->topic, operation->content);
 
     char csock_string[50];
@@ -61,20 +60,13 @@ void handle_new_post(BlogOperation* operation, int csock) {
     printf("new post added in %s by %s\n", operation->topic, parsed_id);
 
     char** clients_subscribed_in_topic = get_values(&subscriptions, operation->topic);
-    int should_answer_back_to_creator = 1;
     if (clients_subscribed_in_topic != NULL) {
         int count = 0;
         while (clients_subscribed_in_topic[count] != NULL) {
-            if (strcmp(csock_string, clients_subscribed_in_topic[count]) == 0) {
-                should_answer_back_to_creator = 0;
-            }
             parse_operation_msg(operation, operation->client_id, NEW_POST, 1, operation->topic, operation->content);
             send_message(atoi(clients_subscribed_in_topic[count]), operation);
             count++;
         }
-    }
-    if (should_answer_back_to_creator) {
-        send_message(csock, operation);
     }
 }
 

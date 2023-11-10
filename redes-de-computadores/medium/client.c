@@ -1,13 +1,12 @@
 #include "common.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <sys/time.h>
 
 #define BUFSZ 1024
 
@@ -54,10 +53,6 @@ void handle_new_post(BlogOperation* operation) {
 }
 
 int get_operation_type() {
-    if (client_id == 0) {
-        return NEW_CONNECTION;
-    }
-
     int type = -1;
 
     do {
@@ -90,9 +85,6 @@ int handle_input_operation(BlogOperation* operation) {
     }
 
     switch (operation->operation_type) {
-        case NEW_CONNECTION:
-            parse_operation_msg(operation, client_id, NEW_CONNECTION, 0, "", "");
-            return 0;
         case NEW_POST:
             handle_new_post(operation);
             parse_operation_msg(operation, client_id, NEW_POST, 0, operation->topic, operation->content);
@@ -118,9 +110,6 @@ void handle_server_msg(BlogOperation* operation) {
         return;
     }
     switch (operation->operation_type) {
-        case NEW_CONNECTION:
-            client_id = operation->client_id;
-            break;
         case LIST_TOPICS:
             printf("%s\n", operation->content);
             break;
@@ -134,6 +123,14 @@ void handle_server_msg(BlogOperation* operation) {
         default:
             break;
     }
+}
+
+void stabilish_connection(int soc) {
+    BlogOperation msg;
+    parse_operation_msg(&msg, client_id, NEW_CONNECTION, 0, "", "");
+    send_message(soc, &msg);
+    get_message(soc, &msg);
+    client_id = msg.client_id;
 }
 
 int main(int argc, char **argv) {
@@ -155,21 +152,42 @@ int main(int argc, char **argv) {
 	char addrstr[BUFSZ];
 	addrtostr(addr, addrstr, BUFSZ);
 
-	while(1) {
-        BlogOperation msg_sent;
-        int error = handle_input_operation(&msg_sent);
-        if (error) continue;
-        send_message(s, &msg_sent);
+	fd_set read_fds;
+    fd_set write_fds;
 
-        BlogOperation msg_received;
-        get_message(s, &msg_received);
-        if (msg_received.operation_type == EXIT) {
-            break;
+    while (1) {
+        if (client_id == 0) {
+            stabilish_connection(s);
+            continue;
         }
-        handle_server_msg(&msg_received);
-	}
+        FD_ZERO(&read_fds);
+        FD_SET(STDIN_FILENO, &read_fds);
+        FD_SET(s, &read_fds);
+
+        int select_result = select(s + 1, &read_fds, &write_fds, NULL, NULL);
+
+        if (select_result == -1) {
+            exit(EXIT_FAILURE);
+        }
+
+        if (FD_ISSET(STDIN_FILENO, &read_fds)) {
+            BlogOperation msg_sent;
+            int error = handle_input_operation(&msg_sent);
+            if (error) continue;
+            send_message(s, &msg_sent);
+        }
+
+        if (FD_ISSET(s, &read_fds)) {
+            BlogOperation msg_received;
+            get_message(s, &msg_received);
+            if (msg_received.operation_type == EXIT) {
+                break;
+            }
+            handle_server_msg(&msg_received);
+        }
+    }
 
     close(s);
-	
-	exit(EXIT_SUCCESS);
+
+    exit(EXIT_SUCCESS);
 }
