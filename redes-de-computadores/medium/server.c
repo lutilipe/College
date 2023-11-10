@@ -50,6 +50,7 @@ void handle_new_connection(BlogOperation* operation, int csock) {
 }
 
 void handle_new_post(BlogOperation* operation, int csock) {
+    printf("csock: %i\n", csock);
     insert_pair(&topics, operation->topic, operation->content);
 
     char csock_string[50];
@@ -60,20 +61,77 @@ void handle_new_post(BlogOperation* operation, int csock) {
     printf("new post added in %s by %s\n", operation->topic, parsed_id);
 
     char** clients_subscribed_in_topic = get_values(&subscriptions, operation->topic);
-    int count = 0;
     int should_answer_back_to_creator = 1;
     if (clients_subscribed_in_topic != NULL) {
+        int count = 0;
         while (clients_subscribed_in_topic[count] != NULL) {
             if (strcmp(csock_string, clients_subscribed_in_topic[count]) == 0) {
                 should_answer_back_to_creator = 0;
             }
             parse_operation_msg(operation, operation->client_id, NEW_POST, 1, operation->topic, operation->content);
             send_message(atoi(clients_subscribed_in_topic[count]), operation);
+            count++;
         }
     }
     if (should_answer_back_to_creator) {
         send_message(csock, operation);
     }
+}
+
+void handle_subscription(BlogOperation* operation, int csock) {
+    char csock_string[50];
+    sprintf(csock_string, "%d", csock);
+    if (has_key(&subscriptions, operation->topic) && has_value(&subscriptions, operation->topic, csock_string)) {
+        // TODO: handle error
+        return;
+    }
+
+    if (!has_key(&topics, operation->topic)) {
+        insert_pair(&topics, operation->topic, "");
+    }
+
+    insert_pair(&subscriptions, operation->topic, csock_string);
+
+    char parsed_id[3];
+    parse_to_two_digits(operation->client_id, parsed_id);
+    printf("client %s subscribed to %s\n", parsed_id, operation->topic);
+
+    send_message(csock, operation);
+}
+
+void handle_unsubscription(BlogOperation* operation, int csock) {
+    char csock_string[50];
+    sprintf(csock_string, "%d", csock);
+    remove_value(&subscriptions, operation->topic, csock_string);
+
+    char parsed_id[3];
+    parse_to_two_digits(operation->client_id, parsed_id);
+    printf("client %s unsubscribed to %s\n", parsed_id, operation->topic);
+
+    send_message(csock, operation);
+}
+
+void handle_list_topics(BlogOperation* operation, int csock) {
+    char** list = list_keys(&topics);
+    int count = 0;
+    char res[sizeof(operation->content)] = "";
+    if (list != NULL) {
+        while (list[count] != NULL) {
+            strcat(res, list[count]);
+            strcat(res, ";");
+            count++;
+        }
+    }
+
+    int len = strlen(res);
+    if (len > 0) {
+        char *lastSemicolon = strrchr(res, ';');
+        if (lastSemicolon != NULL) {
+            *lastSemicolon = '\0';
+        }
+    }
+    parse_operation_msg(operation, operation->client_id, LIST_TOPICS, 1, "", res);
+    send_message(csock, operation);
 }
 
 int handle_action(
@@ -88,13 +146,13 @@ int handle_action(
             handle_new_post(operation, csock);
             break;
         case SUB_TOPIC:
-            /* char csock_string[50];
-            sprintf(csock_string, "%d", csock);
-            insert_pair(&subscriptions, operation->topic, csock_string); */
+            handle_subscription(operation, csock);
             break;
         case UNSUB_TOPIC:
+            handle_unsubscription(operation, csock);
             break;
         case LIST_TOPICS:
+            handle_list_topics(operation, csock);
             break;
         case EXIT:
             handle_exit(operation, csock);

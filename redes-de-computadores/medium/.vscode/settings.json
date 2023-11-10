@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "string.h": "c",
-        "functional": "c",
-        "common.h": "c",
-        "array": "c",
-        "algorithm": "c"
-    }
-}

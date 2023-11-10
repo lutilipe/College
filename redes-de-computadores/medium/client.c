@@ -124,6 +124,13 @@ void handle_server_msg(BlogOperation* operation) {
         case LIST_TOPICS:
             printf("%s\n", operation->content);
             break;
+        case NEW_POST: {
+            char parsed_id[3];
+            parse_to_two_digits(operation->client_id, parsed_id);
+            printf("new post added in %s by %s\n", operation->topic, parsed_id);
+            printf("%s\n", operation->content);
+            break;
+        }
         default:
             break;
     }

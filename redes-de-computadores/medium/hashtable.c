@@ -30,26 +30,6 @@ void insert_pair(struct Map* map, const char* key, const char* value) {
     }
 }
 
-char** get_values(const struct Map* map, const char* key) {
-    char** values = NULL;
-    size_t numValues = 0;
-
-    for (size_t i = 0; i < map->size; i++) {
-        if (strcmp(map->pairs[i].key, key) == 0) {
-            for (size_t j = 0; j < map->pairs[i].num_values; j++) {
-                values = (char**)realloc(values, (numValues + 1) * sizeof(char*));
-                values[numValues] = strdup(map->pairs[i].values[j]);
-                numValues++;
-            }
-        }
-    }
-
-    values = (char**)realloc(values, (numValues + 1) * sizeof(char*));
-    values[numValues] = NULL;
-
-    return values;
-}
-
 void free_map(struct Map* map) {
     for (size_t i = 0; i < map->size; i++) {
         free(map->pairs[i].key);
@@ -81,23 +61,43 @@ int has_key(const struct Map* map, const char* key) {
     return 0;
 }
 
-/* int main() {
-    struct Map map;
-    init_map(&map);
+int has_value(const struct Map* map, const char* key, const char* value) {
+    for (size_t i = 0; i < map->size; i++) {
+        if (strcmp(map->pairs[i].key, key) == 0) {
+            for (size_t j = 0; j < map->pairs[i].num_values; j++) {
+                if (strcmp(map->pairs[i].values[j], value) == 0) {
+                    return 1;
+                }
+            }
+        }
+    }
+    return 0;
+}
 
-    insert_pair(&map, "key1", "value1");
-    insert_pair(&map, "key2", "value2");
-    insert_pair(&map, "key1", "value3");
-    insert_pair(&map, "key1", "");
+void remove_value(struct Map* map, const char* key, const char* value) {
+    for (size_t i = 0; i < map->size; i++) {
+        if (strcmp(map->pairs[i].key, key) == 0) {
+            for (size_t j = 0; j < map->pairs[i].num_values; j++) {
+                if (strcmp(map->pairs[i].values[j], value) == 0) {
+                    free(map->pairs[i].values[j]);
+                    for (size_t k = j; k < map->pairs[i].num_values - 1; k++) {
+                        map->pairs[i].values[k] = map->pairs[i].values[k + 1];
+                    }
+                    map->pairs[i].num_values--;
+                    map->pairs[i].values = (char**)realloc(map->pairs[i].values, map->pairs[i].num_values * sizeof(char*));
+                    return;
+                }
+            }
+        }
+    }
+}
 
-    char** a = getValues(&map, "key1");
-    for (int i = 0; i < 2; i++) {
-        printf("%s\n", a[i]);
+char** get_values(const struct Map* map, const char* key) {
+    for (size_t i = 0; i < map->size; i++) {
+        if (strcmp(map->pairs[i].key, key) == 0) {
+            return map->pairs[i].values;
+        }
     }
 
-    printf("%s\n", listKeys(&map));
-
-    freeMap(&map);
-
-    return 0;
-} */
+    return NULL;
+}
