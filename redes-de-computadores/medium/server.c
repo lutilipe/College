@@ -111,19 +111,20 @@ void handle_list_topics(BlogOperation* operation, int csock) {
     char res[sizeof(operation->content)] = "";
     if (list != NULL) {
         while (list[count] != NULL) {
+            if (count > 0) {
+                strcat(res, ";");
+            }
             strcat(res, list[count]);
-            strcat(res, ";");
             count++;
         }
     }
 
-    int len = strlen(res);
-    if (len > 0) {
-        char *lastSemicolon = strrchr(res, ';');
-        if (lastSemicolon != NULL) {
-            *lastSemicolon = '\0';
-        }
+    if (count == 0) {
+        parse_operation_msg(operation, operation->client_id, LIST_TOPICS, 1, "", "no topics available");
+        send_message(csock, operation);
+        return;
     }
+
     parse_operation_msg(operation, operation->client_id, LIST_TOPICS, 1, "", res);
     send_message(csock, operation);
 }
