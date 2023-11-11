@@ -92,6 +92,22 @@ void remove_value(struct Map* map, const char* key, const char* value) {
     }
 }
 
+void remove_value_from_all(struct Map* map, const char* value) {
+    for (size_t i = 0; i < map->size; i++) {
+        for (size_t j = 0; j < map->pairs[i].num_values; j++) {
+            if (strcmp(map->pairs[i].values[j], value) == 0) {
+                free(map->pairs[i].values[j]);
+                for (size_t k = j; k < map->pairs[i].num_values - 1; k++) {
+                    map->pairs[i].values[k] = map->pairs[i].values[k + 1];
+                }
+                map->pairs[i].num_values--;
+                map->pairs[i].values = (char**)realloc(map->pairs[i].values, map->pairs[i].num_values * sizeof(char*));
+                break;
+            }
+        }
+    }
+}
+
 char** get_values(const struct Map* map, const char* key) {
     for (size_t i = 0; i < map->size; i++) {
         if (strcmp(map->pairs[i].key, key) == 0) {

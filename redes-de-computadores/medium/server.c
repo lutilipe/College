@@ -29,6 +29,11 @@ void handle_exit(BlogOperation* operation, int csock) {
     clients[operation->client_id - 1] = 0;
     parse_operation_msg(operation, operation->client_id, EXIT, 1, "", "");
     send_message(csock, operation);
+
+    char csock_string[50];
+    sprintf(csock_string, "%d", csock);
+    remove_value_from_all(&subscriptions, csock_string);
+
     close(csock);
     pthread_exit(EXIT_SUCCESS);
 }

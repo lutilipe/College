@@ -30,6 +30,8 @@ int has_value(const struct Map* map, const char* key, const char* value);
 
 void remove_value(struct Map* map, const char* key, const char* value);
 
+void remove_value_from_all(struct Map* map, const char* value);
+
 char** get_values(const struct Map* map, const char* key);
 
 #endif
