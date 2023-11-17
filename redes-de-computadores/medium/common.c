@@ -121,10 +121,12 @@ void send_message(int socket, BlogOperation* msg) {
 	}
 }
 
+// Parse de um numero para dois digitos. Ex: 1 -> 01
 void parse_to_two_digits(int number, char *result) {
     sprintf(result, "%02d", number);
 }
 
+// Facilitar preenchimento dos dados da mensagem
 void parse_operation_msg(
     BlogOperation* op,
     int client_id,

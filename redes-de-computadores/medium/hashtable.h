@@ -5,12 +5,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 struct Pair {
     char* key;
     char** values;
     size_t num_values;
 };
 
+/* 
+Implementacao de uma HashTable na qual a chave eh uma string
+e o valor eh um array de strings. 
+*/
 struct Map {
     struct Pair* pairs;
     size_t size;

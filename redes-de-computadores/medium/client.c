@@ -12,12 +12,14 @@
 
 int client_id = 0;
 
+/* Remove a quebra de linha de uma string, caso a mesma exista */
 void parse_string(char* string) {
     int new_line = strlen(string) -1;
     if (string[new_line] == '\n')
         string[new_line] = '\0';
 }
 
+/* Remove os caracteres " in " de uma determinada string */
 void parse_topic(char* topic) {
     char *substring = " in ";
     if (topic != NULL) {
@@ -52,6 +54,7 @@ void handle_new_post(BlogOperation* operation) {
     strcpy(operation->content, content);
 }
 
+/* Obtem o tipo da operacao a partir da entrada do usuario */
 int get_operation_type() {
     int type = -1;
 
@@ -76,6 +79,7 @@ int get_operation_type() {
     return type;
 }
 
+/* Trata a entrada do usuario */
 int handle_input_operation(BlogOperation* operation) {
     operation->operation_type = get_operation_type();
 
@@ -131,6 +135,7 @@ void handle_server_msg(BlogOperation* operation) {
     }
 }
 
+/* Faz uma requisicao no servidor para pegar o id do cliente */
 void create_client_id(int soc) {
     BlogOperation msg;
     parse_operation_msg(&msg, client_id, NEW_CONNECTION, 0, "", "");
@@ -168,6 +173,7 @@ int main(int argc, char **argv) {
         FD_SET(STDIN_FILENO, &read_fds);
         FD_SET(s, &read_fds);
 
+        /* Permite a selecao do canal de entrada ou saida pelo cliente */
         int select_result = select(s + 1, &read_fds, &write_fds, NULL, NULL);
 
         if (select_result == -1) {

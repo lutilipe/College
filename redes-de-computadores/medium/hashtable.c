@@ -30,6 +30,7 @@ void insert_pair(struct Map* map, const char* key, const char* value) {
     }
 }
 
+// Liberar hashtable da memoria
 void free_map(struct Map* map) {
     for (size_t i = 0; i < map->size; i++) {
         free(map->pairs[i].key);
@@ -42,6 +43,7 @@ void free_map(struct Map* map) {
     map->size = 0;
 }
 
+// Listar todas as chaves de uma hashtable
 char** list_keys(const struct Map* map) {
     char** keysArray = (char**)malloc(map->size * sizeof(char*));
     
@@ -52,6 +54,7 @@ char** list_keys(const struct Map* map) {
     return keysArray;
 }
 
+// Checa se a hastable tem uma determinada chave
 int has_key(const struct Map* map, const char* key) {
     for (size_t i = 0; i < map->size; i++) {
         if (strcmp(map->pairs[i].key, key) == 0) {
@@ -61,6 +64,7 @@ int has_key(const struct Map* map, const char* key) {
     return 0;
 }
 
+// Checa se uma chave possui um valor passado como parametro
 int has_value(const struct Map* map, const char* key, const char* value) {
     for (size_t i = 0; i < map->size; i++) {
         if (strcmp(map->pairs[i].key, key) == 0) {
@@ -74,6 +78,7 @@ int has_value(const struct Map* map, const char* key, const char* value) {
     return 0;
 }
 
+/* Remove um valor de uma chave especifica */
 void remove_value(struct Map* map, const char* key, const char* value) {
     for (size_t i = 0; i < map->size; i++) {
         if (strcmp(map->pairs[i].key, key) == 0) {
@@ -92,6 +97,7 @@ void remove_value(struct Map* map, const char* key, const char* value) {
     }
 }
 
+/* Remove um determinado valor de todas as chaves que contem o mesmo */
 void remove_value_from_all(struct Map* map, const char* value) {
     for (size_t i = 0; i < map->size; i++) {
         for (size_t j = 0; j < map->pairs[i].num_values; j++) {
